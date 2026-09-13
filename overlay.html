@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Teko:wght@600;700&family=Chakra+Petch:wght@600;700&display=swap');
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: transparent;
+    font-family: 'Chakra Petch', sans-serif;
+    color: #fff;
+    padding: 10px;
+    overflow: hidden;
+    user-select: none;
+  }
+
+  /* Top Elimination Alert Banner */
+  #elim-banner {
+    position: fixed;
+    top: 15px;
+    left: 50%;
+    transform: translateX(-50%) translateY(-140%);
+    background: linear-gradient(90deg, rgba(217, 45, 32, 0.95), rgba(16, 17, 22, 0.95));
+    border: 2px solid #ff3b30;
+    border-radius: 6px;
+    padding: 8px 24px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    box-shadow: 0 0 20px rgba(255, 59, 48, 0.6);
+    transition: transform 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    z-index: 999;
+  }
+  #elim-banner.show { transform: translateX(-50%) translateY(0); }
+  #elim-banner img { width: 28px; height: 28px; border-radius: 4px; object-fit: cover; }
+  #elim-banner .banner-text {
+    font-family: 'Teko', sans-serif;
+    font-size: 26px;
+    letter-spacing: 1px;
+    color: #fff;
+    line-height: 1;
+    text-transform: uppercase;
+  }
+
+  /* Leaderboard */
+  .leaderboard {
+    width: 330px;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    margin-top: 50px;
+  }
+
+  .board-header {
+    display: grid;
+    grid-template-columns: 32px 1fr 34px 34px 44px;
+    align-items: center;
+    padding: 3px 8px;
+    font-size: 10px;
+    font-weight: 700;
+    color: #8e929b;
+    text-transform: uppercase;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+    margin-bottom: 2px;
+  }
+  .board-header span { text-align: center; }
+  .board-header .head-team { text-align: left; padding-left: 24px; }
+
+  .team-row {
+    display: grid;
+    grid-template-columns: 32px 1fr 34px 34px 44px;
+    align-items: center;
+    background: linear-gradient(90deg, rgba(14, 15, 19, 0.95) 0%, rgba(22, 24, 30, 0.88) 100%);
+    border-left: 4px solid #555861;
+    padding: 4px 8px;
+    border-radius: 0 3px 3px 0;
+    font-size: 13px;
+    transition: all 0.25s ease;
+  }
+
+  .team-row.rank-1 { border-left-color: #ffb800; background: linear-gradient(90deg, rgba(45, 33, 5, 0.95) 0%, rgba(22, 24, 30, 0.9) 100%); }
+  .team-row.rank-2 { border-left-color: #ffd043; }
+  .team-row.rank-3 { border-left-color: #f7941d; }
+
+  .rank-num { font-family: 'Teko', sans-serif; font-size: 18px; line-height: 1; color: #e5a913; text-align: center; }
+  .team-identity { display: flex; align-items: center; gap: 8px; overflow: hidden; }
+  .team-logo { width: 20px; height: 20px; border-radius: 2px; object-fit: cover; background: #000; }
+  .team-name { font-size: 12px; font-weight: 700; text-transform: uppercase; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .elims { font-family: 'Teko', sans-serif; font-size: 20px; line-height: 1; color: #fff; text-align: center; }
+  .total-pts { font-family: 'Teko', sans-serif; font-size: 20px; line-height: 1; color: #e5a913; text-align: center; }
+
+  .status-bars { display: flex; gap: 3px; justify-content: flex-end; }
+  .bar { width: 4.5px; height: 14px; border-radius: 1px; background: #e5a913; }
+  .bar.dead { background: rgba(255, 255, 255, 0.12); }
+
+  .team-row.wiped { opacity: 0.35; filter: grayscale(1); border-left-color: #33363f !important; }
+  .team-row.wiped .rank-num { color: #666; }
+</style>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+</head>
+<body>
+
+  <div id="elim-banner">
+    <img id="banner-logo" src="" alt="logo" />
+    <div class="banner-text" id="banner-text">TEAM ELIMINATED</div>
+  </div>
+
+  <div class="leaderboard">
+    <div class="board-header">
+      <span>#</span>
+      <span class="head-team">Teams</span>
+      <span>Elim</span>
+      <span>Tot</span>
+      <span style="text-align:right;">Status</span>
+    </div>
+    <div id="board-body" style="display:flex; flex-direction:column; gap:3px;"></div>
+  </div>
+
+<script>
+  // PASTE YOUR FIREBASE CONFIG KEYS HERE:
+  const firebaseConfig = {
+    apiKey: "YOUR_API_KEY",
+    authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+    databaseURL: "https://YOUR_PROJECT_ID-default-rtdb.firebaseio.com",
+    projectId: "YOUR_PROJECT_ID",
+    storageBucket: "YOUR_PROJECT_ID.appspot.com",
+    messagingSenderId: "YOUR_SENDER_ID",
+    appId: "YOUR_APP_ID"
+  };
+
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.database();
+
+  let currentTeams = [];
+  let bannerTimeout = null;
+
+  function triggerElimBanner(teamName, teamLogo) {
+    const banner = document.getElementById('elim-banner');
+    const bText = document.getElementById('banner-text');
+    const bLogo = document.getElementById('banner-logo');
+
+    bText.innerText = `${teamName} SQUAD ELIMINATED`;
+    bLogo.src = teamLogo || 'https://dummyimage.com/28x28/000/fff&text=' + teamName[0];
+    banner.classList.add('show');
+
+    clearTimeout(bannerTimeout);
+    bannerTimeout = setTimeout(() => {
+      banner.classList.remove('show');
+    }, 3800);
+  }
+
+  function render(teams) {
+    if (!teams || !Array.isArray(teams)) return;
+
+    if (currentTeams.length > 0) {
+      teams.forEach(t => {
+        const prev = currentTeams.find(p => p.name === t.name);
+        if (prev && prev.alive > 0 && t.alive === 0) {
+          triggerElimBanner(t.name, t.logo);
+        }
+      });
+    }
+    currentTeams = JSON.parse(JSON.stringify(teams));
+
+    const sorted = [...teams].sort((a, b) => {
+      const totA = Number(a.kills) + Number(a.placement || 0);
+      const totB = Number(b.kills) + Number(b.placement || 0);
+      if (totB !== totA) return totB - totA;
+      return b.kills - a.kills;
+    });
+
+    const body = document.getElementById('board-body');
+    body.innerHTML = '';
+
+    sorted.forEach((team, idx) => {
+      const matchKills = Number(team.kills) || 0;
+      const totalOverallPoints = matchKills + (Number(team.placement) || 0);
+      const isWiped = team.alive === 0;
+
+      let barsHtml = '';
+      for (let i = 0; i < 4; i++) {
+        barsHtml += `<div class="bar ${i < team.alive ? '' : 'dead'}"></div>`;
+      }
+
+      const rankClass = idx === 0 ? 'rank-1' : (idx === 1 ? 'rank-2' : (idx === 2 ? 'rank-3' : ''));
+
+      body.innerHTML += `
+        <div class="team-row ${rankClass} ${isWiped ? 'wiped' : ''}">
+          <span class="rank-num">#${idx + 1}</span>
+          <div class="team-identity">
+            <img class="team-logo" src="${team.logo || 'https://dummyimage.com/20x20/000/fff&text=' + team.name[0]}" />
+            <span class="team-name">${team.name}</span>
+          </div>
+          <span class="elims">${matchKills}</span>
+          <span class="total-pts">${totalOverallPoints}</span>
+          <div class="status-bars">${barsHtml}</div>
+        </div>
+      `;
+    });
+  }
+
+  db.ref('esports_data/teams').on('value', (snapshot) => {
+    const val = snapshot.val();
+    if (val) render(val);
+  });
+
+  db.ref('esports_data/resetSignal').on('value', () => {
+    const banner = document.getElementById('elim-banner');
+    if (banner) banner.classList.remove('show');
+  });
+</script>
+</body>
+</html>
