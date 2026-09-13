@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <title>Esports Manual Desk</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@600;700&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@600;700&family=Chakra+Petch:wght@700&display=swap');
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body {
     background: #0c0e12;
@@ -16,8 +16,35 @@
   .top-bar {
     display: flex; justify-content: space-between; align-items: center;
     border-bottom: 1px solid #232630; padding-bottom: 12px; margin-bottom: 16px;
+    flex-wrap: wrap; gap: 10px;
   }
   .top-bar h2 { color: #8cf000; font-size: 20px; letter-spacing: 1px; }
+
+  /* Timer Desk Controls */
+  .timer-desk {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: #141720;
+    padding: 6px 12px;
+    border-radius: 6px;
+    border: 1px solid #252834;
+  }
+  .desk-timer-clock {
+    font-size: 18px;
+    font-family: 'Chakra Petch', sans-serif;
+    font-weight: 700;
+    color: #8cf000;
+    min-width: 60px;
+  }
+  .btn-timer {
+    border: none; padding: 6px 10px; font-weight: 800; border-radius: 4px;
+    cursor: pointer; font-family: inherit; font-size: 11px;
+  }
+  .btn-timer-start { background: #8cf000; color: #000; }
+  .btn-timer-pause { background: #f79009; color: #000; }
+  .btn-timer-reset { background: #373b47; color: #fff; }
+
   .btn-top {
     background: #8cf000; color: #000; font-weight: 800; border: none;
     padding: 8px 14px; border-radius: 4px; cursor: pointer; font-family: inherit;
@@ -48,7 +75,7 @@
     padding: 5px; border-radius: 4px; flex: 1; font-size: 11px;
   }
 
-  /* Player Status Toggles */
+  /* 2-State Player Toggles */
   .player-row {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
@@ -68,7 +95,6 @@
     text-align: center;
   }
   .state-alive { background: #8cf000; color: #000; }
-  .state-knock { background: #6c5ce7; color: #fff; }
   .state-dead  { background: #1c1d24; color: #666; border: 1px solid #333; }
 
   .actions {
@@ -89,6 +115,15 @@
 
   <div class="top-bar">
     <h2>MANUAL DESK CONTROL</h2>
+
+    <!-- Timer Desk Controls -->
+    <div class="timer-desk">
+      <span class="desk-timer-clock" id="desk-timer">00:00</span>
+      <button class="btn-timer btn-timer-start" onclick="startTimer()">START</button>
+      <button class="btn-timer btn-timer-pause" onclick="pauseTimer()">PAUSE</button>
+      <button class="btn-timer btn-timer-reset" onclick="resetTimer()">RESET</button>
+    </div>
+
     <div style="display:flex; gap:8px;">
       <button class="btn-top" onclick="resetAllRevive()">REVIVE ALL (4 ALIVE)</button>
       <button class="btn-top btn-danger" onclick="resetAllKills()">RESET ALL KILLS</button>
@@ -129,6 +164,7 @@
 
   let teams = defaultTeams;
 
+  // 1. Teams Sync
   db.ref('esports_data/teams').on('value', (snap) => {
     const val = snap.val();
     if (val && Array.isArray(val)) {
@@ -144,10 +180,69 @@
     renderGrid();
   }
 
-  // Cycles player status: alive -> knock -> dead -> alive
-  function cyclePlayer(tIdx, pIdx) {
-    const current = teams[tIdx].players[pIdx].status || 'alive';
-    const next = current === 'alive' ? 'knock' : (current === 'knock' ? 'dead' : 'alive');
+  // 2. Timer Logic
+  let timerState = { running: false, seconds: 0, startTimestamp: null };
+  let localDeskInterval = null;
+
+  db.ref('esports_data/timer').on('value', (snap) => {
+    const val = snap.val();
+    if (val) {
+      timerState = val;
+      updateDeskTimerUI();
+    }
+  });
+
+  function formatTime(totalSec) {
+    const m = String(Math.floor(totalSec / 60)).padStart(2, '0');
+    const s = String(totalSec % 60).padStart(2, '0');
+    return `${m}:${s}`;
+  }
+
+  function updateDeskTimerUI() {
+    clearInterval(localDeskInterval);
+    if (timerState.running && timerState.startTimestamp) {
+      localDeskInterval = setInterval(() => {
+        const elapsed = Math.floor((Date.now() - timerState.startTimestamp) / 1000);
+        document.getElementById('desk-timer').innerText = formatTime(elapsed);
+      }, 1000);
+      const elapsed = Math.floor((Date.now() - timerState.startTimestamp) / 1000);
+      document.getElementById('desk-timer').innerText = formatTime(elapsed);
+    } else {
+      document.getElementById('desk-timer').innerText = formatTime(timerState.seconds || 0);
+    }
+  }
+
+  function startTimer() {
+    const currentSec = timerState.seconds || 0;
+    db.ref('esports_data/timer').set({
+      running: true,
+      seconds: currentSec,
+      startTimestamp: Date.now() - (currentSec * 1000)
+    });
+  }
+
+  function pauseTimer() {
+    if (!timerState.running) return;
+    const elapsed = Math.floor((Date.now() - timerState.startTimestamp) / 1000);
+    db.ref('esports_data/timer').set({
+      running: false,
+      seconds: elapsed,
+      startTimestamp: null
+    });
+  }
+
+  function resetTimer() {
+    db.ref('esports_data/timer').set({
+      running: false,
+      seconds: 0,
+      startTimestamp: null
+    });
+  }
+
+  // 3. Controller Actions (2-State Toggle: Alive <-> Dead)
+  function togglePlayer(tIdx, pIdx) {
+    const current = teams[tIdx].players[pIdx].status === 'dead' ? 'dead' : 'alive';
+    const next = current === 'alive' ? 'dead' : 'alive';
     teams[tIdx].players[pIdx].status = next;
     teams[tIdx].alive = teams[tIdx].players.filter(p => p.status === 'alive').length;
     sync();
@@ -187,11 +282,14 @@
       }
       const isDead = t.players.every(p => p.status === 'dead');
 
-      let playersHtml = t.players.map((p, pIdx) => `
-        <button class="btn-player state-${p.status || 'alive'}" onclick="cyclePlayer(${i}, ${pIdx})">
-          P${pIdx+1}: ${(p.status || 'alive').toUpperCase()}
-        </button>
-      `).join('');
+      let playersHtml = t.players.map((p, pIdx) => {
+        const isAlive = p.status !== 'dead';
+        return `
+          <button class="btn-player ${isAlive ? 'state-alive' : 'state-dead'}" onclick="togglePlayer(${i}, ${pIdx})">
+            P${pIdx+1}: ${isAlive ? 'ALIVE' : 'DEAD'}
+          </button>
+        `;
+      }).join('');
 
       grid.innerHTML += `
         <div class="team-card ${isDead ? 'wiped' : ''}">
