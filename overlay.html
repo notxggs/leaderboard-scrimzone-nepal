@@ -2,9 +2,9 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>OBS Esports HUD Overlay</title>
+<title>Pro Broadcast Esports HUD Overlay</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Teko:wght@600;700&family=Rajdhani:wght@700;800&family=Chakra+Petch:wght@700;800&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Teko:wght@700&family=Rajdhani:wght@700;800&family=Chakra+Petch:wght@700;800&display=swap');
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
   html, body {
@@ -17,69 +17,76 @@
     position: relative;
   }
 
-  /* 1. LEFT-ALIGNED ELIMINATION BANNER (MATCHES LEADERBOARD POSITION) */
-  #elim-banner {
+  /* FLUSH TO THE EXTREME LEFT EDGE (0px margin, perfect for tight OBS crop) */
+  .left-broadcast-dock {
     position: absolute;
-    top: 20px;
-    left: 30px; /* Aligned exactly with the leaderboard on the left */
-    width: 380px; /* Fits cleanly on the left without overflowing center screen */
-    transform: translateY(-200%);
-    background: linear-gradient(135deg, rgba(20, 5, 8, 0.98) 0%, rgba(185, 28, 28, 0.95) 50%, rgba(15, 3, 5, 0.98) 100%);
-    border-top: 3px solid #ff4444;
-    border-bottom: 4px solid #ff1111;
-    border-left: 2px solid #ff4444;
-    border-right: 2px solid #ff4444;
-    border-radius: 6px;
-    padding: 10px 16px;
+    top: 10px;
+    left: 0;
+    width: 320px;
     display: flex;
-    align-items: center;
-    gap: 12px;
-    box-shadow: 0 0 35px rgba(255, 20, 20, 0.85);
-    transition: transform 0.45s cubic-bezier(0.19, 1, 0.22, 1), opacity 0.3s ease;
-    opacity: 0;
-    z-index: 99999;
-  }
-  #elim-banner.show {
-    transform: translateY(0);
-    opacity: 1;
-    animation: bannerPulse 1.2s infinite alternate ease-in-out;
+    flex-direction: column;
+    gap: 8px;
   }
 
-  @keyframes bannerPulse {
-    0% { box-shadow: 0 0 25px rgba(255, 0, 0, 0.75); }
-    100% { box-shadow: 0 0 45px rgba(255, 30, 30, 1); }
+  /* 1. ULTRA COMBAT WIPEOUT BANNER */
+  #elim-banner {
+    width: 100%;
+    background: linear-gradient(135deg, rgba(10, 0, 2, 0.98) 0%, rgba(220, 20, 40, 0.95) 50%, rgba(10, 0, 2, 0.98) 100%);
+    border: 2px solid #ff2233;
+    border-left: none;
+    border-radius: 0 6px 6px 0;
+    padding: 8px 12px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    box-shadow: 0 0 35px rgba(255, 30, 50, 0.85), inset 0 0 15px rgba(255, 50, 50, 0.5);
+    transform: translateY(-160%) scale(0.9);
+    opacity: 0;
+    pointer-events: none;
+    transition: transform 0.45s cubic-bezier(0.19, 1, 0.22, 1), opacity 0.3s ease;
+    z-index: 1000;
+  }
+  #elim-banner.show {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+    animation: bannerAlertGlow 1s infinite alternate ease-in-out;
+  }
+
+  @keyframes bannerAlertGlow {
+    0% { box-shadow: 0 0 20px rgba(255, 0, 0, 0.7); }
+    100% { box-shadow: 0 0 45px rgba(255, 0, 0, 1), inset 0 0 20px rgba(255, 255, 255, 0.5); }
   }
 
   .skull-badge {
-    font-size: 32px;
+    font-size: 34px;
     line-height: 1;
     filter: drop-shadow(0 0 10px #ff0033);
-    animation: skullShake 0.4s infinite alternate ease-in-out;
+    animation: skullShock 0.25s infinite alternate ease-in-out;
   }
-  @keyframes skullShake {
-    0% { transform: rotate(-4deg) scale(1); }
-    100% { transform: rotate(4deg) scale(1.08); }
+  @keyframes skullShock {
+    0% { transform: rotate(-6deg) scale(1); }
+    100% { transform: rotate(6deg) scale(1.15); }
   }
 
-  #elim-banner img {
+  #banner-logo {
     width: 44px;
     height: 44px;
     border-radius: 4px;
     object-fit: contain;
-    border: 2px solid #ff4444;
+    border: 2px solid #ff2233;
     background: #000;
   }
 
-  .banner-content {
+  .banner-text-box {
     display: flex;
     flex-direction: column;
     justify-content: center;
     line-height: 0.95;
     overflow: hidden;
   }
-  .banner-title {
+  .banner-primary {
     font-family: 'Teko', sans-serif;
-    font-size: 34px;
+    font-size: 32px;
     letter-spacing: 1px;
     color: #ffffff;
     text-transform: uppercase;
@@ -87,11 +94,12 @@
     overflow: hidden;
     text-overflow: ellipsis;
   }
-  .banner-title span {
+  .banner-primary span {
     color: #ffe600;
-    font-size: 36px;
+    font-size: 35px;
+    text-shadow: 0 0 15px rgba(255, 230, 0, 0.8);
   }
-  .banner-sub {
+  .banner-tagline {
     font-family: 'Chakra Petch', sans-serif;
     font-size: 11px;
     font-weight: 800;
@@ -100,17 +108,15 @@
     text-transform: uppercase;
   }
 
-  /* 2. LEADERBOARD HUD (POSITIONED SAFELY ON THE LEFT) */
+  /* 2. LEADERBOARD HUD */
   .hud-container {
-    position: absolute;
-    top: 95px; /* Sits directly below the left alert banner */
-    left: 30px;
-    width: 280px;
+    width: 100%;
     display: flex;
     flex-direction: column;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.85);
+    box-shadow: 0 12px 35px rgba(0,0,0,0.9);
     border: 2px solid #426aef;
-    border-radius: 6px 6px 0 0;
+    border-left: none;
+    border-radius: 0 6px 6px 0;
     overflow: hidden;
   }
 
@@ -120,13 +126,13 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 5px 10px;
+    padding: 6px 12px;
     border-bottom: 2px solid rgba(66, 106, 239, 0.4);
   }
   .hud-timer-label {
-    font-size: 14px;
+    font-size: 13px;
     font-weight: 800;
-    color: #94a3b8;
+    color: #8fa0b5;
     letter-spacing: 1.5px;
   }
   .hud-timer-clock {
@@ -135,7 +141,7 @@
     color: #426aef;
     font-family: 'Chakra Petch', sans-serif;
     letter-spacing: 1px;
-    text-shadow: 0 0 10px rgba(66, 106, 239, 0.6);
+    text-shadow: 0 0 10px rgba(66, 106, 239, 0.7);
   }
 
   /* Header */
@@ -143,18 +149,18 @@
     background: #426aef;
     color: #ffffff;
     display: grid;
-    grid-template-columns: 140px 55px 1fr;
+    grid-template-columns: 160px 65px 1fr;
     align-items: center;
-    padding: 5px 8px;
+    padding: 6px 8px;
     font-weight: 800;
     font-size: 15px;
     letter-spacing: 1px;
   }
-  .hud-header .col-teams { text-align: left; padding-left: 28px; }
+  .hud-header .col-teams { text-align: left; padding-left: 20px; }
   .hud-header .col-elims { text-align: center; }
   .hud-header .col-alive { text-align: center; }
 
-  /* Leaderboard Body */
+  /* Leaderboard Rows */
   .hud-body {
     display: flex;
     flex-direction: column;
@@ -162,21 +168,20 @@
     background: #000000;
   }
 
-  /* Active Team Row */
   .hud-row {
     background: #0a0d14;
     border-left: 4px solid #426aef;
     display: grid;
-    grid-template-columns: 140px 55px 1fr;
+    grid-template-columns: 160px 65px 1fr;
     align-items: center;
     padding: 4px 6px;
-    min-height: 36px;
+    min-height: 38px;
     position: relative;
     overflow: hidden;
     transition: background 0.25s ease;
   }
 
-  /* Eliminated Team Row (Solid pitch black) */
+  /* Eliminated Team Row */
   .hud-row.eliminated-row {
     background: #000000 !important;
     border-left-color: #1a1a1a !important;
@@ -186,7 +191,10 @@
   .hud-row.eliminated-row .elims-cell { color: #3b4252 !important; }
   .hud-row.eliminated-row .team-logo { filter: grayscale(1) opacity(0.2); }
 
-  /* Red Left-to-Right Wipeout Laser Sweep */
+  /* Red Shock Laser Vaporize Sweep */
+  .hud-row.just-vanished {
+    animation: rowGlitchShake 0.4s ease-out;
+  }
   .hud-row.just-vanished::after {
     content: '';
     position: absolute;
@@ -199,10 +207,10 @@
       transparent 0%, 
       rgba(220, 38, 38, 0.4) 30%, 
       #ffffff 65%, 
-      #ef4444 100%
+      #ff1133 100%
     );
-    box-shadow: 0 0 25px #ef4444;
-    animation: sweepRedVanish 0.95s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+    box-shadow: 0 0 35px #ff1133;
+    animation: sweepRedVanish 0.85s cubic-bezier(0.25, 1, 0.5, 1) forwards;
     pointer-events: none;
   }
 
@@ -212,26 +220,35 @@
     100% { left: 130%; opacity: 0; }
   }
 
-  /* Team Identifiers - Big Written Words */
+  @keyframes rowGlitchShake {
+    0% { transform: translateX(0); }
+    20% { transform: translateX(-4px); }
+    40% { transform: translateX(4px); }
+    60% { transform: translateX(-2px); }
+    80% { transform: translateX(2px); }
+    100% { transform: translateX(0); }
+  }
+
+  /* Team Identifiers */
   .team-cell {
     display: flex;
     align-items: center;
-    gap: 6px;
+    gap: 8px;
     overflow: hidden;
   }
   .rank-tag {
     color: #426aef;
-    font-size: 18px;
+    font-size: 17px;
     font-weight: 800;
     min-width: 18px;
     text-align: right;
     font-family: 'Chakra Petch', sans-serif;
   }
   .team-logo {
-    width: 22px;
-    height: 22px;
+    width: 24px;
+    height: 24px;
     object-fit: contain;
-    border-radius: 2px;
+    border-radius: 3px;
     background: #000;
   }
   .team-name {
@@ -245,7 +262,7 @@
     line-height: 1;
   }
 
-  /* Big Elimination Numbers */
+  /* Elimination Numbers */
   .elims-cell {
     text-align: center;
     font-size: 22px;
@@ -260,19 +277,19 @@
     font-family: 'Chakra Petch', sans-serif;
   }
 
-  /* Compact Alive Indicators */
+  /* Alive Status Indicators */
   .alive-bars {
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: 3.5px;
+    gap: 4px;
     padding: 0 4px;
   }
   .bar {
-    width: 5px;
-    height: 20px;
+    width: 6px;
+    height: 21px;
     border-radius: 1px;
-    transition: background 0.2s ease;
+    transition: background 0.2s ease, box-shadow 0.2s ease;
   }
   .bar.status-alive {
     background: #426aef;
@@ -314,44 +331,49 @@
 </head>
 <body>
 
-  <!-- Left-Aligned Alert Banner (Aligned with the Leaderboard) -->
-  <div id="elim-banner">
-    <div class="skull-badge">☠</div>
-    <img id="banner-logo" src="" alt="logo" />
-    <div class="banner-content">
-      <div class="banner-title"><span id="banner-team-name">TEAM</span> SQUAD ELIMINATED</div>
-      <div class="banner-sub">ALL SQUAD MEMBERS K.I.A</div>
-    </div>
-  </div>
+  <!-- FLUSH DOCKED TO LEFT EDGE -->
+  <div class="left-broadcast-dock">
 
-  <!-- Left-Side Leaderboard HUD -->
-  <div class="hud-container">
-    <!-- Match Timer -->
-    <div class="hud-timer-bar">
-      <span class="hud-timer-label">MATCH TIME</span>
-      <span class="hud-timer-clock" id="timer-display">00:00</span>
-    </div>
-
-    <!-- Header -->
-    <div class="hud-header">
-      <span class="col-teams">TEAMS</span>
-      <span class="col-elims">ELIMS</span>
-      <span class="col-alive">ALIVE</span>
-    </div>
-
-    <div class="hud-body" id="hud-body"></div>
-
-    <!-- Footer Legend -->
-    <div class="hud-legend">
-      <div class="legend-item">
-        <span class="legend-box" style="background:#426aef; box-shadow: 0 0 5px #426aef;"></span>
-        <span>ALIVE</span>
-      </div>
-      <div class="legend-item">
-        <span class="legend-box" style="background:#141720; border: 1px solid #333;"></span>
-        <span>ELIMINATED</span>
+    <!-- SQUAD WIPEOUT ALERT -->
+    <div id="elim-banner">
+      <div class="skull-badge">☠</div>
+      <img id="banner-logo" src="" alt="logo" />
+      <div class="banner-text-box">
+        <div class="banner-primary"><span id="banner-team-name">TEAM</span> WIPED</div>
+        <div class="banner-tagline">ALL PLAYERS K.I.A</div>
       </div>
     </div>
+
+    <!-- MAIN LEADERBOARD HUD -->
+    <div class="hud-container">
+      <!-- Match Duration -->
+      <div class="hud-timer-bar">
+        <span class="hud-timer-label">MATCH TIME</span>
+        <span class="hud-timer-clock" id="timer-display">00:00</span>
+      </div>
+
+      <!-- Header -->
+      <div class="hud-header">
+        <span class="col-teams">TEAMS</span>
+        <span class="col-elims">ELIMS</span>
+        <span class="col-alive">ALIVE</span>
+      </div>
+
+      <div class="hud-body" id="hud-body"></div>
+
+      <!-- Legend Footer -->
+      <div class="hud-legend">
+        <div class="legend-item">
+          <span class="legend-box" style="background:#426aef; box-shadow: 0 0 6px #426aef;"></span>
+          <span>ALIVE</span>
+        </div>
+        <div class="legend-item">
+          <span class="legend-box" style="background:#141720; border: 1px solid #333;"></span>
+          <span>ELIMINATED</span>
+        </div>
+      </div>
+    </div>
+
   </div>
 
 <script>
@@ -373,7 +395,30 @@
   let bannerTimer = null;
   const justVaporizedTeams = new Set();
 
+  function playEliminationAudio() {
+    try {
+      const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+
+      osc.type = 'sawtooth';
+      osc.frequency.setValueAtTime(140, audioCtx.currentTime);
+      osc.frequency.exponentialRampToValueAtTime(32, audioCtx.currentTime + 0.45);
+
+      gain.gain.setValueAtTime(0.4, audioCtx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.5);
+
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+
+      osc.start();
+      osc.stop(audioCtx.currentTime + 0.55);
+    } catch (e) {}
+  }
+
   function showEliminationBanner(name, logo) {
+    playEliminationAudio();
+
     const banner = document.getElementById('elim-banner');
     const teamSpan = document.getElementById('banner-team-name');
     const bLogo = document.getElementById('banner-logo');
@@ -472,7 +517,7 @@
         <div class="hud-row ${isEliminated ? 'eliminated-row' : ''} ${isVaporizing ? 'just-vanished' : ''}">
           <div class="team-cell">
             <span class="rank-tag">#${index + 1}</span>
-            <img class="team-logo" src="${team.logo || 'https://dummyimage.com/22x22/000/426aef&text=' + (team.name ? team.name[0] : '#')}" />
+            <img class="team-logo" src="${team.logo || 'https://dummyimage.com/24x24/000/426aef&text=' + (team.name ? team.name[0] : '#')}" />
             <span class="team-name">${team.name || 'SLOT'}</span>
           </div>
           <div class="elims-cell">${elims}</div>
