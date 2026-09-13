@@ -101,7 +101,7 @@
   /* Grid of 12 Teams */
   .teams-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
     gap: 14px;
   }
 
@@ -132,8 +132,8 @@
     min-width: 32px;
   }
   .logo-preview {
-    width: 36px;
-    height: 36px;
+    width: 38px;
+    height: 38px;
     border-radius: 4px;
     object-fit: contain;
     background: #000;
@@ -162,15 +162,22 @@
     border-color: #426aef;
   }
 
-  /* Roster Inputs */
-  .roster-row {
+  /* Roster Member Inputs */
+  .roster-section {
+    background: #0b0e14;
+    padding: 8px 10px;
+    border-radius: 4px;
+    border: 1px solid #1e293b;
+  }
+  .roster-grid {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 4px;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 6px;
+    margin-top: 4px;
   }
   .roster-input {
-    font-size: 11px !important;
-    padding: 4px 6px !important;
+    font-size: 12px !important;
+    padding: 5px 8px !important;
     text-transform: uppercase;
   }
 
@@ -231,9 +238,10 @@
   .btn-save-team {
     background: #426aef;
     color: #fff;
-    padding: 7px;
-    font-size: 12px;
+    padding: 8px;
+    font-size: 13px;
     width: 100%;
+    margin-top: 4px;
   }
   .btn-save-team:hover { background: #3154c8; }
 </style>
@@ -251,17 +259,16 @@
     </div>
   </header>
 
-  <!-- 1-Click Spectating Switcher -->
+  <!-- Quick Spectate Switcher -->
   <div class="spectate-bar-wrap">
     <div class="section-title">CURRENT SPECTATING FOCUS (TAP TO CHANGE):</div>
     <div class="spectate-btn-grid" id="spectate-btn-container"></div>
   </div>
 
-  <!-- 12-Team Editor Grid -->
+  <!-- 12-Team Grid -->
   <div class="teams-grid" id="teams-container"></div>
 
 <script>
-  // REAL FIREBASE CONFIGURATION
   const firebaseConfig = {
     apiKey: "AIzaSyBRcMrsrifYv-VDsCrTMKZuQiub30a7wEs",
     authDomain: "tournment-leaderboard.firebaseapp.com",
@@ -279,7 +286,6 @@
   let teamsData = [];
   let activeSpectateIdx = null;
 
-  // Listen to Teams
   db.ref('esports_data/teams').on('value', (snap) => {
     const val = snap.val();
     if (val && Array.isArray(val)) {
@@ -289,14 +295,12 @@
     }
   });
 
-  // Listen to Active Spectate
   db.ref('esports_data/active_spectate').on('value', (snap) => {
     activeSpectateIdx = snap.val();
     renderSpectateBar();
     markActiveCard();
   });
 
-  // Render 1-Click Spectate Buttons
   function renderSpectateBar() {
     const container = document.getElementById('spectate-btn-container');
     container.innerHTML = '';
@@ -325,7 +329,6 @@
     });
   }
 
-  // Render Full 12 Team Cards
   function renderTeams() {
     const container = document.getElementById('teams-container');
     container.innerHTML = '';
@@ -340,7 +343,7 @@
       ];
       const roster = team.roster || ['', '', '', ''];
 
-      const fallbackLogo = `https://dummyimage.com/36x36/000/426aef&text=${name ? name[0] : (idx + 1)}`;
+      const fallbackLogo = `https://dummyimage.com/38x38/000/426aef&text=${name ? name[0] : (idx + 1)}`;
 
       let playerToggles = '';
       players.slice(0, 4).forEach((p, pIdx) => {
@@ -363,14 +366,14 @@
             </div>
           </div>
 
-          <!-- Roster IGNs (For AI Auto-Detector) -->
-          <div>
-            <div class="section-title">ROSTER IGNS:</div>
-            <div class="roster-row">
-              <input class="roster-input" type="text" id="r-${idx}-0" placeholder="P1 IGN" value="${roster[0] || ''}">
-              <input class="roster-input" type="text" id="r-${idx}-1" placeholder="P2 IGN" value="${roster[1] || ''}">
-              <input class="roster-input" type="text" id="r-${idx}-2" placeholder="P3 IGN" value="${roster[2] || ''}">
-              <input class="roster-input" type="text" id="r-${idx}-3" placeholder="P4 IGN" value="${roster[3] || ''}">
+          <!-- Roster Members -->
+          <div class="roster-section">
+            <div class="section-title">TEAM MEMBERS (FOR .PY AUTO-DETECTION):</div>
+            <div class="roster-grid">
+              <input class="roster-input" type="text" id="r-${idx}-0" placeholder="Player 1 IGN" value="${roster[0] || ''}">
+              <input class="roster-input" type="text" id="r-${idx}-1" placeholder="Player 2 IGN" value="${roster[1] || ''}">
+              <input class="roster-input" type="text" id="r-${idx}-2" placeholder="Player 3 IGN" value="${roster[2] || ''}">
+              <input class="roster-input" type="text" id="r-${idx}-3" placeholder="Player 4 IGN" value="${roster[3] || ''}">
             </div>
           </div>
 
@@ -387,14 +390,13 @@
             </div>
           </div>
 
-          <button class="btn-save-team" onclick="saveTeamInfo(${idx})">SAVE TEAM #${idx + 1}</button>
+          <button class="btn-save-team" onclick="saveTeamInfo(${idx}, this)">SAVE TEAM #${idx + 1}</button>
         </div>
       `;
     });
   }
 
-  // Save Name, Logo, & Roster IGNs
-  function saveTeamInfo(idx) {
+  function saveTeamInfo(idx, btn) {
     const nameVal = document.getElementById(`name-${idx}`).value.trim();
     const logoVal = document.getElementById(`logo-${idx}`).value.trim();
 
@@ -410,9 +412,8 @@
       logo: logoVal,
       roster: rosterArr
     }).then(() => {
-      const btn = event.target;
       const originalText = btn.innerText;
-      btn.innerText = 'SAVED!';
+      btn.innerText = 'SAVED TO FIREBASE!';
       btn.style.background = '#16a34a';
       setTimeout(() => {
         btn.innerText = originalText;
@@ -421,14 +422,12 @@
     });
   }
 
-  // Quick Kill Controls
   function changeKills(teamIdx, amount) {
     const current = Number(teamsData[teamIdx].kills) || 0;
     const updated = Math.max(0, current + amount);
     db.ref(`esports_data/teams/${teamIdx}/kills`).set(updated);
   }
 
-  // Individual Player Alive/Dead Toggles
   function togglePlayerStatus(teamIdx, playerIdx) {
     const players = teamsData[teamIdx].players || [
       { status: 'alive' }, { status: 'alive' },
@@ -444,7 +443,7 @@
     });
   }
 
-  // Timer Management
+  // Timer Handlers
   let timerState = { running: false, seconds: 0, startTimestamp: null };
   let localTimerInterval = null;
 
