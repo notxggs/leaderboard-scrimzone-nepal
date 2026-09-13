@@ -7,12 +7,14 @@
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body {
-    background: transparent;
+    /* Subtle dark backing so it's readable in a browser, but clean in OBS */
+    background: rgba(10, 11, 15, 0.4);
     font-family: 'Chakra Petch', sans-serif;
     color: #fff;
     padding: 10px;
     overflow: hidden;
     user-select: none;
+    min-height: 100vh;
   }
 
   /* Top Elimination Alert Banner */
@@ -21,14 +23,14 @@
     top: 15px;
     left: 50%;
     transform: translateX(-50%) translateY(-140%);
-    background: linear-gradient(90deg, rgba(217, 45, 32, 0.95), rgba(16, 17, 22, 0.95));
+    background: linear-gradient(90deg, #d92d20 0%, #171922 100%);
     border: 2px solid #ff3b30;
     border-radius: 6px;
     padding: 8px 24px;
     display: flex;
     align-items: center;
     gap: 12px;
-    box-shadow: 0 0 20px rgba(255, 59, 48, 0.6);
+    box-shadow: 0 4px 25px rgba(255, 59, 48, 0.7);
     transition: transform 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     z-index: 999;
   }
@@ -43,58 +45,127 @@
     text-transform: uppercase;
   }
 
-  /* Leaderboard */
+  /* Leaderboard Outer Container */
   .leaderboard {
-    width: 330px;
+    width: 340px;
     display: flex;
     flex-direction: column;
     gap: 3px;
     margin-top: 50px;
+    background: rgba(13, 14, 18, 0.85); /* Solid dark contrast container */
+    padding: 8px;
+    border-radius: 6px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
   }
 
+  /* Table Header */
   .board-header {
     display: grid;
     grid-template-columns: 32px 1fr 34px 34px 44px;
     align-items: center;
-    padding: 3px 8px;
-    font-size: 10px;
+    padding: 5px 8px;
+    font-size: 11px;
     font-weight: 700;
-    color: #8e929b;
+    color: #9da3af;
     text-transform: uppercase;
-    border-bottom: 1px solid rgba(255,255,255,0.1);
-    margin-bottom: 2px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+    margin-bottom: 4px;
   }
   .board-header span { text-align: center; }
-  .board-header .head-team { text-align: left; padding-left: 24px; }
+  .board-header .head-team { text-align: left; padding-left: 28px; }
 
+  /* Team Row */
   .team-row {
     display: grid;
     grid-template-columns: 32px 1fr 34px 34px 44px;
     align-items: center;
-    background: linear-gradient(90deg, rgba(14, 15, 19, 0.95) 0%, rgba(22, 24, 30, 0.88) 100%);
-    border-left: 4px solid #555861;
-    padding: 4px 8px;
-    border-radius: 0 3px 3px 0;
+    background: #181a21; /* High contrast dark background */
+    border-left: 4px solid #4a4d57;
+    padding: 5px 8px;
+    border-radius: 0 4px 4px 0;
     font-size: 13px;
     transition: all 0.25s ease;
   }
 
-  .team-row.rank-1 { border-left-color: #ffb800; background: linear-gradient(90deg, rgba(45, 33, 5, 0.95) 0%, rgba(22, 24, 30, 0.9) 100%); }
+  /* Rank Badges */
+  .team-row.rank-1 {
+    border-left-color: #ffb800;
+    background: linear-gradient(90deg, #2b2108 0%, #181a21 100%);
+  }
   .team-row.rank-2 { border-left-color: #ffd043; }
   .team-row.rank-3 { border-left-color: #f7941d; }
 
-  .rank-num { font-family: 'Teko', sans-serif; font-size: 18px; line-height: 1; color: #e5a913; text-align: center; }
-  .team-identity { display: flex; align-items: center; gap: 8px; overflow: hidden; }
-  .team-logo { width: 20px; height: 20px; border-radius: 2px; object-fit: cover; background: #000; }
-  .team-name { font-size: 12px; font-weight: 700; text-transform: uppercase; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .elims { font-family: 'Teko', sans-serif; font-size: 20px; line-height: 1; color: #fff; text-align: center; }
-  .total-pts { font-family: 'Teko', sans-serif; font-size: 20px; line-height: 1; color: #e5a913; text-align: center; }
+  .rank-num {
+    font-family: 'Teko', sans-serif;
+    font-size: 19px;
+    line-height: 1;
+    color: #ffb800;
+    text-align: center;
+    font-weight: 700;
+  }
 
-  .status-bars { display: flex; gap: 3px; justify-content: flex-end; }
-  .bar { width: 4.5px; height: 14px; border-radius: 1px; background: #e5a913; }
-  .bar.dead { background: rgba(255, 255, 255, 0.12); }
+  .team-identity {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    overflow: hidden;
+  }
+  .team-logo {
+    width: 20px;
+    height: 20px;
+    border-radius: 3px;
+    object-fit: cover;
+    background: #252834;
+  }
+  .team-name {
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: #ffffff;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
 
-  .team-row.wiped { opacity: 0.35; filter: grayscale(1); border-left-color: #33363f !important; }
+  .elims {
+    font-family: 'Teko', sans-serif;
+    font-size: 21px;
+    line-height: 1;
+    color: #ffffff;
+    text-align: center;
+  }
+
+  .total-pts {
+    font-family: 'Teko', sans-serif;
+    font-size: 21px;
+    line-height: 1;
+    color: #ffb800;
+    text-align: center;
+    font-weight: 700;
+  }
+
+  .status-bars {
+    display: flex;
+    gap: 3px;
+    justify-content: flex-end;
+  }
+  .bar {
+    width: 4.5px;
+    height: 15px;
+    border-radius: 1px;
+    background: #ffb800; /* Alive = Bright Gold */
+  }
+  .bar.dead {
+    background: rgba(255, 255, 255, 0.12); /* Eliminated */
+  }
+
+  /* Squad Wipe Styling */
+  .team-row.wiped {
+    opacity: 0.35;
+    filter: grayscale(1);
+    border-left-color: #33363f !important;
+  }
   .team-row.wiped .rank-num { color: #666; }
 </style>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
@@ -190,7 +261,7 @@
         <div class="team-row ${rankClass} ${isWiped ? 'wiped' : ''}">
           <span class="rank-num">#${idx + 1}</span>
           <div class="team-identity">
-            <img class="team-logo" src="${team.logo || 'https://dummyimage.com/20x20/000/fff&text=' + team.name[0]}" />
+            <img class="team-logo" src="${team.logo || 'https://dummyimage.com/20x20/252834/ffb800&text=' + team.name[0]}" />
             <span class="team-name">${team.name}</span>
           </div>
           <span class="elims">${matchKills}</span>
