@@ -4,34 +4,34 @@
 <meta charset="UTF-8">
 <title>OBS Esports HUD Overlay</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Teko:wght@600;700&family=Rajdhani:wght@600;700;800&family=Chakra+Petch:wght@700;800&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Teko:wght@600;700&family=Rajdhani:wght@700;800&family=Chakra+Petch:wght@700;800&display=swap');
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body {
     background: transparent;
     font-family: 'Rajdhani', sans-serif;
-    padding: 20px;
+    padding: 24px;
     overflow: hidden;
     user-select: none;
   }
 
-  /* 1. ULTRA OP ELIMINATION BANNER */
+  /* 1. ULTRA OP CINEMATIC ELIMINATION BANNER */
   #elim-banner {
     position: fixed;
     top: 35px;
     left: 50%;
     transform: translateX(-50%) translateY(-250%) scale(0.7);
-    width: 680px;
+    width: 760px;
     background: linear-gradient(135deg, rgba(20, 5, 8, 0.98) 0%, rgba(185, 28, 28, 0.95) 50%, rgba(15, 3, 5, 0.98) 100%);
-    border-top: 2px solid #ff4444;
-    border-bottom: 3px solid #ff1111;
+    border-top: 3px solid #ff4444;
+    border-bottom: 4px solid #ff1111;
     clip-path: polygon(4% 0%, 100% 0%, 96% 100%, 0% 100%);
-    padding: 14px 36px;
+    padding: 16px 40px;
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 20px;
-    box-shadow: 0 0 50px rgba(255, 20, 20, 0.9), inset 0 0 25px rgba(255, 50, 50, 0.5);
+    gap: 24px;
+    box-shadow: 0 0 60px rgba(255, 20, 20, 0.9), inset 0 0 30px rgba(255, 50, 50, 0.5);
     transition: transform 0.5s cubic-bezier(0.19, 1, 0.22, 1), opacity 0.3s ease;
     opacity: 0;
     z-index: 99999;
@@ -44,10 +44,9 @@
 
   @keyframes bannerPulse {
     0% { box-shadow: 0 0 40px rgba(255, 0, 0, 0.75); }
-    100% { box-shadow: 0 0 70px rgba(255, 30, 30, 1), inset 0 0 35px rgba(255, 255, 255, 0.4); }
+    100% { box-shadow: 0 0 75px rgba(255, 30, 30, 1), inset 0 0 35px rgba(255, 255, 255, 0.4); }
   }
 
-  /* Animated Laser Scan Line */
   #elim-banner::after {
     content: '';
     position: absolute;
@@ -63,11 +62,10 @@
     100% { left: 100%; }
   }
 
-  /* Skull Icon */
   .skull-badge {
-    font-size: 40px;
+    font-size: 48px;
     line-height: 1;
-    filter: drop-shadow(0 0 10px #ff0033);
+    filter: drop-shadow(0 0 12px #ff0033);
     animation: skullShake 0.4s infinite alternate ease-in-out;
   }
   @keyframes skullShake {
@@ -76,13 +74,13 @@
   }
 
   #elim-banner img {
-    width: 58px;
-    height: 58px;
+    width: 68px;
+    height: 68px;
     border-radius: 6px;
     object-fit: contain;
     border: 2px solid #ff4444;
     background: #000;
-    box-shadow: 0 0 18px rgba(255, 0, 0, 0.8);
+    box-shadow: 0 0 20px rgba(255, 0, 0, 0.8);
   }
 
   .banner-content {
@@ -93,7 +91,7 @@
   }
   .banner-title {
     font-family: 'Teko', sans-serif;
-    font-size: 46px;
+    font-size: 54px;
     letter-spacing: 2px;
     color: #ffffff;
     text-transform: uppercase;
@@ -101,29 +99,26 @@
   }
   .banner-title span {
     color: #ffe600;
-    text-shadow: 0 0 15px rgba(255, 230, 0, 0.8);
-    font-size: 50px;
+    text-shadow: 0 0 20px rgba(255, 230, 0, 0.9);
+    font-size: 58px;
   }
   .banner-sub {
     font-family: 'Chakra Petch', sans-serif;
-    font-size: 13px;
+    font-size: 15px;
     font-weight: 800;
     color: #ff9999;
     letter-spacing: 3px;
     text-transform: uppercase;
-    display: flex;
-    align-items: center;
-    gap: 8px;
   }
 
-  /* 2. Scaled-Up HUD Container */
+  /* 2. SUPER SIZED HUD CONTAINER */
   .hud-container {
-    width: 330px;
+    width: 390px;
     display: flex;
     flex-direction: column;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.85);
-    border: 1px solid #426aef;
-    border-radius: 6px 6px 0 0;
+    box-shadow: 0 15px 40px rgba(0,0,0,0.95);
+    border: 2px solid #426aef;
+    border-radius: 8px 8px 0 0;
     overflow: hidden;
   }
 
@@ -133,36 +128,37 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 6px 12px;
-    border-bottom: 1px solid rgba(66, 106, 239, 0.35);
+    padding: 7px 16px;
+    border-bottom: 2px solid rgba(66, 106, 239, 0.4);
   }
   .hud-timer-label {
-    font-size: 13px;
+    font-size: 14px;
     font-weight: 800;
-    color: #8e929b;
-    letter-spacing: 1px;
+    color: #94a3b8;
+    letter-spacing: 1.5px;
   }
   .hud-timer-clock {
-    font-size: 18px;
+    font-size: 22px;
     font-weight: 800;
     color: #426aef;
     font-family: 'Chakra Petch', sans-serif;
     letter-spacing: 1px;
+    text-shadow: 0 0 12px rgba(66, 106, 239, 0.7);
   }
 
-  /* Blue Header */
+  /* Header */
   .hud-header {
     background: #426aef;
     color: #ffffff;
     display: grid;
-    grid-template-columns: 160px 65px 1fr;
+    grid-template-columns: 190px 75px 1fr;
     align-items: center;
-    padding: 6px 10px;
+    padding: 7px 12px;
     font-weight: 800;
-    font-size: 15px;
-    letter-spacing: 0.8px;
+    font-size: 17px;
+    letter-spacing: 1px;
   }
-  .hud-header .col-teams { text-align: left; padding-left: 28px; }
+  .hud-header .col-teams { text-align: left; padding-left: 36px; }
   .hud-header .col-elims { text-align: center; }
   .hud-header .col-alive { text-align: center; }
 
@@ -176,29 +172,29 @@
 
   /* Active Team Row */
   .hud-row {
-    background: #0d1017;
-    border-left: 4px solid #426aef;
+    background: #0a0d14;
+    border-left: 5px solid #426aef;
     display: grid;
-    grid-template-columns: 160px 65px 1fr;
+    grid-template-columns: 190px 75px 1fr;
     align-items: center;
-    padding: 5px 8px;
-    min-height: 38px;
+    padding: 6px 10px;
+    min-height: 44px;
     position: relative;
     overflow: hidden;
     transition: background 0.25s ease;
   }
 
-  /* Eliminated Team Row (Solid pitch black) */
+  /* Eliminated Team Row */
   .hud-row.eliminated-row {
     background: #000000 !important;
     border-left-color: #1a1a1a !important;
   }
-  .hud-row.eliminated-row .team-name { color: #444444 !important; }
-  .hud-row.eliminated-row .rank-tag { color: #333333 !important; }
-  .hud-row.eliminated-row .elims-cell { color: #444444 !important; }
-  .hud-row.eliminated-row .team-logo { filter: grayscale(1) opacity(0.25); }
+  .hud-row.eliminated-row .team-name { color: #3b4252 !important; text-shadow: none !important; }
+  .hud-row.eliminated-row .rank-tag { color: #2d3340 !important; }
+  .hud-row.eliminated-row .elims-cell { color: #3b4252 !important; text-shadow: none !important; }
+  .hud-row.eliminated-row .team-logo { filter: grayscale(1) opacity(0.2); }
 
-  /* Red Laser Vanish Wipe */
+  /* Red Laser Wipeout */
   .hud-row.just-vanished::after {
     content: '';
     position: absolute;
@@ -213,7 +209,7 @@
       #ffffff 65%, 
       #ef4444 100%
     );
-    box-shadow: 0 0 25px #ef4444;
+    box-shadow: 0 0 35px #ef4444;
     animation: sweepRedVanish 0.95s cubic-bezier(0.25, 1, 0.5, 1) forwards;
     pointer-events: none;
   }
@@ -224,89 +220,101 @@
     100% { left: 130%; opacity: 0; }
   }
 
-  /* Team Identifiers */
+  /* Team Identifiers - Super Sized */
   .team-cell {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 10px;
     overflow: hidden;
   }
   .rank-tag {
     color: #426aef;
-    font-size: 15px;
+    font-size: 19px;
     font-weight: 800;
-    min-width: 18px;
+    min-width: 22px;
     text-align: right;
+    font-family: 'Chakra Petch', sans-serif;
   }
   .team-logo {
-    width: 24px;
-    height: 24px;
+    width: 28px;
+    height: 28px;
     object-fit: contain;
     border-radius: 3px;
+    background: #000;
   }
   .team-name {
     font-weight: 800;
-    font-size: 17px;
+    font-size: 22px;
     color: #ffffff;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    letter-spacing: 0.6px;
+    letter-spacing: 0.8px;
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.15);
   }
 
-  /* Elims Column */
+  /* Big Elims Column */
   .elims-cell {
     text-align: center;
-    font-size: 18px;
+    font-size: 24px;
     font-weight: 800;
     color: #ffffff;
-    border-left: 1px solid rgba(255, 255, 255, 0.1);
-    border-right: 1px solid rgba(255, 255, 255, 0.1);
+    border-left: 2px solid rgba(255, 255, 255, 0.1);
+    border-right: 2px solid rgba(255, 255, 255, 0.1);
     height: 100%;
     display: flex;
     align-items: center;
     justify-content: center;
     font-family: 'Chakra Petch', sans-serif;
+    text-shadow: 0 0 12px rgba(255, 255, 255, 0.25);
   }
 
-  /* Bigger Alive Indicators */
+  /* Thick Alive Status Indicators */
   .alive-bars {
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: 4px;
-    padding: 0 4px;
+    gap: 5px;
+    padding: 0 6px;
   }
   .bar {
-    width: 6px;
-    height: 22px;
-    border-radius: 1px;
-    transition: background 0.25s ease;
+    width: 8px;
+    height: 26px;
+    border-radius: 2px;
+    transition: background 0.2s ease, box-shadow 0.2s ease;
   }
-  .bar.status-alive { background: #426aef; box-shadow: 0 0 6px rgba(66, 106, 239, 0.6); }
-  .bar.status-dead  { background: #1a1a1a; box-shadow: none; }
+  .bar.status-alive {
+    background: #426aef;
+    box-shadow: 0 0 8px rgba(66, 106, 239, 0.8), inset 0 0 4px rgba(255, 255, 255, 0.4);
+  }
+  .bar.status-dead {
+    background: #141720;
+    box-shadow: none;
+    border: 1px solid #1e2433;
+  }
 
   /* Legend Footer */
   .hud-legend {
     background: #000000;
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    border-top: 2px solid rgba(255, 255, 255, 0.12);
     color: #ffffff;
     display: flex;
     align-items: center;
     justify-content: space-evenly;
-    padding: 6px 8px;
-    font-size: 11px;
+    padding: 8px 10px;
+    font-size: 13px;
     font-weight: 800;
-    letter-spacing: 0.5px;
+    letter-spacing: 0.8px;
   }
   .legend-item {
     display: flex;
     align-items: center;
-    gap: 6px;
+    gap: 8px;
   }
   .legend-box {
-    width: 9px;
-    height: 9px;
+    width: 12px;
+    height: 12px;
+    border-radius: 2px;
     display: inline-block;
   }
 </style>
@@ -321,15 +329,15 @@
     <img id="banner-logo" src="" alt="logo" />
     <div class="banner-content">
       <div class="banner-title"><span id="banner-team-name">TEAM</span> SQUAD ELIMINATED</div>
-      <div class="banner-sub">ALL MEMBERS K.I.A • SQUAD WIPED</div>
+      <div class="banner-sub">ALL SQUAD MEMBERS K.I.A • WIPED OUT</div>
     </div>
   </div>
 
-  <!-- Main HUD Container -->
+  <!-- Main Tournament HUD -->
   <div class="hud-container">
-    <!-- Top Timer -->
+    <!-- Match Timer -->
     <div class="hud-timer-bar">
-      <span class="hud-timer-label">MATCH TIME</span>
+      <span class="hud-timer-label">MATCH DURATION</span>
       <span class="hud-timer-clock" id="timer-display">00:00</span>
     </div>
 
@@ -342,14 +350,14 @@
 
     <div class="hud-body" id="hud-body"></div>
 
-    <!-- Solid Legend Footer -->
+    <!-- Footer Legend -->
     <div class="hud-legend">
       <div class="legend-item">
-        <span class="legend-box" style="background:#426aef;"></span>
+        <span class="legend-box" style="background:#426aef; box-shadow: 0 0 6px #426aef;"></span>
         <span>ALIVE</span>
       </div>
       <div class="legend-item">
-        <span class="legend-box" style="background:#1a1a1a; border: 1px solid #333;"></span>
+        <span class="legend-box" style="background:#141720; border: 1px solid #333;"></span>
         <span>ELIMINATED</span>
       </div>
     </div>
@@ -380,7 +388,7 @@
     const bLogo = document.getElementById('banner-logo');
 
     teamSpan.innerText = name || 'UNKNOWN';
-    bLogo.src = logo || ('https://dummyimage.com/58x58/000/fff&text=' + (name ? name[0] : '#'));
+    bLogo.src = logo || ('https://dummyimage.com/68x68/000/fff&text=' + (name ? name[0] : '#'));
     banner.classList.add('show');
 
     clearTimeout(bannerTimer);
@@ -428,7 +436,7 @@
   }
 
   function renderOverlay(teams) {
-    // Detect newly wiped squads
+    // Detect newly eliminated squads
     if (previousTeams.length > 0) {
       teams.forEach(curr => {
         const prev = previousTeams.find(p => p.name === curr.name);
@@ -476,8 +484,8 @@
       container.innerHTML += `
         <div class="hud-row ${isEliminated ? 'eliminated-row' : ''} ${isVaporizing ? 'just-vanished' : ''}">
           <div class="team-cell">
-            <span class="rank-tag">${index + 1}</span>
-            <img class="team-logo" src="${team.logo || 'https://dummyimage.com/24x24/000/426aef&text=' + (team.name ? team.name[0] : '#')}" />
+            <span class="rank-tag">#${index + 1}</span>
+            <img class="team-logo" src="${team.logo || 'https://dummyimage.com/28x28/000/426aef&text=' + (team.name ? team.name[0] : '#')}" />
             <span class="team-name">${team.name || 'SLOT'}</span>
           </div>
           <div class="elims-cell">${elims}</div>
