@@ -2,49 +2,44 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>OBS Esports HUD Overlay</title>
+<title>OBS Esports Leaderboard Overlay</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Teko:wght@700&family=Rajdhani:wght@700;800&family=Chakra+Petch:wght@700;800&display=swap');
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
   html, body {
-    width: 1920px;
-    height: 1080px;
     background: transparent;
     font-family: 'Rajdhani', sans-serif;
     overflow: hidden;
     user-select: none;
-    position: relative;
+    display: inline-block;
   }
 
-  /* FLUSH LEFT DOCK - EXPANDS TOGETHER */
-  .left-broadcast-dock {
-    position: absolute;
-    top: 10px;
-    left: 0;
-    width: fit-content;
+  /* LEADERBOARD WRAPPER (Fits content perfectly for OBS Alt-Crop) */
+  .broadcast-dock {
     display: flex;
     flex-direction: column;
     gap: 8px;
+    width: fit-content;
+    padding: 10px;
+    position: relative;
   }
 
-  /* 1. SQUAD WIPEOUT ALERT BANNER */
+  /* 1. SEPARATED SQUAD WIPEOUT ALERT (Does not affect table width) */
   #elim-banner {
     width: 100%;
     background: linear-gradient(135deg, rgba(20, 5, 8, 0.98) 0%, rgba(200, 20, 30, 0.95) 50%, rgba(15, 3, 5, 0.98) 100%);
     border: 2px solid #ff2233;
-    border-left: none;
-    border-radius: 0 6px 6px 0;
-    padding: 8px 18px 8px 14px;
+    border-radius: 6px;
+    padding: 8px 14px;
     display: flex;
     align-items: center;
     gap: 12px;
-    box-shadow: 0 0 35px rgba(255, 30, 50, 0.85), inset 0 0 15px rgba(255, 50, 50, 0.5);
+    box-shadow: 0 0 30px rgba(255, 30, 50, 0.85);
     transform: translateY(-160%) scale(0.9);
     opacity: 0;
     pointer-events: none;
     transition: transform 0.45s cubic-bezier(0.19, 1, 0.22, 1), opacity 0.3s ease;
-    z-index: 1000;
   }
   #elim-banner.show {
     transform: translateY(0) scale(1);
@@ -53,25 +48,20 @@
   }
 
   @keyframes bannerAlertGlow {
-    0% { box-shadow: 0 0 20px rgba(255, 0, 0, 0.7); }
-    100% { box-shadow: 0 0 45px rgba(255, 0, 0, 1), inset 0 0 20px rgba(255, 255, 255, 0.5); }
+    0% { box-shadow: 0 0 15px rgba(255, 0, 0, 0.7); }
+    100% { box-shadow: 0 0 35px rgba(255, 0, 0, 1); }
   }
 
   .skull-badge {
-    font-size: 34px;
+    font-size: 32px;
     line-height: 1;
     filter: drop-shadow(0 0 10px #ff0033);
-    animation: skullShock 0.25s infinite alternate ease-in-out;
     flex-shrink: 0;
-  }
-  @keyframes skullShock {
-    0% { transform: rotate(-6deg) scale(1); }
-    100% { transform: rotate(6deg) scale(1.15); }
   }
 
   #banner-logo {
-    width: 44px;
-    height: 44px;
+    width: 40px;
+    height: 40px;
     border-radius: 4px;
     object-fit: contain;
     border: 2px solid #ff2233;
@@ -88,15 +78,14 @@
   }
   .banner-primary {
     font-family: 'Teko', sans-serif;
-    font-size: 32px;
+    font-size: 28px;
     letter-spacing: 1px;
     color: #ffffff;
     text-transform: uppercase;
   }
   .banner-primary span {
     color: #ffe600;
-    font-size: 35px;
-    text-shadow: 0 0 15px rgba(255, 230, 0, 0.8);
+    font-size: 32px;
   }
   .banner-tagline {
     font-family: 'Chakra Petch', sans-serif;
@@ -107,7 +96,7 @@
     text-transform: uppercase;
   }
 
-  /* 2. LEADERBOARD HUD - SINGLE UNIFIED CSS TABLE */
+  /* 2. UNIFIED CSS MASTER TABLE */
   .hud-container {
     width: fit-content;
     display: table;
@@ -115,8 +104,7 @@
     border-spacing: 0;
     box-shadow: 0 12px 35px rgba(0,0,0,0.9);
     border: 2px solid #426aef;
-    border-left: none;
-    border-radius: 0 6px 6px 0;
+    border-radius: 6px;
     overflow: hidden;
     background: #000000;
   }
@@ -180,7 +168,7 @@
     min-width: 80px;
   }
 
-  /* Table Body */
+  /* Body Rows */
   .hud-body {
     display: table-row-group;
   }
@@ -203,7 +191,7 @@
   .hud-row.eliminated-row .elims-cell { color: #3b4252 !important; }
   .hud-row.eliminated-row .team-logo { filter: grayscale(1) opacity(0.2); }
 
-  /* Red Shock Sweep Animation */
+  /* Red Shock Laser Effect */
   .hud-row.just-vanished {
     animation: rowGlitchShake 0.4s ease-out;
   }
@@ -299,7 +287,7 @@
     border: 1px solid #1e2433;
   }
 
-  /* Legend Footer Caption */
+  /* Legend Footer */
   .hud-legend {
     display: table-caption;
     caption-side: bottom;
@@ -333,25 +321,24 @@
 </head>
 <body>
 
-  <!-- Direct Voice Audio Element: Free from CORS blocks -->
+  <!-- Fallback Elimination Audio -->
   <audio id="elimination-audio" preload="auto">
-    <source src="https://actions.google.com/sounds/v1/sports/referee_whistle_blow.ogg" type="audio/ogg">
     <source src="https://cdn.freesound.org/previews/381/381382_6142149-lq.mp3" type="audio/mpeg">
   </audio>
 
-  <div class="left-broadcast-dock">
+  <div class="broadcast-dock">
 
     <!-- SQUAD WIPEOUT ALERT -->
     <div id="elim-banner">
       <div class="skull-badge">☠</div>
       <img id="banner-logo" src="" alt="logo" />
       <div class="banner-text-box">
-        <div class="banner-primary"><span id="banner-team-name">TEAM</span> SQUAD WIPED</div>
+        <div class="banner-primary"><span id="banner-team-name">TEAM</span> WIPED</div>
         <div class="banner-tagline">ALL PLAYERS K.I.A</div>
       </div>
     </div>
 
-    <!-- MAIN LEADERBOARD HUD (SINGLE UNIFIED TABLE) -->
+    <!-- MAIN LEADERBOARD HUD -->
     <div class="hud-container">
       
       <!-- Match Duration -->
@@ -369,7 +356,7 @@
         <div class="col-alive">ALIVE</div>
       </div>
 
-      <!-- Table Body Rows -->
+      <!-- Body Rows -->
       <div class="hud-body" id="hud-body"></div>
 
       <!-- Footer Legend -->
@@ -391,6 +378,7 @@
   </div>
 
 <script>
+  // YOUR REAL FIREBASE CONFIGURATION
   const firebaseConfig = {
     apiKey: "AIzaSyBRcMrsrifYv-VDsCrTMKZuQiub30a7wEs",
     authDomain: "tournment-leaderboard.firebaseapp.com",
@@ -409,24 +397,46 @@
   let bannerTimer = null;
   const justVaporizedTeams = new Set();
 
-  function playEliminationSound() {
+  // Synthetic Bass-Drop Audio Stinger (Guaranteed playback, never CORS blocked)
+  function playWipeoutSound() {
+    try {
+      const AudioCtx = window.AudioContext || window.webkitAudioContext;
+      if (AudioCtx) {
+        const ctx = new AudioCtx();
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(140, ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(32, ctx.currentTime + 0.6);
+
+        gain.gain.setValueAtTime(0.4, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.6);
+
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start();
+        osc.stop(ctx.currentTime + 0.65);
+      }
+    } catch(e) {}
+
     const audio = document.getElementById('elimination-audio');
     if (audio) {
       audio.currentTime = 0;
-      audio.volume = 0.8;
+      audio.volume = 0.85;
       audio.play().catch(() => {});
     }
   }
 
   function showEliminationBanner(name, logo) {
-    playEliminationSound();
+    playWipeoutSound();
 
     const banner = document.getElementById('elim-banner');
     const teamSpan = document.getElementById('banner-team-name');
     const bLogo = document.getElementById('banner-logo');
 
     teamSpan.innerText = name || 'UNKNOWN';
-    bLogo.src = logo || ('https://dummyimage.com/44x44/000/fff&text=' + (name ? name[0] : '#'));
+    bLogo.src = logo || ('https://dummyimage.com/40x40/000/fff&text=' + (name ? name[0] : '#'));
     banner.classList.add('show');
 
     clearTimeout(bannerTimer);
@@ -435,11 +445,13 @@
     }, 4200);
   }
 
+  // Real-time listener for the teams data
   db.ref('esports_data/teams').on('value', (snapshot) => {
     const teams = snapshot.val();
     if (teams && Array.isArray(teams)) renderOverlay(teams);
   });
 
+  // Real-time listener for the match timer
   let timerState = { running: false, seconds: 0, startTimestamp: null };
   let localTimerInterval = null;
 
@@ -473,16 +485,17 @@
 
   function renderOverlay(teams) {
     if (previousTeams.length > 0) {
-      teams.forEach(curr => {
-        const prev = previousTeams.find(p => p.name === curr.name);
+      teams.forEach((curr, idx) => {
+        const prev = previousTeams[idx];
         if (prev) {
           const prevAlive = (prev.players || []).some(p => p.status !== 'dead');
           const currAlive = (curr.players || []).some(p => p.status !== 'dead');
           if (prevAlive && !currAlive) {
-            showEliminationBanner(curr.name, curr.logo);
-            justVaporizedTeams.add(curr.name);
+            const label = (curr.name && curr.name.trim() !== '') ? curr.name : `SLOT ${idx + 1}`;
+            showEliminationBanner(label, curr.logo);
+            justVaporizedTeams.add(idx);
             setTimeout(() => {
-              justVaporizedTeams.delete(curr.name);
+              justVaporizedTeams.delete(idx);
             }, 1000);
           }
         }
@@ -493,14 +506,16 @@
     const container = document.getElementById('hud-body');
     container.innerHTML = '';
 
-    const sorted = [...teams].sort((a, b) => {
+    // Sort by Kills (Descending), then by Alive count (Descending)
+    const indexedTeams = teams.map((team, index) => ({ ...team, originalIndex: index }));
+    indexedTeams.sort((a, b) => {
       const elimsA = Number(a.kills) || 0;
       const elimsB = Number(b.kills) || 0;
       if (elimsB !== elimsA) return elimsB - elimsA;
       return (Number(b.alive) || 0) - (Number(a.alive) || 0);
     });
 
-    sorted.forEach((team, index) => {
+    indexedTeams.forEach((team, rankIndex) => {
       const elims = Number(team.kills) || 0;
       const players = team.players || [
         { status: 'alive' }, { status: 'alive' },
@@ -508,20 +523,24 @@
       ];
 
       const isEliminated = players.every(p => p.status === 'dead');
-      const isVaporizing = justVaporizedTeams.has(team.name);
+      const isVaporizing = justVaporizedTeams.has(team.originalIndex);
 
       let barsHtml = '';
       players.slice(0, 4).forEach(p => {
         barsHtml += `<div class="bar status-${p.status === 'dead' ? 'dead' : 'alive'}"></div>`;
       });
 
+      // Name Fallback: If empty, display SLOT #
+      const displayName = (team.name && team.name.trim() !== '') ? team.name : `SLOT ${team.originalIndex + 1}`;
+      const displayLogo = (team.logo && team.logo.trim() !== '') ? team.logo : `https://dummyimage.com/24x24/000/426aef&text=${displayName[0]}`;
+
       container.innerHTML += `
         <div class="hud-row ${isEliminated ? 'eliminated-row' : ''} ${isVaporizing ? 'just-vanished' : ''}">
           <div class="team-cell">
             <div class="team-cell-inner">
-              <span class="rank-tag">#${index + 1}</span>
-              <img class="team-logo" src="${team.logo || 'https://dummyimage.com/24x24/000/426aef&text=' + (team.name ? team.name[0] : '#')}" />
-              <span class="team-name">${team.name || 'SLOT'}</span>
+              <span class="rank-tag">#${rankIndex + 1}</span>
+              <img class="team-logo" src="${displayLogo}" />
+              <span class="team-name">${displayName}</span>
             </div>
           </div>
           <div class="elims-cell">${elims}</div>
