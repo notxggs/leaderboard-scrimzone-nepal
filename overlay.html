@@ -2,35 +2,40 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>OBS Esports Leaderboard Overlay</title>
+<title>OBS Esports Master Overlay</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Teko:wght@700&family=Rajdhani:wght@700;800&family=Chakra+Petch:wght@700;800&display=swap');
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
   html, body {
+    width: 1920px;
+    height: 1080px;
     background: transparent;
     font-family: 'Rajdhani', sans-serif;
     overflow: hidden;
     user-select: none;
-    display: inline-block;
+    position: relative;
   }
 
-  /* LEADERBOARD WRAPPER (Fits content perfectly for OBS Alt-Crop) */
+  /* ----------------------------------------------------
+     1. LEFT DOCK: LEADERBOARD & ELIMINATION BANNER
+     ---------------------------------------------------- */
   .broadcast-dock {
+    position: absolute;
+    top: 70px;
+    left: 0;
     display: flex;
     flex-direction: column;
     gap: 8px;
     width: fit-content;
-    padding: 10px;
-    position: relative;
   }
 
-  /* 1. SEPARATED SQUAD WIPEOUT ALERT (Does not affect table width) */
   #elim-banner {
     width: 100%;
     background: linear-gradient(135deg, rgba(20, 5, 8, 0.98) 0%, rgba(200, 20, 30, 0.95) 50%, rgba(15, 3, 5, 0.98) 100%);
     border: 2px solid #ff2233;
-    border-radius: 6px;
+    border-left: none;
+    border-radius: 0 6px 6px 0;
     padding: 8px 14px;
     display: flex;
     align-items: center;
@@ -46,7 +51,6 @@
     opacity: 1;
     animation: bannerAlertGlow 1s infinite alternate ease-in-out;
   }
-
   @keyframes bannerAlertGlow {
     0% { box-shadow: 0 0 15px rgba(255, 0, 0, 0.7); }
     100% { box-shadow: 0 0 35px rgba(255, 0, 0, 1); }
@@ -58,7 +62,6 @@
     filter: drop-shadow(0 0 10px #ff0033);
     flex-shrink: 0;
   }
-
   #banner-logo {
     width: 40px;
     height: 40px;
@@ -68,7 +71,6 @@
     background: #000;
     flex-shrink: 0;
   }
-
   .banner-text-box {
     display: flex;
     flex-direction: column;
@@ -83,10 +85,7 @@
     color: #ffffff;
     text-transform: uppercase;
   }
-  .banner-primary span {
-    color: #ffe600;
-    font-size: 32px;
-  }
+  .banner-primary span { color: #ffe600; font-size: 32px; }
   .banner-tagline {
     font-family: 'Chakra Petch', sans-serif;
     font-size: 11px;
@@ -96,7 +95,7 @@
     text-transform: uppercase;
   }
 
-  /* 2. UNIFIED CSS MASTER TABLE */
+  /* Leaderboard Table */
   .hud-container {
     width: fit-content;
     display: table;
@@ -104,12 +103,11 @@
     border-spacing: 0;
     box-shadow: 0 12px 35px rgba(0,0,0,0.9);
     border: 2px solid #426aef;
-    border-radius: 6px;
+    border-left: none;
+    border-radius: 0 6px 6px 0;
     overflow: hidden;
     background: #000000;
   }
-
-  /* Match Timer Bar Header */
   .hud-timer-bar {
     display: table-caption;
     caption-side: top;
@@ -136,8 +134,6 @@
     letter-spacing: 1px;
     text-shadow: 0 0 10px rgba(66, 106, 239, 0.7);
   }
-
-  /* Header Row */
   .hud-header {
     display: table-row;
     background: #426aef;
@@ -158,53 +154,26 @@
     text-align: center;
     padding: 6px 12px;
     width: 65px;
-    min-width: 65px;
   }
   .hud-header .col-alive {
     display: table-cell;
     text-align: center;
     padding: 6px 16px;
     width: 80px;
-    min-width: 80px;
   }
-
-  /* Body Rows */
-  .hud-body {
-    display: table-row-group;
-  }
-
+  .hud-body { display: table-row-group; }
   .hud-row {
     display: table-row;
     background: #0a0d14;
     transition: background 0.3s ease;
   }
-  .hud-row:nth-child(even) {
-    background: #0c1018;
-  }
-
-  /* Eliminated Team Row */
-  .hud-row.eliminated-row {
-    background: #000000 !important;
-  }
+  .hud-row:nth-child(even) { background: #0c1018; }
+  .hud-row.eliminated-row { background: #000000 !important; }
   .hud-row.eliminated-row .team-name { color: #3b4252 !important; }
   .hud-row.eliminated-row .rank-tag { color: #2d3340 !important; }
   .hud-row.eliminated-row .elims-cell { color: #3b4252 !important; }
   .hud-row.eliminated-row .team-logo { filter: grayscale(1) opacity(0.2); }
 
-  /* Red Shock Laser Effect */
-  .hud-row.just-vanished {
-    animation: rowGlitchShake 0.4s ease-out;
-  }
-  @keyframes rowGlitchShake {
-    0% { transform: translateX(0); }
-    20% { transform: translateX(-4px); }
-    40% { transform: translateX(4px); }
-    60% { transform: translateX(-2px); }
-    80% { transform: translateX(2px); }
-    100% { transform: translateX(0); }
-  }
-
-  /* Team Info Cell */
   .team-cell {
     display: table-cell;
     vertical-align: middle;
@@ -212,11 +181,7 @@
     white-space: nowrap;
     border-bottom: 1px solid rgba(255,255,255,0.04);
   }
-  .team-cell-inner {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
+  .team-cell-inner { display: flex; align-items: center; gap: 8px; }
   .rank-tag {
     color: #426aef;
     font-size: 17px;
@@ -224,7 +189,6 @@
     min-width: 22px;
     text-align: right;
     font-family: 'Chakra Petch', sans-serif;
-    flex-shrink: 0;
   }
   .team-logo {
     width: 24px;
@@ -232,23 +196,19 @@
     object-fit: contain;
     border-radius: 3px;
     background: #000;
-    flex-shrink: 0;
   }
   .team-name {
     font-weight: 800;
-    font-size: 21px;
+    font-size: 20px;
     color: #ffffff;
     letter-spacing: 0.8px;
     line-height: 1;
-    white-space: nowrap;
   }
-
-  /* Elimination Cell */
   .elims-cell {
     display: table-cell;
     vertical-align: middle;
     text-align: center;
-    font-size: 22px;
+    font-size: 21px;
     font-weight: 800;
     color: #ffffff;
     border-left: 1px solid rgba(255, 255, 255, 0.12);
@@ -257,25 +217,18 @@
     font-family: 'Chakra Petch', sans-serif;
     padding: 0 10px;
   }
-
-  /* Alive Status Indicators Cell */
   .alive-cell {
     display: table-cell;
     vertical-align: middle;
     padding: 0 14px;
     border-bottom: 1px solid rgba(255,255,255,0.04);
   }
-  .alive-bars {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 4px;
-  }
+  .alive-bars { display: flex; justify-content: center; align-items: center; gap: 4px; }
   .bar {
     width: 6px;
-    height: 21px;
+    height: 20px;
     border-radius: 1px;
-    transition: background 0.2s ease, box-shadow 0.2s ease;
+    transition: background 0.2s ease;
   }
   .bar.status-alive {
     background: #426aef;
@@ -283,11 +236,8 @@
   }
   .bar.status-dead {
     background: #141720;
-    box-shadow: none;
     border: 1px solid #1e2433;
   }
-
-  /* Legend Footer */
   .hud-legend {
     display: table-caption;
     caption-side: bottom;
@@ -297,23 +247,125 @@
     padding: 6px 14px;
     font-size: 13px;
     font-weight: 800;
+  }
+  .legend-inner { display: flex; align-items: center; justify-content: space-evenly; }
+  .legend-item { display: flex; align-items: center; gap: 6px; }
+  .legend-box { width: 9px; height: 9px; border-radius: 1px; display: inline-block; }
+
+  /* ----------------------------------------------------
+     2. BOTTOM-RIGHT OFFICIAL SPECTATOR CARD
+     ---------------------------------------------------- */
+  #official-spec-card {
+    position: absolute;
+    bottom: 25px;
+    right: 25px;
+    width: 380px;
+    background: linear-gradient(135deg, rgba(8, 11, 16, 0.98) 0%, rgba(14, 18, 28, 0.98) 100%);
+    border: 2px solid #426aef;
+    border-radius: 6px;
+    padding: 12px 16px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.95), 0 0 20px rgba(66, 106, 239, 0.35);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    z-index: 9999;
+  }
+  .card-topbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+    padding-bottom: 5px;
+  }
+  .card-tourney-title {
+    font-family: 'Chakra Petch', sans-serif;
+    font-size: 12px;
+    font-weight: 800;
+    color: #cbd5e1;
+    letter-spacing: 1.5px;
+  }
+  .card-live-tag {
+    background: #ef4444;
+    color: #ffffff;
+    font-size: 11px;
+    font-weight: 800;
+    padding: 2px 7px;
+    border-radius: 3px;
+    letter-spacing: 1px;
+    font-family: 'Chakra Petch', sans-serif;
+    animation: pulseRed 1.5s infinite alternate;
+  }
+  @keyframes pulseRed {
+    0% { opacity: 0.8; }
+    100% { opacity: 1; box-shadow: 0 0 8px #ef4444; }
+  }
+
+  .card-main {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  #spec-card-logo {
+    width: 52px;
+    height: 52px;
+    border-radius: 4px;
+    object-fit: contain;
+    background: #000;
+    border: 2px solid #426aef;
+    flex-shrink: 0;
+  }
+  .card-info {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    line-height: 1.1;
+    overflow: hidden;
+  }
+  .card-player-label {
+    font-size: 12px;
+    font-weight: 800;
+    color: #94a3b8;
+    letter-spacing: 1px;
+  }
+  .card-player-name {
+    font-family: 'Teko', sans-serif;
+    font-size: 26px;
+    color: #ffe600;
+    letter-spacing: 1px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .card-team-name {
+    font-size: 15px;
+    font-weight: 800;
+    color: #ffffff;
     letter-spacing: 0.8px;
+    text-transform: uppercase;
   }
-  .legend-inner {
+
+  .card-subbar {
     display: flex;
-    align-items: center;
-    justify-content: space-evenly;
+    justify-content: space-between;
+    background: #06080c;
+    border: 1px solid #1e2433;
+    padding: 5px 10px;
+    border-radius: 4px;
+    font-family: 'Chakra Petch', sans-serif;
+    font-size: 12px;
+    font-weight: 800;
   }
-  .legend-item {
+  .card-subbar .stat-val { color: #426aef; }
+
+  .card-bottombar {
     display: flex;
-    align-items: center;
-    gap: 6px;
-  }
-  .legend-box {
-    width: 9px;
-    height: 9px;
-    border-radius: 1px;
-    display: inline-block;
+    justify-content: space-between;
+    font-size: 11px;
+    font-weight: 800;
+    color: #64748b;
+    border-top: 1px solid rgba(255,255,255,0.06);
+    padding-top: 5px;
+    letter-spacing: 1px;
   }
 </style>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
@@ -321,14 +373,13 @@
 </head>
 <body>
 
-  <!-- Fallback Elimination Audio -->
+  <!-- Wipeout Audio -->
   <audio id="elimination-audio" preload="auto">
     <source src="https://cdn.freesound.org/previews/381/381382_6142149-lq.mp3" type="audio/mpeg">
   </audio>
 
+  <!-- 1. LEFT LEADERBOARD DOCK -->
   <div class="broadcast-dock">
-
-    <!-- SQUAD WIPEOUT ALERT -->
     <div id="elim-banner">
       <div class="skull-badge">☠</div>
       <img id="banner-logo" src="" alt="logo" />
@@ -338,10 +389,7 @@
       </div>
     </div>
 
-    <!-- MAIN LEADERBOARD HUD -->
     <div class="hud-container">
-      
-      <!-- Match Duration -->
       <div class="hud-timer-bar">
         <div class="timer-inner">
           <span class="hud-timer-label">MATCH TIME</span>
@@ -349,17 +397,14 @@
         </div>
       </div>
 
-      <!-- Header Row -->
       <div class="hud-header">
         <div class="col-teams">TEAMS</div>
         <div class="col-elims">ELIMS</div>
         <div class="col-alive">ALIVE</div>
       </div>
 
-      <!-- Body Rows -->
       <div class="hud-body" id="hud-body"></div>
 
-      <!-- Footer Legend -->
       <div class="hud-legend">
         <div class="legend-inner">
           <div class="legend-item">
@@ -372,13 +417,36 @@
           </div>
         </div>
       </div>
+    </div>
+  </div>
 
+  <!-- 2. BOTTOM-RIGHT OFFICIAL SPECTATOR CARD (HIDES THE SPECTATOR/LIKE BUTTONS) -->
+  <div id="official-spec-card">
+    <div class="card-topbar">
+      <span class="card-tourney-title">/// FFWS PRO TOURNAMENT ///</span>
+      <span class="card-live-tag">LIVE FEED</span>
     </div>
 
+    <div class="card-main">
+      <img id="spec-card-logo" src="https://dummyimage.com/52x52/000/426aef&text=FF" alt="Team Logo" />
+      <div class="card-info">
+        <span class="card-player-label">PLAYER: <span class="card-player-name" id="spec-player-name">SELECTING...</span></span>
+        <span class="card-team-name" id="spec-team-name">WAITING FOR SPECTATE</span>
+      </div>
+    </div>
+
+    <div class="card-subbar">
+      <span>TEAM ELIMS: <span class="stat-val" id="spec-team-kills">0</span></span>
+      <span>SQUAD: <span class="stat-val" id="spec-squad-alive">4/4 ALIVE</span></span>
+    </div>
+
+    <div class="card-bottombar">
+      <span>MAP 01 - BERMUDA | DAY 01</span>
+      <span style="color:#426aef;">OFFICIAL SPECTATOR CLIENT</span>
+    </div>
   </div>
 
 <script>
-  // YOUR REAL FIREBASE CONFIGURATION
   const firebaseConfig = {
     apiKey: "AIzaSyBRcMrsrifYv-VDsCrTMKZuQiub30a7wEs",
     authDomain: "tournment-leaderboard.firebaseapp.com",
@@ -393,65 +461,66 @@
   firebase.initializeApp(firebaseConfig);
   const db = firebase.database();
 
+  let cachedTeams = [];
   let previousTeams = [];
   let bannerTimer = null;
-  const justVaporizedTeams = new Set();
-
-  // Synthetic Bass-Drop Audio Stinger (Guaranteed playback, never CORS blocked)
-  function playWipeoutSound() {
-    try {
-      const AudioCtx = window.AudioContext || window.webkitAudioContext;
-      if (AudioCtx) {
-        const ctx = new AudioCtx();
-        const osc = ctx.createOscillator();
-        const gain = ctx.createGain();
-
-        osc.type = 'sawtooth';
-        osc.frequency.setValueAtTime(140, ctx.currentTime);
-        osc.frequency.exponentialRampToValueAtTime(32, ctx.currentTime + 0.6);
-
-        gain.gain.setValueAtTime(0.4, ctx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.6);
-
-        osc.connect(gain);
-        gain.connect(ctx.destination);
-        osc.start();
-        osc.stop(ctx.currentTime + 0.65);
-      }
-    } catch(e) {}
-
-    const audio = document.getElementById('elimination-audio');
-    if (audio) {
-      audio.currentTime = 0;
-      audio.volume = 0.85;
-      audio.play().catch(() => {});
-    }
-  }
 
   function showEliminationBanner(name, logo) {
-    playWipeoutSound();
-
     const banner = document.getElementById('elim-banner');
-    const teamSpan = document.getElementById('banner-team-name');
-    const bLogo = document.getElementById('banner-logo');
-
-    teamSpan.innerText = name || 'UNKNOWN';
-    bLogo.src = logo || ('https://dummyimage.com/40x40/000/fff&text=' + (name ? name[0] : '#'));
+    document.getElementById('banner-team-name').innerText = name || 'UNKNOWN';
+    document.getElementById('banner-logo').src = logo || 'https://dummyimage.com/40x40/000/fff&text=#';
     banner.classList.add('show');
 
     clearTimeout(bannerTimer);
-    bannerTimer = setTimeout(() => {
-      banner.classList.remove('show');
-    }, 4200);
+    bannerTimer = setTimeout(() => banner.classList.remove('show'), 4200);
   }
 
-  // Real-time listener for the teams data
+  // 1. Teams & Leaderboard Listener
   db.ref('esports_data/teams').on('value', (snapshot) => {
     const teams = snapshot.val();
-    if (teams && Array.isArray(teams)) renderOverlay(teams);
+    if (teams && Array.isArray(teams)) {
+      cachedTeams = teams;
+      renderOverlay(teams);
+      updateSpectatorCard();
+    }
   });
 
-  // Real-time listener for the match timer
+  // 2. Active Spectate Team + Player Listener
+  let currentActiveTeamIdx = 0;
+  let currentDetectedIGN = "SPECTATING";
+
+  db.ref('esports_data/active_spectate').on('value', (snap) => {
+    const val = snap.val();
+    if (val !== null && typeof val === 'number') {
+      currentActiveTeamIdx = val;
+      updateSpectatorCard();
+    }
+  });
+
+  db.ref('esports_data/detected_player').on('value', (snap) => {
+    const val = snap.val();
+    if (val) {
+      currentDetectedIGN = val;
+      document.getElementById('spec-player-name').innerText = currentDetectedIGN;
+    }
+  });
+
+  function updateSpectatorCard() {
+    if (!cachedTeams || !cachedTeams[currentActiveTeamIdx]) return;
+    const team = cachedTeams[currentActiveTeamIdx];
+
+    const teamName = team.name && team.name.trim() !== '' ? team.name : `SLOT ${currentActiveTeamIdx + 1}`;
+    const logoUrl = team.logo && team.logo.trim() !== '' ? team.logo : `https://dummyimage.com/52x52/000/426aef&text=${teamName[0]}`;
+    const kills = team.kills || 0;
+    const aliveCount = (team.players || []).filter(p => p.status === 'alive').length;
+
+    document.getElementById('spec-card-logo').src = logoUrl;
+    document.getElementById('spec-team-name').innerText = teamName;
+    document.getElementById('spec-team-kills').innerText = kills;
+    document.getElementById('spec-squad-alive').innerText = `${aliveCount}/4 ALIVE`;
+  }
+
+  // 3. Timer Listener
   let timerState = { running: false, seconds: 0, startTimestamp: null };
   let localTimerInterval = null;
 
@@ -491,12 +560,8 @@
           const prevAlive = (prev.players || []).some(p => p.status !== 'dead');
           const currAlive = (curr.players || []).some(p => p.status !== 'dead');
           if (prevAlive && !currAlive) {
-            const label = (curr.name && curr.name.trim() !== '') ? curr.name : `SLOT ${idx + 1}`;
+            const label = curr.name && curr.name.trim() !== '' ? curr.name : `SLOT ${idx + 1}`;
             showEliminationBanner(label, curr.logo);
-            justVaporizedTeams.add(idx);
-            setTimeout(() => {
-              justVaporizedTeams.delete(idx);
-            }, 1000);
           }
         }
       });
@@ -506,7 +571,6 @@
     const container = document.getElementById('hud-body');
     container.innerHTML = '';
 
-    // Sort by Kills (Descending), then by Alive count (Descending)
     const indexedTeams = teams.map((team, index) => ({ ...team, originalIndex: index }));
     indexedTeams.sort((a, b) => {
       const elimsA = Number(a.kills) || 0;
@@ -523,19 +587,17 @@
       ];
 
       const isEliminated = players.every(p => p.status === 'dead');
-      const isVaporizing = justVaporizedTeams.has(team.originalIndex);
 
       let barsHtml = '';
       players.slice(0, 4).forEach(p => {
         barsHtml += `<div class="bar status-${p.status === 'dead' ? 'dead' : 'alive'}"></div>`;
       });
 
-      // Name Fallback: If empty, display SLOT #
-      const displayName = (team.name && team.name.trim() !== '') ? team.name : `SLOT ${team.originalIndex + 1}`;
-      const displayLogo = (team.logo && team.logo.trim() !== '') ? team.logo : `https://dummyimage.com/24x24/000/426aef&text=${displayName[0]}`;
+      const displayName = team.name && team.name.trim() !== '' ? team.name : `SLOT ${team.originalIndex + 1}`;
+      const displayLogo = team.logo && team.logo.trim() !== '' ? team.logo : `https://dummyimage.com/24x24/000/426aef&text=${displayName[0]}`;
 
       container.innerHTML += `
-        <div class="hud-row ${isEliminated ? 'eliminated-row' : ''} ${isVaporizing ? 'just-vanished' : ''}">
+        <div class="hud-row ${isEliminated ? 'eliminated-row' : ''}">
           <div class="team-cell">
             <div class="team-cell-inner">
               <span class="rank-tag">#${rankIndex + 1}</span>
