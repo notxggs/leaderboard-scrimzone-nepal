@@ -7,20 +7,22 @@
   @import url('https://fonts.googleapis.com/css2?family=Teko:wght@600;700&family=Rajdhani:wght@700;800&family=Chakra+Petch:wght@700;800&display=swap');
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  body {
+  html, body {
+    width: 1920px;
+    height: 1080px;
     background: transparent;
     font-family: 'Rajdhani', sans-serif;
-    padding: 20px;
     overflow: hidden;
     user-select: none;
+    position: relative;
   }
 
-  /* 1. OP Cinematic Elimination Banner */
+  /* 1. TOP-CENTER POP-UP ELIMINATION BANNER */
   #elim-banner {
-    position: fixed;
+    position: absolute;
     top: 35px;
     left: 50%;
-    transform: translateX(-50%) translateY(-250%) scale(0.7);
+    transform: translateX(-50%) translateY(-260%) scale(0.7);
     width: 720px;
     background: linear-gradient(135deg, rgba(20, 5, 8, 0.98) 0%, rgba(185, 28, 28, 0.95) 50%, rgba(15, 3, 5, 0.98) 100%);
     border-top: 3px solid #ff4444;
@@ -111,8 +113,11 @@
     text-transform: uppercase;
   }
 
-  /* 2. Compact HUD Size (280px) */
+  /* 2. LEADERBOARD HUD (POSITIONED SAFELY ON THE LEFT) */
   .hud-container {
+    position: absolute;
+    top: 60px;
+    left: 30px;
     width: 280px;
     display: flex;
     flex-direction: column;
@@ -184,7 +189,7 @@
     transition: background 0.25s ease;
   }
 
-  /* Eliminated Team Row */
+  /* Eliminated Team Row (Solid pitch black) */
   .hud-row.eliminated-row {
     background: #000000 !important;
     border-left-color: #1a1a1a !important;
@@ -194,7 +199,7 @@
   .hud-row.eliminated-row .elims-cell { color: #3b4252 !important; }
   .hud-row.eliminated-row .team-logo { filter: grayscale(1) opacity(0.2); }
 
-  /* Red Laser Wipeout */
+  /* Red Left-to-Right Wipeout Laser Sweep */
   .hud-row.just-vanished::after {
     content: '';
     position: absolute;
@@ -220,7 +225,7 @@
     100% { left: 130%; opacity: 0; }
   }
 
-  /* Team Identifiers - Words Are Big */
+  /* Team Identifiers - Big Written Words */
   .team-cell {
     display: flex;
     align-items: center;
@@ -322,7 +327,7 @@
 </head>
 <body>
 
-  <!-- OP Elimination Banner -->
+  <!-- Top-Center Alert Banner -->
   <div id="elim-banner">
     <div class="skull-badge">☠</div>
     <img id="banner-logo" src="" alt="logo" />
@@ -332,7 +337,7 @@
     </div>
   </div>
 
-  <!-- Compact Tournament HUD -->
+  <!-- Left-Side Leaderboard HUD -->
   <div class="hud-container">
     <!-- Match Timer -->
     <div class="hud-timer-bar">
