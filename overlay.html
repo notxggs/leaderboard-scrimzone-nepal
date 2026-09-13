@@ -112,19 +112,55 @@
     align-items: center;
     padding: 3px 6px;
     min-height: 32px;
-    transition: background 0.2s ease;
+    position: relative;
+    overflow: hidden;
+    transition: background 0.3s ease, border-color 0.3s ease;
   }
 
-  /* Eliminated Team Row - Completely solid black (no transparency / no back elements visible) */
+  /* Eliminated Team Row Styling (Pitch Black, zero bleed-through) */
   .hud-row.eliminated-row {
-    opacity: 1 !important;
     background: #000000 !important;
-    border-left-color: #222222 !important;
+    border-left-color: #1a1a1a !important;
   }
-  .hud-row.eliminated-row .team-name { color: #555555 !important; }
-  .hud-row.eliminated-row .rank-tag { color: #444444 !important; }
+  .hud-row.eliminated-row .team-name { color: #444444 !important; }
+  .hud-row.eliminated-row .rank-tag { color: #333333 !important; }
   .hud-row.eliminated-row .elims-cell { color: #444444 !important; }
-  .hud-row.eliminated-row .team-logo { filter: grayscale(1) opacity(0.35); }
+  .hud-row.eliminated-row .team-logo { filter: grayscale(1) opacity(0.2); }
+
+  /* Left-to-Right Wipeout Laser Vaporization Animation */
+  .hud-row.just-vanished::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+      90deg, 
+      transparent 0%, 
+      rgba(66, 106, 239, 0.4) 30%, 
+      #ffffff 65%, 
+      #426aef 100%
+    );
+    box-shadow: 0 0 20px #426aef;
+    animation: sweepVanish 0.95s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+    pointer-events: none;
+  }
+
+  @keyframes sweepVanish {
+    0% {
+      left: -100%;
+      opacity: 1;
+    }
+    60% {
+      left: 100%;
+      opacity: 0.9;
+    }
+    100% {
+      left: 120%;
+      opacity: 0;
+    }
+  }
 
   /* Team Identifiers */
   .team-cell {
@@ -170,7 +206,7 @@
     justify-content: center;
   }
 
-  /* Alive Indicator Status Bars */
+  /* Alive Status Bars */
   .alive-bars {
     display: flex;
     justify-content: center;
@@ -182,9 +218,10 @@
     width: 4.5px;
     height: 18px;
     border-radius: 1px;
+    transition: background 0.25s ease;
   }
   .bar.status-alive { background: #426aef; box-shadow: 0 0 5px rgba(66, 106, 239, 0.5); }
-  .bar.status-dead  { background: #1a1a1a; }
+  .bar.status-dead  { background: #1a1a1a; box-shadow: none; }
 
   /* Legend Footer */
   .hud-legend {
@@ -268,8 +305,8 @@
 
   let previousTeams = [];
   let bannerTimer = null;
+  const justVaporizedTeams = new Set();
 
-  // Banner trigger animation
   function showEliminationBanner(name, logo) {
     const banner = document.getElementById('elim-banner');
     const bText = document.getElementById('banner-text');
@@ -324,7 +361,7 @@
   }
 
   function renderOverlay(teams) {
-    // Check if any team just got wiped out to fire the banner
+    // Detect newly eliminated teams for the wipe animation + banner
     if (previousTeams.length > 0) {
       teams.forEach(curr => {
         const prev = previousTeams.find(p => p.name === curr.name);
@@ -333,6 +370,10 @@
           const currAlive = (curr.players || []).some(p => p.status !== 'dead');
           if (prevAlive && !currAlive) {
             showEliminationBanner(curr.name, curr.logo);
+            justVaporizedTeams.add(curr.name);
+            setTimeout(() => {
+              justVaporizedTeams.delete(curr.name);
+            }, 1000);
           }
         }
       });
@@ -358,6 +399,7 @@
       ];
 
       const isEliminated = players.every(p => p.status === 'dead');
+      const isVaporizing = justVaporizedTeams.has(team.name);
 
       let barsHtml = '';
       players.slice(0, 4).forEach(p => {
@@ -365,7 +407,7 @@
       });
 
       container.innerHTML += `
-        <div class="hud-row ${isEliminated ? 'eliminated-row' : ''}">
+        <div class="hud-row ${isEliminated ? 'eliminated-row' : ''} ${isVaporizing ? 'just-vanished' : ''}">
           <div class="team-cell">
             <span class="rank-tag">${index + 1}</span>
             <img class="team-logo" src="${team.logo || 'https://dummyimage.com/20x20/000/426aef&text=' + (team.name ? team.name[0] : '#')}" />
