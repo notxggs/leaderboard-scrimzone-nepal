@@ -2,134 +2,292 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Esports Manual Desk</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pro Esports Admin Desk</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@600;700&family=Chakra+Petch:wght@700&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@600;700;800&family=Chakra+Petch:wght@600;700&display=swap');
+
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body {
-    background: #0c0e12;
-    color: #e2e4e9;
+    background: #090a0f;
+    color: #e5e7eb;
     font-family: 'Rajdhani', sans-serif;
-    padding: 16px;
+    padding: 14px;
+    user-select: none;
   }
 
+  /* Top Navigation Bar */
   .top-bar {
-    display: flex; justify-content: space-between; align-items: center;
-    border-bottom: 1px solid #232630; padding-bottom: 12px; margin-bottom: 16px;
-    flex-wrap: wrap; gap: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #12141c;
+    border: 1px solid #1f2330;
+    border-radius: 8px;
+    padding: 10px 16px;
+    margin-bottom: 14px;
+    flex-wrap: wrap;
+    gap: 12px;
   }
-  .top-bar h2 { color: #8cf000; font-size: 20px; letter-spacing: 1px; }
 
-  /* Timer Desk Controls */
-  .timer-desk {
+  .title-group h2 {
+    color: #8cf000;
+    font-size: 22px;
+    letter-spacing: 1px;
+    line-height: 1;
+  }
+  .title-group span {
+    font-size: 11px;
+    color: #6b7280;
+    font-family: 'Chakra Petch', sans-serif;
+  }
+
+  /* Timer Controls */
+  .timer-box {
     display: flex;
     align-items: center;
     gap: 8px;
-    background: #141720;
+    background: #090a0f;
     padding: 6px 12px;
     border-radius: 6px;
-    border: 1px solid #252834;
+    border: 1px solid #282e3f;
   }
-  .desk-timer-clock {
-    font-size: 18px;
+  .timer-clock {
+    font-size: 20px;
     font-family: 'Chakra Petch', sans-serif;
     font-weight: 700;
     color: #8cf000;
     min-width: 60px;
+    text-align: center;
   }
   .btn-timer {
-    border: none; padding: 6px 10px; font-weight: 800; border-radius: 4px;
-    cursor: pointer; font-family: inherit; font-size: 11px;
+    border: none;
+    padding: 6px 12px;
+    font-weight: 800;
+    border-radius: 4px;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 12px;
+    transition: opacity 0.15s;
   }
-  .btn-timer-start { background: #8cf000; color: #000; }
-  .btn-timer-pause { background: #f79009; color: #000; }
-  .btn-timer-reset { background: #373b47; color: #fff; }
+  .btn-timer:hover { opacity: 0.85; }
+  .btn-start { background: #8cf000; color: #000; }
+  .btn-pause { background: #f59e0b; color: #000; }
+  .btn-reset { background: #374151; color: #fff; }
+
+  /* Top Controls & Search */
+  .actions-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .search-input {
+    background: #090a0f;
+    border: 1px solid #282e3f;
+    color: #fff;
+    padding: 7px 12px;
+    border-radius: 4px;
+    font-family: inherit;
+    font-size: 13px;
+    outline: none;
+    width: 140px;
+  }
+  .search-input:focus { border-color: #8cf000; }
 
   .btn-top {
-    background: #8cf000; color: #000; font-weight: 800; border: none;
-    padding: 8px 14px; border-radius: 4px; cursor: pointer; font-family: inherit;
+    border: none;
+    padding: 7px 13px;
+    border-radius: 4px;
+    font-weight: 800;
+    font-size: 12px;
+    cursor: pointer;
+    font-family: inherit;
+    transition: 0.15s;
   }
-  .btn-danger { background: #d92d20; color: #fff; }
+  .btn-revive { background: #1f2937; color: #8cf000; border: 1px solid #374151; }
+  .btn-revive:hover { background: #374151; }
+  .btn-danger { background: #ef4444; color: #fff; }
 
+  /* Teams Grid Layout */
   .grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(285px, 1fr));
     gap: 12px;
   }
 
   .team-card {
-    background: #141720; border: 1px solid #252834; border-radius: 6px;
-    padding: 10px; display: flex; flex-direction: column; gap: 8px;
+    background: #12141c;
+    border: 1px solid #1f2330;
+    border-radius: 8px;
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    transition: transform 0.15s, border-color 0.15s;
+    position: relative;
   }
-  .team-card.wiped { opacity: 0.55; border-color: #551111; }
+  .team-card:hover { border-color: #374151; }
+  .team-card.wiped {
+    opacity: 0.45;
+    background: #0f1017;
+    border-color: #331518;
+  }
 
-  .row-top { display: flex; align-items: center; gap: 8px; }
-  .slot-id { color: #8cf000; font-weight: 800; font-size: 14px; width: 22px; }
-  .inp-name {
-    background: #0a0c10; border: 1px solid #333644; color: #8cf000;
-    font-weight: 800; padding: 5px 8px; border-radius: 4px; width: 90px;
-    text-transform: uppercase; font-family: inherit; font-size: 14px;
+  /* Card Header */
+  .card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
   }
-  .inp-logo {
-    background: #0a0c10; border: 1px solid #333644; color: #8e929b;
-    padding: 5px; border-radius: 4px; flex: 1; font-size: 11px;
-  }
-
-  /* 2-State Player Toggles */
-  .player-row {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 4px;
-    background: #0a0c10;
-    padding: 6px;
+  .slot-tag {
+    font-size: 13px;
+    font-weight: 800;
+    color: #8cf000;
+    background: rgba(140, 240, 0, 0.08);
+    padding: 3px 6px;
     border-radius: 4px;
   }
-  .btn-player {
+  .name-input {
+    background: #090a0f;
+    border: 1px solid #282e3f;
+    color: #8cf000;
+    font-weight: 800;
+    font-size: 15px;
+    padding: 4px 8px;
+    border-radius: 4px;
+    width: 100px;
+    text-transform: uppercase;
+    font-family: inherit;
+  }
+  .name-input:focus { border-color: #8cf000; }
+  .logo-input {
+    background: #090a0f;
+    border: 1px solid #282e3f;
+    color: #9ca3af;
+    font-size: 11px;
+    padding: 5px 8px;
+    border-radius: 4px;
+    flex: 1;
+    font-family: inherit;
+  }
+
+  /* Status Bar - 4 Clickable Indicators */
+  .players-container {
+    background: #090a0f;
+    border: 1px solid #1a1d27;
+    padding: 8px;
+    border-radius: 6px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .players-title {
+    display: flex;
+    justify-content: space-between;
+    font-size: 11px;
+    color: #6b7280;
+    font-weight: 700;
+  }
+  .player-bars {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 5px;
+  }
+  .p-toggle {
     border: none;
-    padding: 6px 2px;
+    height: 32px;
+    border-radius: 4px;
+    font-family: inherit;
     font-size: 11px;
     font-weight: 800;
-    border-radius: 3px;
     cursor: pointer;
-    font-family: inherit;
-    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.1s ease;
   }
-  .state-alive { background: #8cf000; color: #000; }
-  .state-dead  { background: #1c1d24; color: #666; border: 1px solid #333; }
+  .p-toggle.alive {
+    background: #8cf000;
+    color: #0b1500;
+    box-shadow: 0 0 8px rgba(140, 240, 0, 0.25);
+  }
+  .p-toggle.dead {
+    background: #1a1d27;
+    color: #4b5563;
+    border: 1px solid #242938;
+  }
 
-  .actions {
-    display: flex; gap: 6px; align-items: center; justify-content: space-between;
+  /* Score & Elimination Controls */
+  .score-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #090a0f;
+    padding: 6px 10px;
+    border-radius: 6px;
+    border: 1px solid #1a1d27;
   }
-  .btn-action {
-    border: none; padding: 6px 10px; font-weight: 700; border-radius: 3px;
-    cursor: pointer; font-family: inherit; font-size: 12px;
+  .score-display {
+    font-size: 14px;
+    font-weight: 700;
   }
-  .btn-kill-add { background: #d92d20; color: #fff; }
-  .btn-kill-sub { background: #2f1719; color: #f97066; }
-  .btn-wipe { background: #373b47; color: #fff; }
+  .score-display b {
+    color: #fff;
+    font-size: 18px;
+    font-family: 'Chakra Petch', sans-serif;
+    margin-left: 4px;
+  }
+
+  .kill-btns {
+    display: flex;
+    gap: 4px;
+  }
+  .btn-kill {
+    border: none;
+    padding: 6px 10px;
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 800;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  .btn-kill-add { background: #ef4444; color: #fff; }
+  .btn-kill-add:hover { background: #dc2626; }
+  .btn-kill-sub { background: #261618; color: #f87171; border: 1px solid #451b1e; }
+  .btn-wipe-team { background: #1f2937; color: #9ca3af; border: 1px solid #374151; }
+  .btn-wipe-team:hover { background: #374151; color: #fff; }
 </style>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 </head>
 <body>
 
+  <!-- Top Navigation & Controls -->
   <div class="top-bar">
-    <h2>MANUAL DESK CONTROL</h2>
-
-    <!-- Timer Desk Controls -->
-    <div class="timer-desk">
-      <span class="desk-timer-clock" id="desk-timer">00:00</span>
-      <button class="btn-timer btn-timer-start" onclick="startTimer()">START</button>
-      <button class="btn-timer btn-timer-pause" onclick="pauseTimer()">PAUSE</button>
-      <button class="btn-timer btn-timer-reset" onclick="resetTimer()">RESET</button>
+    <div class="title-group">
+      <h2>ESPORTS CONTROL DESK</h2>
+      <span>LIVE FIREBASE RTDB SYNC</span>
     </div>
 
-    <div style="display:flex; gap:8px;">
-      <button class="btn-top" onclick="resetAllRevive()">REVIVE ALL (4 ALIVE)</button>
-      <button class="btn-top btn-danger" onclick="resetAllKills()">RESET ALL KILLS</button>
+    <!-- Match Timer -->
+    <div class="timer-box">
+      <span class="timer-clock" id="desk-timer">00:00</span>
+      <button class="btn-timer btn-start" onclick="startTimer()">START</button>
+      <button class="btn-timer btn-pause" onclick="pauseTimer()">PAUSE</button>
+      <button class="btn-timer btn-reset" onclick="resetTimer()">RESET</button>
+    </div>
+
+    <!-- Quick Global Actions -->
+    <div class="actions-group">
+      <input type="text" id="search-box" class="search-input" placeholder="Search team..." onkeyup="filterCards()" />
+      <button class="btn-top btn-revive" onclick="resetAllRevive()">REVIVE ALL (4/4)</button>
+      <button class="btn-top btn-danger" onclick="confirmResetKills()">RESET KILLS</button>
     </div>
   </div>
 
+  <!-- 12 Slot Interactive Grid -->
   <div class="grid" id="teams-grid"></div>
 
 <script>
@@ -164,7 +322,7 @@
 
   let teams = defaultTeams;
 
-  // 1. Teams Sync
+  // 1. Database Listener
   db.ref('esports_data/teams').on('value', (snap) => {
     const val = snap.val();
     if (val && Array.isArray(val)) {
@@ -180,7 +338,7 @@
     renderGrid();
   }
 
-  // 2. Timer Logic
+  // 2. Timer Listener & Actions
   let timerState = { running: false, seconds: 0, startTimestamp: null };
   let localDeskInterval = null;
 
@@ -239,11 +397,10 @@
     });
   }
 
-  // 3. Controller Actions (2-State Toggle: Alive <-> Dead)
+  // 3. Fast Card Toggles
   function togglePlayer(tIdx, pIdx) {
     const current = teams[tIdx].players[pIdx].status === 'dead' ? 'dead' : 'alive';
-    const next = current === 'alive' ? 'dead' : 'alive';
-    teams[tIdx].players[pIdx].status = next;
+    teams[tIdx].players[pIdx].status = current === 'alive' ? 'dead' : 'alive';
     teams[tIdx].alive = teams[tIdx].players.filter(p => p.status === 'alive').length;
     sync();
   }
@@ -267,9 +424,20 @@
     sync();
   }
 
-  function resetAllKills() {
-    teams.forEach(t => t.kills = 0);
-    sync();
+  function confirmResetKills() {
+    if (confirm("Reset ALL team eliminations back to 0?")) {
+      teams.forEach(t => t.kills = 0);
+      sync();
+    }
+  }
+
+  function filterCards() {
+    const q = document.getElementById('search-box').value.toUpperCase();
+    const cards = document.querySelectorAll('.team-card');
+    cards.forEach(card => {
+      const name = card.querySelector('.name-input').value.toUpperCase();
+      card.style.display = name.includes(q) ? '' : 'none';
+    });
   }
 
   function renderGrid() {
@@ -281,34 +449,41 @@
         t.players = [{status:'alive'}, {status:'alive'}, {status:'alive'}, {status:'alive'}];
       }
       const isDead = t.players.every(p => p.status === 'dead');
+      const aliveCount = t.players.filter(p => p.status === 'alive').length;
 
-      let playersHtml = t.players.map((p, pIdx) => {
+      let barsHtml = t.players.map((p, pIdx) => {
         const isAlive = p.status !== 'dead';
         return `
-          <button class="btn-player ${isAlive ? 'state-alive' : 'state-dead'}" onclick="togglePlayer(${i}, ${pIdx})">
-            P${pIdx+1}: ${isAlive ? 'ALIVE' : 'DEAD'}
+          <button class="p-toggle ${isAlive ? 'alive' : 'dead'}" onclick="togglePlayer(${i}, ${pIdx})" title="Click to toggle Player ${pIdx+1}">
+            ${isAlive ? 'ALIVE' : 'DEAD'}
           </button>
         `;
       }).join('');
 
       grid.innerHTML += `
         <div class="team-card ${isDead ? 'wiped' : ''}">
-          <div class="row-top">
-            <span class="slot-id">#${i + 1}</span>
-            <input class="inp-name" value="${t.name || ''}" onchange="teams[${i}].name=this.value; sync();" />
-            <input class="inp-logo" placeholder="Logo URL" value="${t.logo || ''}" onchange="teams[${i}].logo=this.value; sync();" />
+          <div class="card-header">
+            <span class="slot-tag">#${i + 1}</span>
+            <input class="name-input" value="${t.name || ''}" onchange="teams[${i}].name=this.value.trim().toUpperCase(); sync();" />
+            <input class="logo-input" placeholder="Logo URL" value="${t.logo || ''}" onchange="teams[${i}].logo=this.value.trim(); sync();" />
           </div>
 
-          <div class="player-row">
-            ${playersHtml}
+          <div class="players-container">
+            <div class="players-title">
+              <span>SQUAD SENSORS</span>
+              <span>${aliveCount} / 4 STANDING</span>
+            </div>
+            <div class="player-bars">
+              ${barsHtml}
+            </div>
           </div>
 
-          <div class="actions">
-            <span>Elims: <b>${t.kills || 0}</b></span>
-            <div style="display:flex; gap:4px;">
-              <button class="btn-action btn-kill-add" onclick="adjustKill(${i}, 1)">+1 KILL</button>
-              <button class="btn-action btn-kill-sub" onclick="adjustKill(${i}, -1)">-1</button>
-              <button class="btn-action btn-wipe" onclick="wipeTeam(${i})">WIPE</button>
+          <div class="score-row">
+            <span class="score-display">ELIMS: <b>${t.kills || 0}</b></span>
+            <div class="kill-btns">
+              <button class="btn-kill btn-kill-add" onclick="adjustKill(${i}, 1)">+1</button>
+              <button class="btn-kill btn-kill-sub" onclick="adjustKill(${i}, -1)">-1</button>
+              <button class="btn-kill btn-wipe-team" onclick="wipeTeam(${i})">WIPE</button>
             </div>
           </div>
         </div>
