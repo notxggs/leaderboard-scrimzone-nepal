@@ -22,6 +22,31 @@
     box-shadow: 0 8px 24px rgba(0,0,0,0.7);
   }
 
+  /* Top Match Timer Bar */
+  .hud-timer-bar {
+    background: #090c0a;
+    border: 1px solid #1e2920;
+    border-bottom: none;
+    border-radius: 4px 4px 0 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 3px 8px;
+  }
+  .hud-timer-label {
+    font-size: 11px;
+    font-weight: 800;
+    color: #8e929b;
+    letter-spacing: 1px;
+  }
+  .hud-timer-clock {
+    font-size: 14px;
+    font-weight: 800;
+    color: #8cf000;
+    font-family: 'Chakra Petch', sans-serif;
+    letter-spacing: 1px;
+  }
+
   /* Neon Green Header */
   .hud-header {
     background: #8cf000;
@@ -33,7 +58,6 @@
     font-weight: 800;
     font-size: 13px;
     letter-spacing: 0.5px;
-    border-radius: 4px 4px 0 0;
   }
   .hud-header .col-teams { text-align: center; }
   .hud-header .col-elims { text-align: center; }
@@ -66,7 +90,7 @@
     background: rgba(10, 14, 12, 0.92);
   }
 
-  /* Team Info (Rank + Logo + Name) */
+  /* Team Info */
   .team-cell {
     display: flex;
     align-items: center;
@@ -125,10 +149,9 @@
     transition: background 0.15s ease;
   }
   .bar.status-alive { background: #8cf000; }
-  .bar.status-knock { background: #6c5ce7; }
   .bar.status-dead  { background: #000000; }
 
-  /* Legend Footer */
+  /* Legend Footer (Only Alive & Eliminated) */
   .hud-legend {
     background: #ffffff;
     color: #111;
@@ -144,11 +167,11 @@
   .legend-item {
     display: flex;
     align-items: center;
-    gap: 3px;
+    gap: 4px;
   }
   .legend-box {
-    width: 7px;
-    height: 7px;
+    width: 8px;
+    height: 8px;
     display: inline-block;
   }
 </style>
@@ -158,6 +181,13 @@
 <body>
 
   <div class="hud-container">
+    <!-- Top Timer -->
+    <div class="hud-timer-bar">
+      <span class="hud-timer-label">MATCH TIME</span>
+      <span class="hud-timer-clock" id="timer-display">00:00</span>
+    </div>
+
+    <!-- Green Header -->
     <div class="hud-header">
       <span class="col-teams">TEAMS</span>
       <span class="col-elims">ELIMS</span>
@@ -166,14 +196,11 @@
 
     <div class="hud-body" id="hud-body"></div>
 
+    <!-- Legend Footer -->
     <div class="hud-legend">
       <div class="legend-item">
         <span class="legend-box" style="background:#8cf000;"></span>
         <span>ALIVE</span>
-      </div>
-      <div class="legend-item">
-        <span class="legend-box" style="background:#6c5ce7;"></span>
-        <span>KNOCK</span>
       </div>
       <div class="legend-item">
         <span class="legend-box" style="background:#000000;"></span>
@@ -202,11 +229,41 @@
     if (teams && Array.isArray(teams)) renderOverlay(teams);
   });
 
+  let timerState = { running: false, seconds: 0, startTimestamp: null };
+  let localTimerInterval = null;
+
+  db.ref('esports_data/timer').on('value', (snapshot) => {
+    const val = snapshot.val();
+    if (val) {
+      timerState = val;
+      updateTimerUI();
+    }
+  });
+
+  function formatTime(totalSec) {
+    const m = String(Math.floor(totalSec / 60)).padStart(2, '0');
+    const s = String(totalSec % 60).padStart(2, '0');
+    return `${m}:${s}`;
+  }
+
+  function updateTimerUI() {
+    clearInterval(localTimerInterval);
+    if (timerState.running && timerState.startTimestamp) {
+      localTimerInterval = setInterval(() => {
+        const elapsed = Math.floor((Date.now() - timerState.startTimestamp) / 1000);
+        document.getElementById('timer-display').innerText = formatTime(elapsed);
+      }, 1000);
+      const elapsed = Math.floor((Date.now() - timerState.startTimestamp) / 1000);
+      document.getElementById('timer-display').innerText = formatTime(elapsed);
+    } else {
+      document.getElementById('timer-display').innerText = formatTime(timerState.seconds || 0);
+    }
+  }
+
   function renderOverlay(teams) {
     const container = document.getElementById('hud-body');
     container.innerHTML = '';
 
-    // Sort by elims descending
     const sorted = [...teams].sort((a, b) => {
       const elimsA = Number(a.kills) || 0;
       const elimsB = Number(b.kills) || 0;
@@ -221,12 +278,11 @@
         { status: 'alive' }, { status: 'alive' }
       ];
 
-      // Check if squad is completely eliminated
       const isEliminated = players.every(p => p.status === 'dead');
 
       let barsHtml = '';
       players.slice(0, 4).forEach(p => {
-        barsHtml += `<div class="bar status-${p.status || 'alive'}"></div>`;
+        barsHtml += `<div class="bar status-${p.status === 'dead' ? 'dead' : 'alive'}"></div>`;
       });
 
       container.innerHTML += `
