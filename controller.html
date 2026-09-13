@@ -3,292 +3,312 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Pro Esports Admin Desk</title>
+<title>Ultra Esports Master Console</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@600;700;800&family=Chakra+Petch:wght@600;700&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@600;700;800&family=Chakra+Petch:wght@700&display=swap');
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body {
-    background: #090a0f;
+    background: #08090d;
     color: #e5e7eb;
     font-family: 'Rajdhani', sans-serif;
-    padding: 14px;
+    padding: 12px;
     user-select: none;
   }
 
-  /* Top Navigation Bar */
-  .top-bar {
+  /* Sticky Top Master HUD */
+  .master-bar {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: #10121a;
+    border: 1px solid #1f2333;
+    border-radius: 8px;
+    padding: 10px 14px;
+    margin-bottom: 12px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background: #12141c;
-    border: 1px solid #1f2330;
-    border-radius: 8px;
-    padding: 10px 16px;
-    margin-bottom: 14px;
     flex-wrap: wrap;
-    gap: 12px;
+    gap: 10px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.6);
   }
 
-  .title-group h2 {
+  .title-wrap h2 {
     color: #8cf000;
-    font-size: 22px;
+    font-size: 20px;
     letter-spacing: 1px;
     line-height: 1;
   }
-  .title-group span {
+  .title-wrap span {
     font-size: 11px;
     color: #6b7280;
     font-family: 'Chakra Petch', sans-serif;
   }
 
-  /* Timer Controls */
-  .timer-box {
+  /* High Visibility Timer Bar */
+  .timer-deck {
     display: flex;
     align-items: center;
-    gap: 8px;
-    background: #090a0f;
-    padding: 6px 12px;
+    gap: 6px;
+    background: #08090d;
+    padding: 4px 10px;
     border-radius: 6px;
-    border: 1px solid #282e3f;
+    border: 1px solid #252b3b;
   }
   .timer-clock {
-    font-size: 20px;
+    font-size: 22px;
     font-family: 'Chakra Petch', sans-serif;
     font-weight: 700;
     color: #8cf000;
-    min-width: 60px;
+    min-width: 65px;
     text-align: center;
   }
-  .btn-timer {
+  .btn-t {
     border: none;
-    padding: 6px 12px;
+    padding: 6px 10px;
     font-weight: 800;
     border-radius: 4px;
     cursor: pointer;
     font-family: inherit;
-    font-size: 12px;
-    transition: opacity 0.15s;
+    font-size: 11px;
   }
-  .btn-timer:hover { opacity: 0.85; }
-  .btn-start { background: #8cf000; color: #000; }
-  .btn-pause { background: #f59e0b; color: #000; }
-  .btn-reset { background: #374151; color: #fff; }
+  .btn-t-start { background: #8cf000; color: #000; }
+  .btn-t-pause { background: #f59e0b; color: #000; }
+  .btn-t-reset { background: #374151; color: #fff; }
 
-  /* Top Controls & Search */
-  .actions-group {
+  /* Emergency Control Buttons */
+  .top-btn-group {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 6px;
     flex-wrap: wrap;
   }
-  .search-input {
-    background: #090a0f;
-    border: 1px solid #282e3f;
+  .btn-undo {
+    background: #4b5563;
     color: #fff;
-    padding: 7px 12px;
-    border-radius: 4px;
-    font-family: inherit;
-    font-size: 13px;
-    outline: none;
-    width: 140px;
-  }
-  .search-input:focus { border-color: #8cf000; }
-
-  .btn-top {
     border: none;
-    padding: 7px 13px;
+    padding: 7px 12px;
     border-radius: 4px;
     font-weight: 800;
     font-size: 12px;
     cursor: pointer;
     font-family: inherit;
-    transition: 0.15s;
   }
-  .btn-revive { background: #1f2937; color: #8cf000; border: 1px solid #374151; }
-  .btn-revive:hover { background: #374151; }
-  .btn-danger { background: #ef4444; color: #fff; }
+  .btn-undo:disabled { opacity: 0.3; cursor: not-allowed; }
+  .btn-revive-all {
+    background: #1b2618;
+    color: #8cf000;
+    border: 1px solid #2d4524;
+    padding: 7px 12px;
+    border-radius: 4px;
+    font-weight: 800;
+    font-size: 12px;
+    cursor: pointer;
+    font-family: inherit;
+  }
+  .btn-reset-kills {
+    background: #2b1416;
+    color: #ef4444;
+    border: 1px solid #4a1d22;
+    padding: 7px 12px;
+    border-radius: 4px;
+    font-weight: 800;
+    font-size: 12px;
+    cursor: pointer;
+    font-family: inherit;
+  }
 
-  /* Teams Grid Layout */
+  /* Rapid Killfeed Action Assistant */
+  .quick-killfeed-bar {
+    background: #141724;
+    border: 1px solid #2a3147;
+    border-radius: 8px;
+    padding: 8px 14px;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  .quick-killfeed-bar label {
+    font-size: 12px;
+    font-weight: 800;
+    color: #8cf000;
+    letter-spacing: 0.5px;
+  }
+  .killfeed-select {
+    background: #08090d;
+    border: 1px solid #374151;
+    color: #fff;
+    font-family: inherit;
+    font-weight: 700;
+    font-size: 13px;
+    padding: 6px 10px;
+    border-radius: 4px;
+    min-width: 110px;
+  }
+  .btn-auto-clash {
+    background: #ef4444;
+    color: #fff;
+    border: none;
+    padding: 7px 16px;
+    border-radius: 4px;
+    font-family: inherit;
+    font-weight: 800;
+    font-size: 13px;
+    cursor: pointer;
+    transition: 0.1s transform;
+  }
+  .btn-auto-clash:active { transform: scale(0.97); }
+
+  /* Slots Grid */
   .grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(285px, 1fr));
-    gap: 12px;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 10px;
   }
 
   .team-card {
-    background: #12141c;
-    border: 1px solid #1f2330;
+    background: #11131c;
+    border: 1px solid #1f2333;
     border-radius: 8px;
-    padding: 12px;
+    padding: 10px;
     display: flex;
     flex-direction: column;
-    gap: 10px;
-    transition: transform 0.15s, border-color 0.15s;
+    gap: 8px;
     position: relative;
+    transition: border-color 0.15s;
   }
-  .team-card:hover { border-color: #374151; }
+  .team-card.selected-focus {
+    border-color: #8cf000;
+    box-shadow: 0 0 10px rgba(140, 240, 0, 0.25);
+  }
   .team-card.wiped {
-    opacity: 0.45;
-    background: #0f1017;
-    border-color: #331518;
+    opacity: 0.4;
+    background: #0b0c12;
+    border-color: #3b1619;
   }
 
-  /* Card Header */
+  /* Slot Header */
   .card-header {
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    gap: 8px;
+    gap: 6px;
   }
-  .slot-tag {
-    font-size: 13px;
-    font-weight: 800;
+  .slot-chip {
+    background: rgba(140, 240, 0, 0.12);
     color: #8cf000;
-    background: rgba(140, 240, 0, 0.08);
-    padding: 3px 6px;
+    font-size: 12px;
+    font-weight: 800;
+    padding: 2px 6px;
     border-radius: 4px;
   }
-  .name-input {
-    background: #090a0f;
-    border: 1px solid #282e3f;
+  .inp-team-name {
+    background: #08090d;
+    border: 1px solid #2a3147;
     color: #8cf000;
+    font-size: 14px;
     font-weight: 800;
-    font-size: 15px;
-    padding: 4px 8px;
+    padding: 4px 6px;
     border-radius: 4px;
-    width: 100px;
+    width: 90px;
     text-transform: uppercase;
     font-family: inherit;
   }
-  .name-input:focus { border-color: #8cf000; }
-  .logo-input {
-    background: #090a0f;
-    border: 1px solid #282e3f;
+  .inp-logo-url {
+    background: #08090d;
+    border: 1px solid #2a3147;
     color: #9ca3af;
     font-size: 11px;
-    padding: 5px 8px;
+    padding: 4px 6px;
     border-radius: 4px;
     flex: 1;
     font-family: inherit;
   }
 
-  /* Status Bar - 4 Clickable Indicators */
-  .players-container {
-    background: #090a0f;
-    border: 1px solid #1a1d27;
-    padding: 8px;
-    border-radius: 6px;
+  /* Alive Indicator Bars */
+  .squad-status-row {
     display: flex;
-    flex-direction: column;
-    gap: 6px;
-  }
-  .players-title {
-    display: flex;
+    align-items: center;
     justify-content: space-between;
-    font-size: 11px;
-    color: #6b7280;
-    font-weight: 700;
+    background: #08090d;
+    border: 1px solid #1c202e;
+    border-radius: 6px;
+    padding: 6px 10px;
   }
-  .player-bars {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
+  .bars-display {
+    display: flex;
     gap: 5px;
   }
-  .p-toggle {
-    border: none;
-    height: 32px;
-    border-radius: 4px;
-    font-family: inherit;
-    font-size: 11px;
-    font-weight: 800;
+  .stat-bar {
+    width: 22px;
+    height: 18px;
+    border-radius: 3px;
     cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.1s ease;
+    transition: 0.15s;
   }
-  .p-toggle.alive {
-    background: #8cf000;
-    color: #0b1500;
-    box-shadow: 0 0 8px rgba(140, 240, 0, 0.25);
-  }
-  .p-toggle.dead {
-    background: #1a1d27;
-    color: #4b5563;
-    border: 1px solid #242938;
-  }
+  .stat-bar.on { background: #8cf000; box-shadow: 0 0 6px rgba(140, 240, 0, 0.3); }
+  .stat-bar.off { background: #1c202e; border: 1px solid #2d3348; }
 
-  /* Score & Elimination Controls */
-  .score-row {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    background: #090a0f;
-    padding: 6px 10px;
-    border-radius: 6px;
-    border: 1px solid #1a1d27;
+  /* Elimination Steppers */
+  .score-controls {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 5px;
   }
-  .score-display {
-    font-size: 14px;
-    font-weight: 700;
-  }
-  .score-display b {
-    color: #fff;
-    font-size: 18px;
-    font-family: 'Chakra Petch', sans-serif;
-    margin-left: 4px;
-  }
-
-  .kill-btns {
-    display: flex;
-    gap: 4px;
-  }
-  .btn-kill {
+  .btn-sub-score {
     border: none;
-    padding: 6px 10px;
+    padding: 8px 4px;
     font-family: inherit;
-    font-size: 12px;
     font-weight: 800;
+    font-size: 13px;
     border-radius: 4px;
     cursor: pointer;
   }
-  .btn-kill-add { background: #ef4444; color: #fff; }
-  .btn-kill-add:hover { background: #dc2626; }
-  .btn-kill-sub { background: #261618; color: #f87171; border: 1px solid #451b1e; }
-  .btn-wipe-team { background: #1f2937; color: #9ca3af; border: 1px solid #374151; }
-  .btn-wipe-team:hover { background: #374151; color: #fff; }
+  .btn-add-kill { background: #ef4444; color: #fff; }
+  .btn-kill-minus { background: #241416; color: #f87171; border: 1px solid #4a1d22; }
+  .btn-wipe-squad { background: #262938; color: #e5e7eb; }
 </style>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 </head>
 <body>
 
-  <!-- Top Navigation & Controls -->
-  <div class="top-bar">
-    <div class="title-group">
-      <h2>ESPORTS CONTROL DESK</h2>
-      <span>LIVE FIREBASE RTDB SYNC</span>
+  <!-- 1. Master Sticky Navigation -->
+  <div class="master-bar">
+    <div class="title-wrap">
+      <h2>MASTER ESPORTS DECK</h2>
+      <span>FIREBASE REALTIME LINK ACTIVE</span>
     </div>
 
-    <!-- Match Timer -->
-    <div class="timer-box">
-      <span class="timer-clock" id="desk-timer">00:00</span>
-      <button class="btn-timer btn-start" onclick="startTimer()">START</button>
-      <button class="btn-timer btn-pause" onclick="pauseTimer()">PAUSE</button>
-      <button class="btn-timer btn-reset" onclick="resetTimer()">RESET</button>
+    <!-- Timer Control Engine -->
+    <div class="timer-deck">
+      <span class="timer-clock" id="clock-readout">00:00</span>
+      <button class="btn-t btn-t-start" onclick="startTimer()">START</button>
+      <button class="btn-t btn-t-pause" onclick="pauseTimer()">PAUSE</button>
+      <button class="btn-t btn-t-reset" onclick="resetTimer()">RESET</button>
     </div>
 
-    <!-- Quick Global Actions -->
-    <div class="actions-group">
-      <input type="text" id="search-box" class="search-input" placeholder="Search team..." onkeyup="filterCards()" />
-      <button class="btn-top btn-revive" onclick="resetAllRevive()">REVIVE ALL (4/4)</button>
-      <button class="btn-top btn-danger" onclick="confirmResetKills()">RESET KILLS</button>
+    <!-- Rapid Actions -->
+    <div class="top-btn-group">
+      <button class="btn-undo" id="btn-undo" onclick="performUndo()" disabled>UNDO</button>
+      <button class="btn-revive-all" onclick="reviveAllSquads()">REVIVE ALL (4/4)</button>
+      <button class="btn-reset-kills" onclick="resetAllMatchKills()">RESET ALL KILLS</button>
     </div>
   </div>
 
-  <!-- 12 Slot Interactive Grid -->
-  <div class="grid" id="teams-grid"></div>
+  <!-- 2. Fast Killfeed Clash Assistant -->
+  <div class="quick-killfeed-bar">
+    <label>FAST KILLFEED ACTION:</label>
+    <select id="killer-select" class="killfeed-select"></select>
+    <span style="color:#ef4444; font-weight:800;">ELIMINATED</span>
+    <select id="victim-select" class="killfeed-select"></select>
+    <button class="btn-auto-clash" onclick="executeFastKillfeedClash()">+1 KILL & -1 PLAYER</button>
+  </div>
+
+  <!-- 3. Slots Grid -->
+  <div class="grid" id="slots-canvas"></div>
 
 <script>
   const firebaseConfig = {
@@ -305,7 +325,7 @@
   firebase.initializeApp(firebaseConfig);
   const db = firebase.database();
 
-  const defaultTeams = [
+  let teams = [
     { name: "ELC", logo: "", kills: 6, players: [{status:'alive'}, {status:'alive'}, {status:'alive'}, {status:'alive'}] },
     { name: "TNG", logo: "", kills: 5, players: [{status:'alive'}, {status:'alive'}, {status:'alive'}, {status:'alive'}] },
     { name: "INF", logo: "", kills: 4, players: [{status:'alive'}, {status:'alive'}, {status:'alive'}, {status:'dead'}] },
@@ -320,62 +340,212 @@
     { name: "RA",  logo: "", kills: 3, players: [{status:'dead'},  {status:'dead'},  {status:'dead'},  {status:'dead'}] }
   ];
 
-  let teams = defaultTeams;
+  let undoState = null;
+  let focusedSlot = 0;
 
-  // 1. Database Listener
+  // Firebase Realtime Listener
   db.ref('esports_data/teams').on('value', (snap) => {
     const val = snap.val();
     if (val && Array.isArray(val)) {
       teams = val;
-      renderGrid();
+      renderSlots();
+      updateFastSelectors();
     } else {
-      sync();
+      pushSync();
     }
   });
 
-  function sync() {
+  function pushSync(trackUndo = true) {
+    if (trackUndo) {
+      undoState = JSON.parse(JSON.stringify(teams));
+      document.getElementById('btn-undo').disabled = false;
+    }
     db.ref('esports_data/teams').set(teams);
-    renderGrid();
+    renderSlots();
+    updateFastSelectors();
   }
 
-  // 2. Timer Listener & Actions
+  function performUndo() {
+    if (undoState) {
+      teams = JSON.parse(JSON.stringify(undoState));
+      undoState = null;
+      document.getElementById('btn-undo').disabled = true;
+      db.ref('esports_data/teams').set(teams);
+      renderSlots();
+    }
+  }
+
+  // Fast Killfeed Clash Execution
+  function executeFastKillfeedClash() {
+    const killerIdx = parseInt(document.getElementById('killer-select').value);
+    const victimIdx = parseInt(document.getElementById('victim-select').value);
+
+    if (isNaN(killerIdx) || isNaN(victimIdx) || killerIdx === victimIdx) return;
+
+    // Add +1 Kill to Killer
+    teams[killerIdx].kills = (teams[killerIdx].kills || 0) + 1;
+
+    // Subtract 1 Alive player from victim
+    const firstAlive = teams[victimIdx].players.find(p => p.status !== 'dead');
+    if (firstAlive) {
+      firstAlive.status = 'dead';
+      teams[victimIdx].alive = teams[victimIdx].players.filter(p => p.status === 'alive').length;
+    }
+
+    pushSync();
+  }
+
+  function updateFastSelectors() {
+    const killerSel = document.getElementById('killer-select');
+    const victimSel = document.getElementById('victim-select');
+    const prevKiller = killerSel.value;
+    const prevVictim = victimSel.value;
+
+    killerSel.innerHTML = '';
+    victimSel.innerHTML = '';
+
+    teams.forEach((t, i) => {
+      killerSel.innerHTML += `<option value="${i}">${i+1}. ${t.name || 'SLOT'}</option>`;
+      victimSel.innerHTML += `<option value="${i}">${i+1}. ${t.name || 'SLOT'}</option>`;
+    });
+
+    if (prevKiller) killerSel.value = prevKiller;
+    if (prevVictim) victimSel.value = prevVictim;
+  }
+
+  // Quick Action Modifiers
+  function adjustKills(idx, amount) {
+    teams[idx].kills = Math.max(0, (teams[idx].kills || 0) + amount);
+    pushSync();
+  }
+
+  function toggleSinglePlayer(teamIdx, playerIdx) {
+    const current = teams[teamIdx].players[playerIdx].status;
+    teams[teamIdx].players[playerIdx].status = current === 'dead' ? 'alive' : 'dead';
+    teams[teamIdx].alive = teams[teamIdx].players.filter(p => p.status === 'alive').length;
+    pushSync();
+  }
+
+  function wipeTeam(idx) {
+    teams[idx].players.forEach(p => p.status = 'dead');
+    teams[idx].alive = 0;
+    pushSync();
+  }
+
+  function reviveAllSquads() {
+    teams.forEach(t => {
+      t.players = [{status:'alive'}, {status:'alive'}, {status:'alive'}, {status:'alive'}];
+      t.alive = 4;
+    });
+    pushSync();
+  }
+
+  function resetAllMatchKills() {
+    if (confirm("Reset ALL team kills to 0?")) {
+      teams.forEach(t => t.kills = 0);
+      pushSync();
+    }
+  }
+
+  // Render Slots
+  function renderSlots() {
+    const canvas = document.getElementById('slots-canvas');
+    canvas.innerHTML = '';
+
+    teams.forEach((t, i) => {
+      if (!t.players) {
+        t.players = [{status:'alive'}, {status:'alive'}, {status:'alive'}, {status:'alive'}];
+      }
+      const isDead = t.players.every(p => p.status === 'dead');
+      const aliveCount = t.players.filter(p => p.status === 'alive').length;
+
+      let barsHtml = t.players.map((p, pIdx) => `
+        <div 
+          class="stat-bar ${p.status === 'dead' ? 'off' : 'on'}" 
+          onclick="toggleSinglePlayer(${i}, ${pIdx})"
+          title="Click to toggle P${pIdx+1}">
+        </div>
+      `).join('');
+
+      canvas.innerHTML += `
+        <div class="team-card ${isDead ? 'wiped' : ''} ${focusedSlot === i ? 'selected-focus' : ''}" onclick="focusedSlot=${i}">
+          <div class="card-header">
+            <span class="slot-chip">#${i + 1}</span>
+            <input class="inp-team-name" value="${t.name || ''}" onchange="teams[${i}].name=this.value.trim().toUpperCase(); pushSync();" />
+            <input class="inp-logo-url" placeholder="Logo URL" value="${t.logo || ''}" onchange="teams[${i}].logo=this.value.trim(); pushSync();" />
+          </div>
+
+          <div class="squad-status-row">
+            <span style="font-weight:700; font-size:13px; color:#9ca3af;">ALIVE: <b style="color:#fff;">${aliveCount}/4</b></span>
+            <div class="bars-display">${barsHtml}</div>
+          </div>
+
+          <div class="score-controls">
+            <button class="btn-sub-score btn-add-kill" onclick="adjustKills(${i}, 1)">+1 KILL (${t.kills || 0})</button>
+            <button class="btn-sub-score btn-kill-minus" onclick="adjustKills(${i}, -1)">-1 KILL</button>
+            <button class="btn-sub-score btn-wipe-squad" onclick="wipeTeam(${i})">WIPE</button>
+          </div>
+        </div>
+      `;
+    });
+  }
+
+  // Global Keyboard Shortcuts
+  window.addEventListener('keydown', (e) => {
+    // Prevent typing inside inputs from triggering hotkeys
+    if (['INPUT', 'SELECT'].includes(document.activeElement.tagName)) return;
+
+    if (e.key >= '1' && e.key <= '9') {
+      focusedSlot = parseInt(e.key) - 1;
+      renderSlots();
+    } else if (e.key === '0') {
+      focusedSlot = 9; // Slot 10
+      renderSlots();
+    } else if (e.key === '+' || e.key === '=') {
+      adjustKills(focusedSlot, 1);
+    } else if (e.key === '-' || e.key === '_') {
+      adjustKills(focusedSlot, -1);
+    } else if (e.key.toLowerCase() === 'w') {
+      wipeTeam(focusedSlot);
+    }
+  });
+
+  // Timer Code
   let timerState = { running: false, seconds: 0, startTimestamp: null };
-  let localDeskInterval = null;
+  let localTimerInterval = null;
 
   db.ref('esports_data/timer').on('value', (snap) => {
     const val = snap.val();
     if (val) {
       timerState = val;
-      updateDeskTimerUI();
+      updateTimerUI();
     }
   });
 
-  function formatTime(totalSec) {
-    const m = String(Math.floor(totalSec / 60)).padStart(2, '0');
-    const s = String(totalSec % 60).padStart(2, '0');
-    return `${m}:${s}`;
+  function formatTime(s) {
+    return `${String(Math.floor(s/60)).padStart(2,'0')}:${String(s%60).padStart(2,'0')}`;
   }
 
-  function updateDeskTimerUI() {
-    clearInterval(localDeskInterval);
+  function updateTimerUI() {
+    clearInterval(localTimerInterval);
     if (timerState.running && timerState.startTimestamp) {
-      localDeskInterval = setInterval(() => {
+      localTimerInterval = setInterval(() => {
         const elapsed = Math.floor((Date.now() - timerState.startTimestamp) / 1000);
-        document.getElementById('desk-timer').innerText = formatTime(elapsed);
+        document.getElementById('clock-readout').innerText = formatTime(elapsed);
       }, 1000);
       const elapsed = Math.floor((Date.now() - timerState.startTimestamp) / 1000);
-      document.getElementById('desk-timer').innerText = formatTime(elapsed);
+      document.getElementById('clock-readout').innerText = formatTime(elapsed);
     } else {
-      document.getElementById('desk-timer').innerText = formatTime(timerState.seconds || 0);
+      document.getElementById('clock-readout').innerText = formatTime(timerState.seconds || 0);
     }
   }
 
   function startTimer() {
-    const currentSec = timerState.seconds || 0;
+    const sec = timerState.seconds || 0;
     db.ref('esports_data/timer').set({
       running: true,
-      seconds: currentSec,
-      startTimestamp: Date.now() - (currentSec * 1000)
+      seconds: sec,
+      startTimestamp: Date.now() - (sec * 1000)
     });
   }
 
@@ -397,101 +567,7 @@
     });
   }
 
-  // 3. Fast Card Toggles
-  function togglePlayer(tIdx, pIdx) {
-    const current = teams[tIdx].players[pIdx].status === 'dead' ? 'dead' : 'alive';
-    teams[tIdx].players[pIdx].status = current === 'alive' ? 'dead' : 'alive';
-    teams[tIdx].alive = teams[tIdx].players.filter(p => p.status === 'alive').length;
-    sync();
-  }
-
-  function adjustKill(tIdx, amount) {
-    teams[tIdx].kills = Math.max(0, (teams[tIdx].kills || 0) + amount);
-    sync();
-  }
-
-  function wipeTeam(tIdx) {
-    teams[tIdx].players.forEach(p => p.status = 'dead');
-    teams[tIdx].alive = 0;
-    sync();
-  }
-
-  function resetAllRevive() {
-    teams.forEach(t => {
-      t.players = [{status:'alive'}, {status:'alive'}, {status:'alive'}, {status:'alive'}];
-      t.alive = 4;
-    });
-    sync();
-  }
-
-  function confirmResetKills() {
-    if (confirm("Reset ALL team eliminations back to 0?")) {
-      teams.forEach(t => t.kills = 0);
-      sync();
-    }
-  }
-
-  function filterCards() {
-    const q = document.getElementById('search-box').value.toUpperCase();
-    const cards = document.querySelectorAll('.team-card');
-    cards.forEach(card => {
-      const name = card.querySelector('.name-input').value.toUpperCase();
-      card.style.display = name.includes(q) ? '' : 'none';
-    });
-  }
-
-  function renderGrid() {
-    const grid = document.getElementById('teams-grid');
-    grid.innerHTML = '';
-
-    teams.forEach((t, i) => {
-      if (!t.players) {
-        t.players = [{status:'alive'}, {status:'alive'}, {status:'alive'}, {status:'alive'}];
-      }
-      const isDead = t.players.every(p => p.status === 'dead');
-      const aliveCount = t.players.filter(p => p.status === 'alive').length;
-
-      let barsHtml = t.players.map((p, pIdx) => {
-        const isAlive = p.status !== 'dead';
-        return `
-          <button class="p-toggle ${isAlive ? 'alive' : 'dead'}" onclick="togglePlayer(${i}, ${pIdx})" title="Click to toggle Player ${pIdx+1}">
-            ${isAlive ? 'ALIVE' : 'DEAD'}
-          </button>
-        `;
-      }).join('');
-
-      grid.innerHTML += `
-        <div class="team-card ${isDead ? 'wiped' : ''}">
-          <div class="card-header">
-            <span class="slot-tag">#${i + 1}</span>
-            <input class="name-input" value="${t.name || ''}" onchange="teams[${i}].name=this.value.trim().toUpperCase(); sync();" />
-            <input class="logo-input" placeholder="Logo URL" value="${t.logo || ''}" onchange="teams[${i}].logo=this.value.trim(); sync();" />
-          </div>
-
-          <div class="players-container">
-            <div class="players-title">
-              <span>SQUAD SENSORS</span>
-              <span>${aliveCount} / 4 STANDING</span>
-            </div>
-            <div class="player-bars">
-              ${barsHtml}
-            </div>
-          </div>
-
-          <div class="score-row">
-            <span class="score-display">ELIMS: <b>${t.kills || 0}</b></span>
-            <div class="kill-btns">
-              <button class="btn-kill btn-kill-add" onclick="adjustKill(${i}, 1)">+1</button>
-              <button class="btn-kill btn-kill-sub" onclick="adjustKill(${i}, -1)">-1</button>
-              <button class="btn-kill btn-wipe-team" onclick="wipeTeam(${i})">WIPE</button>
-            </div>
-          </div>
-        </div>
-      `;
-    });
-  }
-
-  renderGrid();
+  renderSlots();
 </script>
 </body>
 </html>
