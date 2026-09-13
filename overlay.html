@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Pro Broadcast Esports HUD Overlay</title>
+<title>OBS Esports HUD Overlay</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Teko:wght@700&family=Rajdhani:wght@700;800&family=Chakra+Petch:wght@700;800&display=swap');
 
@@ -17,27 +17,27 @@
     position: relative;
   }
 
-  /* FLUSH DOCK - DYNAMICALLY EXPANDS WITH LONG NAMES */
+  /* FLUSH LEFT DOCK CONTAINER */
   .left-broadcast-dock {
     position: absolute;
     top: 10px;
     left: 0;
-    width: fit-content;
+    width: max-content;
     min-width: 320px;
-    max-width: 550px;
     display: flex;
     flex-direction: column;
     gap: 8px;
   }
 
-  /* 1. SQUAD WIPEOUT ALERT BANNER */
+  /* 1. RESTORED OP CINEMATIC WIPEOUT BANNER */
   #elim-banner {
-    width: 100%;
-    background: linear-gradient(135deg, rgba(10, 0, 2, 0.98) 0%, rgba(220, 20, 40, 0.95) 50%, rgba(10, 0, 2, 0.98) 100%);
+    width: max-content;
+    min-width: 100%;
+    background: linear-gradient(135deg, rgba(20, 5, 8, 0.98) 0%, rgba(200, 20, 30, 0.95) 50%, rgba(15, 3, 5, 0.98) 100%);
     border: 2px solid #ff2233;
     border-left: none;
     border-radius: 0 6px 6px 0;
-    padding: 8px 14px;
+    padding: 8px 18px 8px 14px;
     display: flex;
     align-items: center;
     gap: 12px;
@@ -64,6 +64,7 @@
     line-height: 1;
     filter: drop-shadow(0 0 10px #ff0033);
     animation: skullShock 0.25s infinite alternate ease-in-out;
+    flex-shrink: 0;
   }
   @keyframes skullShock {
     0% { transform: rotate(-6deg) scale(1); }
@@ -108,7 +109,7 @@
     text-transform: uppercase;
   }
 
-  /* 2. LEADERBOARD HUD - AUTO EXPANDS */
+  /* 2. LEADERBOARD HUD */
   .hud-container {
     width: 100%;
     display: flex;
@@ -144,19 +145,19 @@
     text-shadow: 0 0 10px rgba(66, 106, 239, 0.7);
   }
 
-  /* Header - Auto Resizing Columns */
+  /* Header */
   .hud-header {
     background: #426aef;
     color: #ffffff;
     display: grid;
-    grid-template-columns: 1fr 60px 75px;
+    grid-template-columns: max-content 65px 75px;
     align-items: center;
-    padding: 6px 12px;
+    padding: 6px 14px;
     font-weight: 800;
     font-size: 15px;
     letter-spacing: 1px;
   }
-  .hud-header .col-teams { text-align: left; padding-left: 20px; }
+  .hud-header .col-teams { text-align: left; padding-left: 24px; min-width: 160px; }
   .hud-header .col-elims { text-align: center; }
   .hud-header .col-alive { text-align: center; }
 
@@ -172,16 +173,16 @@
     background: #0a0d14;
     border-left: 4px solid #426aef;
     display: grid;
-    grid-template-columns: 1fr 60px 75px;
+    grid-template-columns: max-content 65px 75px;
     align-items: center;
-    padding: 4px 10px;
+    padding: 4px 14px 4px 8px;
     min-height: 38px;
     position: relative;
     overflow: hidden;
-    transition: background 0.25s ease;
+    transition: background 0.3s ease;
   }
 
-  /* Eliminated Team Row */
+  /* Eliminated Team Row (Solid pitch black, zero bleed-through) */
   .hud-row.eliminated-row {
     background: #000000 !important;
     border-left-color: #1a1a1a !important;
@@ -191,10 +192,7 @@
   .hud-row.eliminated-row .elims-cell { color: #3b4252 !important; }
   .hud-row.eliminated-row .team-logo { filter: grayscale(1) opacity(0.2); }
 
-  /* Red Shock Laser Sweep */
-  .hud-row.just-vanished {
-    animation: rowGlitchShake 0.4s ease-out;
-  }
+  /* RESTORED ORIGINAL LEFT-TO-RIGHT NEON RED LASER WIPE */
   .hud-row.just-vanished::after {
     content: '';
     position: absolute;
@@ -205,42 +203,45 @@
     background: linear-gradient(
       90deg, 
       transparent 0%, 
-      rgba(220, 38, 38, 0.4) 30%, 
+      rgba(220, 38, 38, 0.4) 25%, 
       #ffffff 65%, 
       #ff1133 100%
     );
     box-shadow: 0 0 35px #ff1133;
-    animation: sweepRedVanish 0.85s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+    animation: sweepRedLaser 0.9s cubic-bezier(0.25, 1, 0.5, 1) forwards;
     pointer-events: none;
+    z-index: 50;
   }
 
-  @keyframes sweepRedVanish {
-    0% { left: -100%; opacity: 1; }
-    60% { left: 100%; opacity: 0.95; }
-    100% { left: 130%; opacity: 0; }
+  @keyframes sweepRedLaser {
+    0% {
+      left: -100%;
+      opacity: 1;
+    }
+    60% {
+      left: 100%;
+      opacity: 0.95;
+    }
+    100% {
+      left: 140%;
+      opacity: 0;
+    }
   }
 
-  @keyframes rowGlitchShake {
-    0% { transform: translateX(0); }
-    20% { transform: translateX(-4px); }
-    40% { transform: translateX(4px); }
-    60% { transform: translateX(-2px); }
-    80% { transform: translateX(2px); }
-    100% { transform: translateX(0); }
-  }
-
-  /* Team Identifiers - No Word Truncation / No Dots */
+  /* Team Identifiers */
   .team-cell {
     display: flex;
     align-items: center;
     gap: 8px;
-    padding-right: 12px;
+    min-width: 160px;
+    padding-right: 18px;
+    white-space: nowrap;
   }
   .rank-tag {
     color: #426aef;
     font-size: 17px;
     font-weight: 800;
-    min-width: 18px;
+    min-width: 22px;
     text-align: right;
     font-family: 'Chakra Petch', sans-serif;
     flex-shrink: 0;
@@ -301,7 +302,7 @@
     border: 1px solid #1e2433;
   }
 
-  /* Legend Footer - Full Spelled-Out Text */
+  /* Legend Footer */
   .hud-legend {
     background: #000000;
     border-top: 1px solid rgba(255, 255, 255, 0.12);
@@ -309,7 +310,7 @@
     display: flex;
     align-items: center;
     justify-content: space-evenly;
-    padding: 6px 12px;
+    padding: 6px 14px;
     font-size: 13px;
     font-weight: 800;
     letter-spacing: 0.8px;
@@ -331,7 +332,6 @@
 </head>
 <body>
 
-  <!-- FLUSH DOCKED TO LEFT EDGE WITH EXPANDING WIDTH -->
   <div class="left-broadcast-dock">
 
     <!-- SQUAD WIPEOUT ALERT -->
@@ -346,13 +346,11 @@
 
     <!-- MAIN LEADERBOARD HUD -->
     <div class="hud-container">
-      <!-- Match Duration -->
       <div class="hud-timer-bar">
         <span class="hud-timer-label">MATCH TIME</span>
         <span class="hud-timer-clock" id="timer-display">00:00</span>
       </div>
 
-      <!-- Header -->
       <div class="hud-header">
         <span class="col-teams">TEAMS</span>
         <span class="col-elims">ELIMS</span>
@@ -361,7 +359,6 @@
 
       <div class="hud-body" id="hud-body"></div>
 
-      <!-- Legend Footer (Cleanly Spelled Out) -->
       <div class="hud-legend">
         <div class="legend-item">
           <span class="legend-box" style="background:#426aef; box-shadow: 0 0 6px #426aef;"></span>
@@ -395,29 +392,47 @@
   let bannerTimer = null;
   const justVaporizedTeams = new Set();
 
-  function playEliminationAudio() {
+  // HIGH-IMPACT DUAL-LAYER SYNTHETIC SFX (Sub-drop bass + high-freq electric sting)
+  function playWipeoutStinger() {
     try {
-      const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-      const osc = audioCtx.createOscillator();
-      const gain = audioCtx.createGain();
+      const AudioCtx = window.AudioContext || window.webkitAudioContext;
+      if (!AudioCtx) return;
+      const ctx = new AudioCtx();
 
-      osc.type = 'sawtooth';
-      osc.frequency.setValueAtTime(140, audioCtx.currentTime);
-      osc.frequency.exponentialRampToValueAtTime(32, audioCtx.currentTime + 0.45);
+      // Sub-Bass Drop Oscillator
+      const subOsc = ctx.createOscillator();
+      const subGain = ctx.createGain();
+      subOsc.type = 'sawtooth';
+      subOsc.frequency.setValueAtTime(160, ctx.currentTime);
+      subOsc.frequency.exponentialRampToValueAtTime(28, ctx.currentTime + 0.55);
 
-      gain.gain.setValueAtTime(0.4, audioCtx.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.5);
+      subGain.gain.setValueAtTime(0.5, ctx.currentTime);
+      subGain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.6);
 
-      osc.connect(gain);
-      gain.connect(audioCtx.destination);
+      subOsc.connect(subGain);
+      subGain.connect(ctx.destination);
+      subOsc.start();
+      subOsc.stop(ctx.currentTime + 0.65);
 
-      osc.start();
-      osc.stop(audioCtx.currentTime + 0.55);
+      // High-Frequency Laser Crack Oscillator
+      const stingOsc = ctx.createOscillator();
+      const stingGain = ctx.createGain();
+      stingOsc.type = 'sine';
+      stingOsc.frequency.setValueAtTime(900, ctx.currentTime);
+      stingOsc.frequency.exponentialRampToValueAtTime(220, ctx.currentTime + 0.25);
+
+      stingGain.gain.setValueAtTime(0.3, ctx.currentTime);
+      stingGain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.3);
+
+      stingOsc.connect(stingGain);
+      stingGain.connect(ctx.destination);
+      stingOsc.start();
+      stingOsc.stop(ctx.currentTime + 0.35);
     } catch (e) {}
   }
 
   function showEliminationBanner(name, logo) {
-    playEliminationAudio();
+    playWipeoutStinger();
 
     const banner = document.getElementById('elim-banner');
     const teamSpan = document.getElementById('banner-team-name');
