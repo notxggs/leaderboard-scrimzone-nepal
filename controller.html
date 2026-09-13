@@ -117,7 +117,7 @@
     <h2>REMOTE CLOUD DESK</h2>
     <div class="top-actions">
       <button class="btn-header btn-new-tourney" onclick="newTournamentReset()">+ NEW TOURNAMENT (0 0)</button>
-      <button class="btn-header btn-reset-match" onclick="resetCurrentMatch()">RESET CURRENT MATCH</button>
+      <button class="btn-header btn-reset-match" onclick="resetCurrentMatch()">RESET CURRENT MATCH (NEXT MAP)</button>
       <button class="btn-header btn-logout" onclick="logout()">LOGOUT</button>
     </div>
   </div>
@@ -139,7 +139,7 @@
       sessionStorage.setItem('admin_logged_in', 'true');
       document.getElementById('login-overlay').style.display = 'none';
     } else {
-      alert("Invalid credentials! Default is admin / 1234");
+      alert("Invalid password! Default is admin / 1234");
     }
   }
 
@@ -148,17 +148,16 @@
     location.reload();
   }
 
-  // PASTE YOUR FIREBASE CONFIG KEYS HERE:
   const firebaseConfig = {
-  apiKey: "AIzaSyBRcMrsrifYv-VDsCrTMKZuQiub30a7wEs",
-  authDomain: "tournment-leaderboard.firebaseapp.com",
-  databaseURL: "https://tournment-leaderboard-default-rtdb.firebaseio.com",
-  projectId: "tournment-leaderboard",
-  storageBucket: "tournment-leaderboard.firebasestorage.app",
-  messagingSenderId: "685244342962",
-  appId: "1:685244342962:web:d31c15a67fb9b6161f5fab",
-  measurementId: "G-RKSK1ZBC5M"
-};
+    apiKey: "AIzaSyBRcMrsrifYv-VDsCrTMKZuQiub30a7wEs",
+    authDomain: "tournment-leaderboard.firebaseapp.com",
+    databaseURL: "https://tournment-leaderboard-default-rtdb.firebaseio.com",
+    projectId: "tournment-leaderboard",
+    storageBucket: "tournment-leaderboard.firebasestorage.app",
+    messagingSenderId: "685244342962",
+    appId: "1:685244342962:web:d31c15a67fb9b6161f5fab",
+    measurementId: "G-RKSK1ZBC5M"
+  };
 
   firebase.initializeApp(firebaseConfig);
   const db = firebase.database();
@@ -218,7 +217,7 @@
   }
 
   function resetCurrentMatch() {
-    if (confirm("Start next Map? Current map kills will be banked into Total Points, match kills reset to 0, and all squads revive to 4.")) {
+    if (confirm("Start next Map? Current map kills will be banked into Total Points, map kills reset to 0, and all squads revive to 4.")) {
       teams.forEach(t => {
         t.placement = (Number(t.placement) || 0) + (Number(t.kills) || 0);
         t.kills = 0;
@@ -230,7 +229,7 @@
   }
 
   function newTournamentReset() {
-    const clearNames = confirm("Start a brand new tournament?\n\nOK = reset everything and reset names to SLOT 1-12.\nCancel = reset points to 0 but keep names.");
+    const clearNames = confirm("Start a brand new tournament?\n\nOK = reset points to 0 AND reset names to SLOT 1-12.\nCancel = reset points to 0 but keep team names.");
     if (clearNames) {
       teams = defaultTeams.map(t => ({ ...t }));
     } else {
