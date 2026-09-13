@@ -17,19 +17,19 @@
     position: relative;
   }
 
-  /* FLUSH LEFT DOCK CONTAINER */
+  /* FLUSH LEFT DOCK - ONLY EXPANDS IF TEAM NAMES GROW */
   .left-broadcast-dock {
     position: absolute;
     top: 10px;
     left: 0;
     width: max-content;
-    min-width: 320px;
+    min-width: 280px;
     display: flex;
     flex-direction: column;
     gap: 8px;
   }
 
-  /* 1. RESTORED OP CINEMATIC WIPEOUT BANNER */
+  /* 1. SQUAD WIPEOUT ALERT BANNER */
   #elim-banner {
     width: max-content;
     min-width: 100%;
@@ -145,19 +145,19 @@
     text-shadow: 0 0 10px rgba(66, 106, 239, 0.7);
   }
 
-  /* Header */
+  /* Header - Resizes dynamically based on team cell width */
   .hud-header {
     background: #426aef;
     color: #ffffff;
     display: grid;
-    grid-template-columns: max-content 65px 75px;
+    grid-template-columns: 1fr 65px 75px;
     align-items: center;
     padding: 6px 14px;
     font-weight: 800;
     font-size: 15px;
     letter-spacing: 1px;
   }
-  .hud-header .col-teams { text-align: left; padding-left: 24px; min-width: 160px; }
+  .hud-header .col-teams { text-align: left; padding-left: 24px; }
   .hud-header .col-elims { text-align: center; }
   .hud-header .col-alive { text-align: center; }
 
@@ -173,7 +173,7 @@
     background: #0a0d14;
     border-left: 4px solid #426aef;
     display: grid;
-    grid-template-columns: max-content 65px 75px;
+    grid-template-columns: 1fr 65px 75px;
     align-items: center;
     padding: 4px 14px 4px 8px;
     min-height: 38px;
@@ -182,7 +182,7 @@
     transition: background 0.3s ease;
   }
 
-  /* Eliminated Team Row (Solid pitch black, zero bleed-through) */
+  /* Eliminated Team Row */
   .hud-row.eliminated-row {
     background: #000000 !important;
     border-left-color: #1a1a1a !important;
@@ -192,7 +192,7 @@
   .hud-row.eliminated-row .elims-cell { color: #3b4252 !important; }
   .hud-row.eliminated-row .team-logo { filter: grayscale(1) opacity(0.2); }
 
-  /* RESTORED ORIGINAL LEFT-TO-RIGHT NEON RED LASER WIPE */
+  /* Red Laser Sweep */
   .hud-row.just-vanished::after {
     content: '';
     position: absolute;
@@ -214,28 +214,19 @@
   }
 
   @keyframes sweepRedLaser {
-    0% {
-      left: -100%;
-      opacity: 1;
-    }
-    60% {
-      left: 100%;
-      opacity: 0.95;
-    }
-    100% {
-      left: 140%;
-      opacity: 0;
-    }
+    0% { left: -100%; opacity: 1; }
+    60% { left: 100%; opacity: 0.95; }
+    100% { left: 140%; opacity: 0; }
   }
 
-  /* Team Identifiers */
+  /* Team Identifiers - Dictates Natural Column Width */
   .team-cell {
     display: flex;
     align-items: center;
     gap: 8px;
-    min-width: 160px;
     padding-right: 18px;
     white-space: nowrap;
+    width: max-content;
   }
   .rank-tag {
     color: #426aef;
@@ -332,6 +323,11 @@
 </head>
 <body>
 
+  <!-- Audio Element for MrBeast Eliminated Sound Effect -->
+  <audio id="elimination-audio" preload="auto">
+    <source src="https://www.myinstants.com/media/sounds/mr-beast-eliminated-sounds-effect-4272.mp3" type="audio/mpeg">
+  </audio>
+
   <div class="left-broadcast-dock">
 
     <!-- SQUAD WIPEOUT ALERT -->
@@ -392,47 +388,16 @@
   let bannerTimer = null;
   const justVaporizedTeams = new Set();
 
-  // HIGH-IMPACT DUAL-LAYER SYNTHETIC SFX (Sub-drop bass + high-freq electric sting)
-  function playWipeoutStinger() {
-    try {
-      const AudioCtx = window.AudioContext || window.webkitAudioContext;
-      if (!AudioCtx) return;
-      const ctx = new AudioCtx();
-
-      // Sub-Bass Drop Oscillator
-      const subOsc = ctx.createOscillator();
-      const subGain = ctx.createGain();
-      subOsc.type = 'sawtooth';
-      subOsc.frequency.setValueAtTime(160, ctx.currentTime);
-      subOsc.frequency.exponentialRampToValueAtTime(28, ctx.currentTime + 0.55);
-
-      subGain.gain.setValueAtTime(0.5, ctx.currentTime);
-      subGain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.6);
-
-      subOsc.connect(subGain);
-      subGain.connect(ctx.destination);
-      subOsc.start();
-      subOsc.stop(ctx.currentTime + 0.65);
-
-      // High-Frequency Laser Crack Oscillator
-      const stingOsc = ctx.createOscillator();
-      const stingGain = ctx.createGain();
-      stingOsc.type = 'sine';
-      stingOsc.frequency.setValueAtTime(900, ctx.currentTime);
-      stingOsc.frequency.exponentialRampToValueAtTime(220, ctx.currentTime + 0.25);
-
-      stingGain.gain.setValueAtTime(0.3, ctx.currentTime);
-      stingGain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.3);
-
-      stingOsc.connect(stingGain);
-      stingGain.connect(ctx.destination);
-      stingOsc.start();
-      stingOsc.stop(ctx.currentTime + 0.35);
-    } catch (e) {}
+  function playEliminationSound() {
+    const audio = document.getElementById('elimination-audio');
+    if (audio) {
+      audio.currentTime = 0;
+      audio.play().catch(() => {});
+    }
   }
 
   function showEliminationBanner(name, logo) {
-    playWipeoutStinger();
+    playEliminationSound();
 
     const banner = document.getElementById('elim-banner');
     const teamSpan = document.getElementById('banner-team-name');
