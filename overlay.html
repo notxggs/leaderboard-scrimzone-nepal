@@ -2,118 +2,202 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Esports HUD Overlay</title>
+<title>Esports Elite HUD Overlay</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@600;700;800&family=Chakra+Petch:wght@700&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@600;700;800&family=Chakra+Petch:wght@700&family=Teko:wght@600;700&display=swap');
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body {
     background: transparent;
     font-family: 'Rajdhani', sans-serif;
-    padding: 20px;
+    padding: 24px;
     overflow: hidden;
     user-select: none;
   }
 
-  .hud-container {
-    width: 255px;
+  /* 1. Dramatic Squad Wipe Banner */
+  #wipe-banner {
+    position: fixed;
+    top: 25px;
+    left: 50%;
+    transform: translateX(-50%) translateY(-200%) scale(0.85);
+    background: linear-gradient(90deg, rgba(239, 68, 68, 0.95), rgba(15, 18, 28, 0.95), rgba(66, 106, 239, 0.95));
+    border: 2px solid #ef4444;
+    border-radius: 6px;
+    padding: 10px 28px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    box-shadow: 0 0 35px rgba(239, 68, 68, 0.8), inset 0 0 15px rgba(239, 68, 68, 0.4);
+    opacity: 0;
+    transition: transform 0.45s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.3s ease;
+    z-index: 1000;
+  }
+  #wipe-banner.active {
+    transform: translateX(-50%) translateY(0) scale(1);
+    opacity: 1;
+    animation: wipePulse 1.2s infinite alternate ease-in-out;
+  }
+  @keyframes wipePulse {
+    0% { box-shadow: 0 0 25px rgba(239, 68, 68, 0.6); }
+    100% { box-shadow: 0 0 45px rgba(239, 68, 68, 1), 0 0 15px #426aef; }
+  }
+  #wipe-banner img {
+    width: 38px;
+    height: 38px;
+    border-radius: 4px;
+    object-fit: cover;
+    border: 1px solid #fff;
+  }
+  .banner-details {
     display: flex;
     flex-direction: column;
-    box-shadow: 0 8px 24px rgba(0,0,0,0.7);
+  }
+  .banner-title {
+    font-family: 'Teko', sans-serif;
+    font-size: 32px;
+    letter-spacing: 1.5px;
+    color: #fff;
+    line-height: 0.9;
+    text-transform: uppercase;
+    text-shadow: 0 2px 8px rgba(0,0,0,0.8);
+  }
+  .banner-sub {
+    font-size: 11px;
+    font-weight: 800;
+    color: #ffb4b4;
+    letter-spacing: 2px;
   }
 
-  /* Top Match Timer Bar */
+  /* 2. HUD Core Container */
+  .hud-container {
+    width: 275px;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 12px 35px rgba(0,0,0,0.8);
+    border-radius: 6px;
+    overflow: hidden;
+  }
+
+  /* Top Match Timer Header with #426aef Theme */
   .hud-timer-bar {
-    background: #090c0a;
-    border: 1px solid #1e2920;
-    border-bottom: none;
-    border-radius: 4px 4px 0 0;
+    background: #0d1017;
+    border-bottom: 2px solid #426aef;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 3px 8px;
+    padding: 5px 12px;
   }
   .hud-timer-label {
     font-size: 11px;
     font-weight: 800;
-    color: #8e929b;
-    letter-spacing: 1px;
+    color: #93a3b8;
+    letter-spacing: 1.5px;
   }
   .hud-timer-clock {
-    font-size: 14px;
+    font-size: 16px;
     font-weight: 800;
-    color: #8cf000;
+    color: #426aef;
     font-family: 'Chakra Petch', sans-serif;
     letter-spacing: 1px;
+    text-shadow: 0 0 10px rgba(66, 106, 239, 0.6);
   }
 
-  /* Neon Green Header */
+  /* #426aef Primary Header */
   .hud-header {
-    background: #8cf000;
-    color: #0b1500;
+    background: linear-gradient(90deg, #426aef 0%, #2b48a8 100%);
+    color: #ffffff;
     display: grid;
-    grid-template-columns: 120px 48px 1fr;
+    grid-template-columns: 135px 50px 1fr;
     align-items: center;
-    padding: 3px 8px;
+    padding: 5px 10px;
     font-weight: 800;
     font-size: 13px;
-    letter-spacing: 0.5px;
+    letter-spacing: 1px;
+    text-shadow: 0 1px 3px rgba(0,0,0,0.5);
   }
-  .hud-header .col-teams { text-align: center; }
+  .hud-header .col-teams { text-align: left; padding-left: 20px; }
   .hud-header .col-elims { text-align: center; }
   .hud-header .col-alive { text-align: center; }
 
-  /* Leaderboard Rows */
+  /* Leaderboard Rows List */
   .hud-body {
     display: flex;
     flex-direction: column;
-    gap: 1px;
-    background: rgba(0, 0, 0, 0.6);
-  }
-
-  .hud-row {
-    background: rgba(14, 25, 18, 0.94);
-    border-left: 3px solid #8cf000;
-    display: grid;
-    grid-template-columns: 120px 48px 1fr;
-    align-items: center;
-    padding: 3px 6px;
-    min-height: 31px;
+    gap: 2px;
+    background: rgba(8, 10, 15, 0.85);
     position: relative;
-    transition: all 0.2s ease;
   }
 
+  /* Smooth Row Animation Canvas */
+  .hud-row {
+    background: linear-gradient(90deg, rgba(16, 20, 31, 0.96) 0%, rgba(20, 26, 40, 0.92) 100%);
+    border-left: 3.5px solid #426aef;
+    display: grid;
+    grid-template-columns: 135px 50px 1fr;
+    align-items: center;
+    padding: 4px 8px;
+    min-height: 33px;
+    position: relative;
+    transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1), background 0.3s ease, opacity 0.3s;
+  }
+
+  /* Top #1 Leader Highlight */
+  .hud-row.rank-1 {
+    border-left-color: #8cf000;
+    background: linear-gradient(90deg, rgba(66, 106, 239, 0.3) 0%, rgba(16, 20, 31, 0.98) 100%);
+    box-shadow: inset 0 0 12px rgba(66, 106, 239, 0.3);
+  }
+  .hud-row.rank-1 .rank-tag {
+    color: #8cf000;
+    text-shadow: 0 0 8px rgba(140, 240, 0, 0.6);
+  }
+
+  /* Leader Takeover Flash */
+  .hud-row.leader-flash {
+    animation: leaderFlashAnim 1s ease-out;
+  }
+  @keyframes leaderFlashAnim {
+    0% { background: #426aef; }
+    50% { background: #8cf000; }
+    100% { background: linear-gradient(90deg, rgba(66, 106, 239, 0.3) 0%, rgba(16, 20, 31, 0.98) 100%); }
+  }
+
+  /* Eliminated Team State */
   .hud-row.eliminated-row {
-    opacity: 0.35;
-    filter: grayscale(0.8);
-    border-left-color: #2b302c;
-    background: rgba(10, 14, 12, 0.92);
+    opacity: 0.32;
+    filter: grayscale(0.85);
+    border-left-color: #2b303d !important;
+    background: rgba(10, 12, 16, 0.9) !important;
+    transform: scale(0.98);
   }
 
-  /* Team Info */
+  /* Team Info (Rank + Logo + Name) */
   .team-cell {
     display: flex;
     align-items: center;
-    gap: 6px;
+    gap: 7px;
     overflow: hidden;
   }
   .rank-tag {
-    color: #8cf000;
-    font-size: 12px;
+    color: #426aef;
+    font-size: 13px;
     font-weight: 800;
     min-width: 14px;
     text-align: right;
   }
   .team-logo {
-    width: 19px;
-    height: 19px;
-    object-fit: contain;
-    border-radius: 2px;
+    width: 20px;
+    height: 20px;
+    object-fit: cover;
+    border-radius: 3px;
+    background: #000;
+    border: 1px solid rgba(255,255,255,0.1);
   }
   .team-name {
     font-weight: 800;
     font-size: 14px;
-    color: #8cf000;
+    color: #ffffff;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -123,15 +207,26 @@
   /* Elims Column */
   .elims-cell {
     text-align: center;
-    font-size: 14px;
-    font-weight: 700;
+    font-size: 15px;
+    font-weight: 800;
     color: #ffffff;
-    border-left: 1px solid rgba(255, 255, 255, 0.15);
-    border-right: 1px solid rgba(255, 255, 255, 0.15);
+    border-left: 1px solid rgba(255, 255, 255, 0.08);
+    border-right: 1px solid rgba(255, 255, 255, 0.08);
     height: 100%;
     display: flex;
     align-items: center;
     justify-content: center;
+    transition: transform 0.2s, color 0.2s;
+  }
+  .elims-cell.score-bump {
+    animation: scorePop 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    color: #8cf000;
+    text-shadow: 0 0 10px rgba(140, 240, 0, 0.8);
+  }
+  @keyframes scorePop {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.45); }
+    100% { transform: scale(1); }
   }
 
   /* 4 Alive Status Bars */
@@ -143,35 +238,43 @@
     padding: 0 4px;
   }
   .bar {
-    width: 4.5px;
+    width: 5px;
     height: 18px;
-    border-radius: 1px;
-    transition: background 0.15s ease;
+    border-radius: 1.5px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   }
-  .bar.status-alive { background: #8cf000; }
-  .bar.status-dead  { background: #000000; }
+  .bar.status-alive {
+    background: #8cf000;
+    box-shadow: 0 0 8px rgba(140, 240, 0, 0.4);
+  }
+  .bar.status-dead {
+    background: #141720;
+    border: 1px solid #232738;
+    transform: scaleY(0.8);
+  }
 
-  /* Legend Footer (Only Alive & Eliminated) */
+  /* Legend Footer */
   .hud-legend {
-    background: #ffffff;
-    color: #111;
+    background: #0d1017;
+    border-top: 1px solid #1a2030;
     display: flex;
     align-items: center;
     justify-content: space-evenly;
-    padding: 3px 6px;
-    font-size: 9px;
+    padding: 5px 8px;
+    font-size: 10px;
     font-weight: 800;
-    border-radius: 0 0 4px 4px;
-    letter-spacing: 0.4px;
+    letter-spacing: 0.5px;
   }
   .legend-item {
     display: flex;
     align-items: center;
-    gap: 4px;
+    gap: 5px;
+    color: #94a3b8;
   }
   .legend-box {
     width: 8px;
     height: 8px;
+    border-radius: 1px;
     display: inline-block;
   }
 </style>
@@ -180,30 +283,37 @@
 </head>
 <body>
 
+  <!-- Wipe Popout Alert -->
+  <div id="wipe-banner">
+    <img id="wipe-logo" src="" alt="logo" />
+    <div class="banner-details">
+      <div class="banner-title" id="wipe-team-name">TEAM WIPED</div>
+      <div class="banner-sub">SQUAD ELIMINATED</div>
+    </div>
+  </div>
+
+  <!-- HUD Container -->
   <div class="hud-container">
-    <!-- Top Timer -->
     <div class="hud-timer-bar">
-      <span class="hud-timer-label">MATCH TIME</span>
+      <span class="hud-timer-label">MATCH TIMER</span>
       <span class="hud-timer-clock" id="timer-display">00:00</span>
     </div>
 
-    <!-- Green Header -->
     <div class="hud-header">
       <span class="col-teams">TEAMS</span>
       <span class="col-elims">ELIMS</span>
-      <span class="col-alive">ALIVE</span>
+      <span class="col-alive">STATUS</span>
     </div>
 
     <div class="hud-body" id="hud-body"></div>
 
-    <!-- Legend Footer -->
     <div class="hud-legend">
       <div class="legend-item">
-        <span class="legend-box" style="background:#8cf000;"></span>
+        <span class="legend-box" style="background:#8cf000; box-shadow:0 0 6px rgba(140,240,0,0.5);"></span>
         <span>ALIVE</span>
       </div>
       <div class="legend-item">
-        <span class="legend-box" style="background:#000000;"></span>
+        <span class="legend-box" style="background:#141720; border:1px solid #374151;"></span>
         <span>ELIMINATED</span>
       </div>
     </div>
@@ -224,11 +334,103 @@
   firebase.initializeApp(firebaseConfig);
   const db = firebase.database();
 
+  let previousTeams = [];
+  let wipeTimeout = null;
+  let leaderTeamName = null;
+
+  // 1. Wipe Banner Trigger
+  function triggerWipeBanner(teamName, teamLogo) {
+    const banner = document.getElementById('wipe-banner');
+    document.getElementById('wipe-team-name').innerText = `${teamName} SQUAD WIPED`;
+    document.getElementById('wipe-logo').src = teamLogo || 'https://dummyimage.com/38x38/000/fff&text=' + (teamName ? teamName[0] : '!');
+    
+    banner.classList.add('active');
+    clearTimeout(wipeTimeout);
+    wipeTimeout = setTimeout(() => {
+      banner.classList.remove('active');
+    }, 4000);
+  }
+
+  // 2. Real-Time Teams Listener
   db.ref('esports_data/teams').on('value', (snapshot) => {
     const teams = snapshot.val();
-    if (teams && Array.isArray(teams)) renderOverlay(teams);
+    if (teams && Array.isArray(teams)) {
+      detectEventsAndRender(teams);
+    }
   });
 
+  function detectEventsAndRender(teams) {
+    // Check for wipe events
+    if (previousTeams.length > 0) {
+      teams.forEach(t => {
+        const prev = previousTeams.find(p => p.name === t.name);
+        if (prev) {
+          const prevAlive = (prev.players || []).filter(p => p.status !== 'dead').length;
+          const currAlive = (t.players || []).filter(p => p.status !== 'dead').length;
+          if (prevAlive > 0 && currAlive === 0) {
+            triggerWipeBanner(t.name, t.logo);
+          }
+        }
+      });
+    }
+
+    // Sort descending by eliminations, then alive count
+    const sorted = [...teams].sort((a, b) => {
+      const elimsA = Number(a.kills) || 0;
+      const elimsB = Number(b.kills) || 0;
+      if (elimsB !== elimsA) return elimsB - elimsA;
+
+      const aliveA = (a.players || []).filter(p => p.status !== 'dead').length;
+      const aliveB = (b.players || []).filter(p => p.status !== 'dead').length;
+      return aliveB - aliveA;
+    });
+
+    const newLeader = sorted[0] ? sorted[0].name : null;
+    const isNewLeader = leaderTeamName && newLeader && leaderTeamName !== newLeader;
+    leaderTeamName = newLeader;
+
+    const container = document.getElementById('hud-body');
+    container.innerHTML = '';
+
+    sorted.forEach((team, index) => {
+      const elims = Number(team.kills) || 0;
+      const players = team.players || [
+        { status: 'alive' }, { status: 'alive' },
+        { status: 'alive' }, { status: 'alive' }
+      ];
+
+      const isEliminated = players.every(p => p.status === 'dead');
+
+      // Check if kills increased for pulse effect
+      const prevTeam = previousTeams.find(p => p.name === team.name);
+      const isKillBumping = prevTeam && (Number(team.kills) > Number(prevTeam.kills));
+
+      let barsHtml = '';
+      players.slice(0, 4).forEach(p => {
+        barsHtml += `<div class="bar status-${p.status === 'dead' ? 'dead' : 'alive'}"></div>`;
+      });
+
+      const isFirst = index === 0;
+      const flashClass = (isFirst && isNewLeader) ? 'leader-flash' : '';
+      const bumpClass = isKillBumping ? 'score-bump' : '';
+
+      container.innerHTML += `
+        <div class="hud-row ${isFirst ? 'rank-1' : ''} ${flashClass} ${isEliminated ? 'eliminated-row' : ''}">
+          <div class="team-cell">
+            <span class="rank-tag">#${index + 1}</span>
+            <img class="team-logo" src="${team.logo || 'https://dummyimage.com/20x20/0d1017/426aef&text=' + (team.name ? team.name[0] : '#')}" />
+            <span class="team-name">${team.name || 'SLOT'}</span>
+          </div>
+          <div class="elims-cell ${bumpClass}">${elims}</div>
+          <div class="alive-bars">${barsHtml}</div>
+        </div>
+      `;
+    });
+
+    previousTeams = JSON.parse(JSON.stringify(teams));
+  }
+
+  // 3. Realtime Timer Sync
   let timerState = { running: false, seconds: 0, startTimestamp: null };
   let localTimerInterval = null;
 
@@ -258,45 +460,6 @@
     } else {
       document.getElementById('timer-display').innerText = formatTime(timerState.seconds || 0);
     }
-  }
-
-  function renderOverlay(teams) {
-    const container = document.getElementById('hud-body');
-    container.innerHTML = '';
-
-    const sorted = [...teams].sort((a, b) => {
-      const elimsA = Number(a.kills) || 0;
-      const elimsB = Number(b.kills) || 0;
-      if (elimsB !== elimsA) return elimsB - elimsA;
-      return (Number(b.alive) || 0) - (Number(a.alive) || 0);
-    });
-
-    sorted.forEach((team, index) => {
-      const elims = Number(team.kills) || 0;
-      const players = team.players || [
-        { status: 'alive' }, { status: 'alive' },
-        { status: 'alive' }, { status: 'alive' }
-      ];
-
-      const isEliminated = players.every(p => p.status === 'dead');
-
-      let barsHtml = '';
-      players.slice(0, 4).forEach(p => {
-        barsHtml += `<div class="bar status-${p.status === 'dead' ? 'dead' : 'alive'}"></div>`;
-      });
-
-      container.innerHTML += `
-        <div class="hud-row ${isEliminated ? 'eliminated-row' : ''}">
-          <div class="team-cell">
-            <span class="rank-tag">${index + 1}</span>
-            <img class="team-logo" src="${team.logo || 'https://dummyimage.com/19x19/000/8cf000&text=' + (team.name ? team.name[0] : '#')}" />
-            <span class="team-name">${team.name || 'SLOT'}</span>
-          </div>
-          <div class="elims-cell">${elims}</div>
-          <div class="alive-bars">${barsHtml}</div>
-        </div>
-      `;
-    });
   }
 </script>
 </body>
