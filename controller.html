@@ -2,152 +2,102 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Esports Cloud Admin Console</title>
+<title>Esports Manual Desk</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;700&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@600;700&display=swap');
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body {
-    background: #0d0e12;
+    background: #0c0e12;
     color: #e2e4e9;
-    font-family: 'Chakra Petch', sans-serif;
+    font-family: 'Rajdhani', sans-serif;
     padding: 16px;
-  }
-
-  #login-overlay {
-    position: fixed;
-    top: 0; left: 0; width: 100vw; height: 100vh;
-    background: rgba(10, 11, 15, 0.96);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
-  }
-  .login-card {
-    background: #181a22;
-    border: 1px solid #282a36;
-    padding: 30px;
-    border-radius: 8px;
-    width: 320px;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-  }
-  .login-card h3 { color: #ffb800; text-align: center; }
-  .login-card input {
-    background: #0f1015; border: 1px solid #333644; color: #fff;
-    padding: 10px; border-radius: 4px; font-family: inherit;
-  }
-  .login-btn {
-    background: #ffb800; color: #000; font-weight: bold; border: none;
-    padding: 10px; border-radius: 4px; cursor: pointer;
   }
 
   .top-bar {
     display: flex; justify-content: space-between; align-items: center;
-    border-bottom: 1px solid #232630; padding-bottom: 14px; margin-bottom: 18px;
-    flex-wrap: wrap; gap: 10px;
+    border-bottom: 1px solid #232630; padding-bottom: 12px; margin-bottom: 16px;
   }
-  .top-bar h2 { font-size: 19px; color: #ffb800; }
-  .top-actions { display: flex; gap: 8px; flex-wrap: wrap; }
-  .btn-header {
-    border: none; padding: 8px 14px; border-radius: 4px;
-    font-weight: bold; cursor: pointer; font-family: inherit; font-size: 12px;
+  .top-bar h2 { color: #8cf000; font-size: 20px; letter-spacing: 1px; }
+  .btn-top {
+    background: #8cf000; color: #000; font-weight: 800; border: none;
+    padding: 8px 14px; border-radius: 4px; cursor: pointer; font-family: inherit;
   }
-  .btn-new-tourney { background: #7a27d6; color: #fff; }
-  .btn-reset-match { background: #d92d20; color: #fff; }
-  .btn-logout { background: #282a36; color: #e2e4e9; }
+  .btn-danger { background: #d92d20; color: #fff; }
 
   .grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
-    gap: 14px;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 12px;
   }
 
   .team-card {
-    background: #171821; border: 1px solid #252834; border-radius: 6px;
-    padding: 12px; display: flex; flex-direction: column; gap: 8px;
+    background: #141720; border: 1px solid #252834; border-radius: 6px;
+    padding: 10px; display: flex; flex-direction: column; gap: 8px;
   }
-  .team-card.eliminated { border-color: #611919; background: #151114; }
+  .team-card.wiped { opacity: 0.55; border-color: #551111; }
 
-  .header-row { display: flex; align-items: center; gap: 8px; }
-  .header-row .slot-num { color: #ffb800; font-weight: bold; font-size: 13px; }
-  .name-input {
-    background: #0d0e12; border: 1px solid #333642; color: #ffb800;
-    font-weight: bold; padding: 5px 8px; border-radius: 4px; width: 90px;
-    text-transform: uppercase;
+  .row-top { display: flex; align-items: center; gap: 8px; }
+  .slot-id { color: #8cf000; font-weight: 800; font-size: 14px; width: 22px; }
+  .inp-name {
+    background: #0a0c10; border: 1px solid #333644; color: #8cf000;
+    font-weight: 800; padding: 5px 8px; border-radius: 4px; width: 90px;
+    text-transform: uppercase; font-family: inherit; font-size: 14px;
   }
-  .logo-input {
-    background: #0d0e12; border: 1px solid #333642; color: #8e929b;
-    font-size: 11px; padding: 5px; border-radius: 4px; flex: 1;
+  .inp-logo {
+    background: #0a0c10; border: 1px solid #333644; color: #8e929b;
+    padding: 5px; border-radius: 4px; flex: 1; font-size: 11px;
   }
 
-  .stats-bar {
-    display: flex; justify-content: space-between; background: #101117;
-    padding: 6px 10px; border-radius: 4px; font-size: 13px;
+  /* Player Status Toggles */
+  .player-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 4px;
+    background: #0a0c10;
+    padding: 6px;
+    border-radius: 4px;
   }
-  .stats-bar span b { color: #fff; }
+  .btn-player {
+    border: none;
+    padding: 6px 2px;
+    font-size: 11px;
+    font-weight: 800;
+    border-radius: 3px;
+    cursor: pointer;
+    font-family: inherit;
+    text-align: center;
+  }
+  .state-alive { background: #8cf000; color: #000; }
+  .state-knock { background: #6c5ce7; color: #fff; }
+  .state-dead  { background: #1c1d24; color: #666; border: 1px solid #333; }
 
-  .controls-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
-  button {
-    border: none; padding: 8px; font-weight: 700; border-radius: 4px;
+  .actions {
+    display: flex; gap: 6px; align-items: center; justify-content: space-between;
+  }
+  .btn-action {
+    border: none; padding: 6px 10px; font-weight: 700; border-radius: 3px;
     cursor: pointer; font-family: inherit; font-size: 12px;
   }
-  .btn-kill { background: #d92d20; color: #fff; }
-  .btn-kill-minus { background: #3b2225; color: #f97066; }
-  .btn-alive-add { background: #12b76a; color: #fff; }
-  .btn-alive-down { background: #f79009; color: #fff; }
-  .btn-wipe { background: #475467; color: #fff; }
-  .btn-team-reset { background: #232631; color: #8e929b; }
+  .btn-kill-add { background: #d92d20; color: #fff; }
+  .btn-kill-sub { background: #2f1719; color: #f97066; }
+  .btn-wipe { background: #373b47; color: #fff; }
 </style>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 </head>
 <body>
 
-  <div id="login-overlay">
-    <div class="login-card">
-      <h3>REMOTE ADMIN LOGIN</h3>
-      <input type="text" id="username" placeholder="Username" />
-      <input type="password" id="password" placeholder="Password" />
-      <button class="login-btn" onclick="checkLogin()">LOGIN</button>
-    </div>
-  </div>
-
   <div class="top-bar">
-    <h2>REMOTE CLOUD DESK</h2>
-    <div class="top-actions">
-      <button class="btn-header btn-new-tourney" onclick="newTournamentReset()">+ NEW TOURNAMENT (0 0)</button>
-      <button class="btn-header btn-reset-match" onclick="resetCurrentMatch()">RESET CURRENT MATCH (NEXT MAP)</button>
-      <button class="btn-header btn-logout" onclick="logout()">LOGOUT</button>
+    <h2>MANUAL DESK CONTROL</h2>
+    <div style="display:flex; gap:8px;">
+      <button class="btn-top" onclick="resetAllRevive()">REVIVE ALL (4 ALIVE)</button>
+      <button class="btn-top btn-danger" onclick="resetAllKills()">RESET ALL KILLS</button>
     </div>
   </div>
 
-  <div class="grid" id="slots-grid"></div>
+  <div class="grid" id="teams-grid"></div>
 
 <script>
-  const ADMIN_USER = "notxog";
-  const ADMIN_PASS = "1234";
-
-  if (sessionStorage.getItem('admin_logged_in') === 'true') {
-    document.getElementById('login-overlay').style.display = 'none';
-  }
-
-  function checkLogin() {
-    const u = document.getElementById('username').value;
-    const p = document.getElementById('password').value;
-    if (u === ADMIN_USER && p === ADMIN_PASS) {
-      sessionStorage.setItem('admin_logged_in', 'true');
-      document.getElementById('login-overlay').style.display = 'none';
-    } else {
-      alert("Invalid password! Default is admin / 1234");
-    }
-  }
-
-  function logout() {
-    sessionStorage.removeItem('admin_logged_in');
-    location.reload();
-  }
-
   const firebaseConfig = {
     apiKey: "AIzaSyBRcMrsrifYv-VDsCrTMKZuQiub30a7wEs",
     authDomain: "tournment-leaderboard.firebaseapp.com",
@@ -163,27 +113,27 @@
   const db = firebase.database();
 
   const defaultTeams = [
-    { name: "SLOT 1", logo: "", kills: 0, placement: 0, alive: 4 },
-    { name: "SLOT 2", logo: "", kills: 0, placement: 0, alive: 4 },
-    { name: "SLOT 3", logo: "", kills: 0, placement: 0, alive: 4 },
-    { name: "SLOT 4", logo: "", kills: 0, placement: 0, alive: 4 },
-    { name: "SLOT 5", logo: "", kills: 0, placement: 0, alive: 4 },
-    { name: "SLOT 6", logo: "", kills: 0, placement: 0, alive: 4 },
-    { name: "SLOT 7", logo: "", kills: 0, placement: 0, alive: 4 },
-    { name: "SLOT 8", logo: "", kills: 0, placement: 0, alive: 4 },
-    { name: "SLOT 9", logo: "", kills: 0, placement: 0, alive: 4 },
-    { name: "SLOT 10", logo: "", kills: 0, placement: 0, alive: 4 },
-    { name: "SLOT 11", logo: "", kills: 0, placement: 0, alive: 4 },
-    { name: "SLOT 12", logo: "", kills: 0, placement: 0, alive: 4 }
+    { name: "ELC", logo: "", kills: 6, players: [{status:'alive'}, {status:'alive'}, {status:'alive'}, {status:'alive'}] },
+    { name: "TNG", logo: "", kills: 5, players: [{status:'alive'}, {status:'alive'}, {status:'alive'}, {status:'alive'}] },
+    { name: "INF", logo: "", kills: 4, players: [{status:'alive'}, {status:'alive'}, {status:'alive'}, {status:'dead'}] },
+    { name: "X2",  logo: "", kills: 4, players: [{status:'dead'},  {status:'alive'}, {status:'alive'}, {status:'alive'}] },
+    { name: "TOP", logo: "", kills: 3, players: [{status:'alive'}, {status:'alive'}, {status:'alive'}, {status:'alive'}] },
+    { name: "RPR", logo: "", kills: 2, players: [{status:'alive'}, {status:'alive'}, {status:'alive'}, {status:'alive'}] },
+    { name: "DVX", logo: "", kills: 1, players: [{status:'alive'}, {status:'alive'}, {status:'alive'}, {status:'alive'}] },
+    { name: "RFX", logo: "", kills: 1, players: [{status:'alive'}, {status:'alive'}, {status:'alive'}, {status:'alive'}] },
+    { name: "TEC", logo: "", kills: 1, players: [{status:'alive'}, {status:'alive'}, {status:'alive'}, {status:'alive'}] },
+    { name: "NK",  logo: "", kills: 1, players: [{status:'alive'}, {status:'alive'}, {status:'alive'}, {status:'dead'}] },
+    { name: "FES", logo: "", kills: 1, players: [{status:'alive'}, {status:'alive'}, {status:'dead'},  {status:'dead'}] },
+    { name: "RA",  logo: "", kills: 3, players: [{status:'dead'},  {status:'dead'},  {status:'dead'},  {status:'dead'}] }
   ];
 
   let teams = defaultTeams;
 
   db.ref('esports_data/teams').on('value', (snap) => {
     const val = snap.val();
-    if (val) {
+    if (val && Array.isArray(val)) {
       teams = val;
-      renderController();
+      renderGrid();
     } else {
       sync();
     }
@@ -191,94 +141,84 @@
 
   function sync() {
     db.ref('esports_data/teams').set(teams);
-    renderController();
+    renderGrid();
   }
 
-  function adjustKill(idx, amount) {
-    teams[idx].kills = Math.max(0, teams[idx].kills + amount);
+  // Cycles player status: alive -> knock -> dead -> alive
+  function cyclePlayer(tIdx, pIdx) {
+    const current = teams[tIdx].players[pIdx].status || 'alive';
+    const next = current === 'alive' ? 'knock' : (current === 'knock' ? 'dead' : 'alive');
+    teams[tIdx].players[pIdx].status = next;
+    teams[tIdx].alive = teams[tIdx].players.filter(p => p.status === 'alive').length;
     sync();
   }
 
-  function adjustAlive(idx, amount) {
-    teams[idx].alive = Math.min(4, Math.max(0, teams[idx].alive + amount));
+  function adjustKill(tIdx, amount) {
+    teams[tIdx].kills = Math.max(0, (teams[tIdx].kills || 0) + amount);
     sync();
   }
 
-  function wipeSquad(idx) {
-    teams[idx].alive = 0;
+  function wipeTeam(tIdx) {
+    teams[tIdx].players.forEach(p => p.status = 'dead');
+    teams[tIdx].alive = 0;
     sync();
   }
 
-  function resetSingleTeam(idx) {
-    teams[idx].kills = 0;
-    teams[idx].placement = 0;
-    teams[idx].alive = 4;
+  function resetAllRevive() {
+    teams.forEach(t => {
+      t.players = [{status:'alive'}, {status:'alive'}, {status:'alive'}, {status:'alive'}];
+      t.alive = 4;
+    });
     sync();
   }
 
-  function resetCurrentMatch() {
-    if (confirm("Start next Map? Current map kills will be banked into Total Points, map kills reset to 0, and all squads revive to 4.")) {
-      teams.forEach(t => {
-        t.placement = (Number(t.placement) || 0) + (Number(t.kills) || 0);
-        t.kills = 0;
-        t.alive = 4;
-      });
-      db.ref('esports_data/resetSignal').set(Date.now());
-      sync();
-    }
-  }
-
-  function newTournamentReset() {
-    const clearNames = confirm("Start a brand new tournament?\n\nOK = reset points to 0 AND reset names to SLOT 1-12.\nCancel = reset points to 0 but keep team names.");
-    if (clearNames) {
-      teams = defaultTeams.map(t => ({ ...t }));
-    } else {
-      teams.forEach(t => {
-        t.kills = 0;
-        t.placement = 0;
-        t.alive = 4;
-      });
-    }
-    db.ref('esports_data/resetSignal').set(Date.now());
+  function resetAllKills() {
+    teams.forEach(t => t.kills = 0);
     sync();
   }
 
-  function renderController() {
-    const grid = document.getElementById('slots-grid');
+  function renderGrid() {
+    const grid = document.getElementById('teams-grid');
     grid.innerHTML = '';
 
     teams.forEach((t, i) => {
-      const isDead = t.alive === 0;
-      const totalPoints = (Number(t.kills) || 0) + (Number(t.placement) || 0);
+      if (!t.players) {
+        t.players = [{status:'alive'}, {status:'alive'}, {status:'alive'}, {status:'alive'}];
+      }
+      const isDead = t.players.every(p => p.status === 'dead');
+
+      let playersHtml = t.players.map((p, pIdx) => `
+        <button class="btn-player state-${p.status || 'alive'}" onclick="cyclePlayer(${i}, ${pIdx})">
+          P${pIdx+1}: ${(p.status || 'alive').toUpperCase()}
+        </button>
+      `).join('');
 
       grid.innerHTML += `
-        <div class="team-card ${isDead ? 'eliminated' : ''}">
-          <div class="header-row">
-            <span class="slot-num">#${i + 1}</span>
-            <input class="name-input" value="${t.name}" onchange="teams[${i}].name=this.value; sync();" />
-            <input class="logo-input" placeholder="Logo URL" value="${t.logo}" onchange="teams[${i}].logo=this.value; sync();" />
+        <div class="team-card ${isDead ? 'wiped' : ''}">
+          <div class="row-top">
+            <span class="slot-id">#${i + 1}</span>
+            <input class="inp-name" value="${t.name || ''}" onchange="teams[${i}].name=this.value; sync();" />
+            <input class="inp-logo" placeholder="Logo URL" value="${t.logo || ''}" onchange="teams[${i}].logo=this.value; sync();" />
           </div>
 
-          <div class="stats-bar">
-            <span>Map Kills: <b>${t.kills}</b></span>
-            <span>Total Pts: <b>${totalPoints}</b></span>
-            <span>Alive: <b>${t.alive}/4</b></span>
+          <div class="player-row">
+            ${playersHtml}
           </div>
 
-          <div class="controls-grid">
-            <button class="btn-kill" onclick="adjustKill(${i}, 1)">+1 KILL</button>
-            <button class="btn-alive-add" onclick="adjustAlive(${i}, 1)">+1 ALIVE</button>
-            <button class="btn-kill-minus" onclick="adjustKill(${i}, -1)">-1 KILL</button>
-            <button class="btn-alive-down" onclick="adjustAlive(${i}, -1)">-1 ALIVE</button>
-            <button class="btn-wipe" onclick="wipeSquad(${i})">WIPE SQUAD (0)</button>
-            <button class="btn-team-reset" onclick="resetSingleTeam(${i})">RESET SLOT</button>
+          <div class="actions">
+            <span>Elims: <b>${t.kills || 0}</b></span>
+            <div style="display:flex; gap:4px;">
+              <button class="btn-action btn-kill-add" onclick="adjustKill(${i}, 1)">+1 KILL</button>
+              <button class="btn-action btn-kill-sub" onclick="adjustKill(${i}, -1)">-1</button>
+              <button class="btn-action btn-wipe" onclick="wipeTeam(${i})">WIPE</button>
+            </div>
           </div>
         </div>
       `;
     });
   }
 
-  renderController();
+  renderGrid();
 </script>
 </body>
 </html>
