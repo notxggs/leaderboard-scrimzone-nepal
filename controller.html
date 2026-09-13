@@ -107,8 +107,8 @@
   <div id="login-overlay">
     <div class="login-card">
       <h3>REMOTE ADMIN LOGIN</h3>
-      <input type="text" id="username" placeholder="Username (admin)" />
-      <input type="password" id="password" placeholder="Password (1234)" />
+      <input type="text" id="username" placeholder="Username" />
+      <input type="password" id="password" placeholder="Password" />
       <button class="login-btn" onclick="checkLogin()">LOGIN</button>
     </div>
   </div>
@@ -125,7 +125,7 @@
   <div class="grid" id="slots-grid"></div>
 
 <script>
-  const ADMIN_USER = "admin";
+  const ADMIN_USER = "notxog";
   const ADMIN_PASS = "1234";
 
   if (sessionStorage.getItem('admin_logged_in') === 'true') {
