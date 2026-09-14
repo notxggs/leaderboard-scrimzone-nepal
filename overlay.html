@@ -20,7 +20,80 @@
   }
 
   /* ----------------------------------------------------
-     1. LEFT DOCK: LEADERBOARD & ELIMINATION BANNER
+     1. SEPARATE STANDALONE HEADER: CURRENT MATCH & TIMER
+     (Located top-center: ready to Alt-crop cleanly in OBS)
+     ---------------------------------------------------- */
+  #match-timer-dock {
+    position: fixed;
+    top: 25px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: linear-gradient(180deg, #161b26 0%, #090c12 100%);
+    border: 1.5px solid #d4af37;
+    border-top: 2px solid #5c84ff;
+    border-radius: 6px;
+    padding: 6px 16px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.85), inset 0 1px 0 rgba(255, 215, 0, 0.4);
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    z-index: 1000;
+  }
+
+  .current-match-block {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    line-height: 1;
+  }
+  .match-main-title {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 20px;
+    font-weight: 800;
+    color: #ffffff;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+  }
+  .match-sub-title {
+    font-family: 'Chakra Petch', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    color: #e5b95c;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    margin-top: 2px;
+  }
+  .header-divider-line {
+    width: 1px;
+    height: 32px;
+    background: rgba(255, 255, 255, 0.15);
+  }
+  .timer-block {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    justify-content: center;
+    line-height: 1;
+  }
+  .timer-small-label {
+    font-family: 'Chakra Petch', sans-serif;
+    font-size: 10px;
+    font-weight: 700;
+    color: #8fa0b5;
+    letter-spacing: 1px;
+  }
+  .hud-timer-clock {
+    font-size: 24px;
+    font-weight: 800;
+    color: #5c84ff;
+    font-family: 'Chakra Petch', sans-serif;
+    letter-spacing: 1px;
+    text-shadow: 0 0 10px rgba(66, 106, 239, 0.7);
+    margin-top: 1px;
+  }
+
+  /* ----------------------------------------------------
+     2. LEFT DOCK: LEADERBOARD & ELIMINATION BANNER
      ---------------------------------------------------- */
   .broadcast-dock {
     position: fixed;
@@ -108,73 +181,6 @@
     border-radius: 6px;
     overflow: hidden;
     background: #000000;
-  }
-
-  /* OFFICIAL GOLD CURRENT MATCH & TIMER BAR (FROM REFERENCE IMAGE) */
-  .hud-timer-bar {
-    display: table-caption;
-    caption-side: top;
-    background: linear-gradient(180deg, #161b26 0%, #090c12 100%);
-    border: 1.5px solid #d4af37;
-    border-bottom: 2px solid #426aef;
-    border-radius: 4px 4px 0 0;
-    padding: 6px 14px;
-    box-shadow: inset 0 1px 0 rgba(255, 215, 0, 0.4), 0 4px 15px rgba(0, 0, 0, 0.8);
-    display: flex !important;
-    align-items: center;
-    justify-content: space-between;
-  }
-  .current-match-block {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    line-height: 1;
-  }
-  .match-main-title {
-    font-family: 'Rajdhani', sans-serif;
-    font-size: 20px;
-    font-weight: 800;
-    color: #ffffff;
-    letter-spacing: 1.5px;
-    text-transform: uppercase;
-  }
-  .match-sub-title {
-    font-family: 'Chakra Petch', sans-serif;
-    font-size: 11px;
-    font-weight: 700;
-    color: #e5b95c;
-    letter-spacing: 1.5px;
-    text-transform: uppercase;
-    margin-top: 2px;
-  }
-  .divider-line {
-    width: 1px;
-    height: 32px;
-    background: rgba(255, 255, 255, 0.15);
-    margin: 0 10px;
-  }
-  .timer-block {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-    justify-content: center;
-    line-height: 1;
-  }
-  .timer-small-label {
-    font-family: 'Chakra Petch', sans-serif;
-    font-size: 10px;
-    font-weight: 700;
-    color: #8fa0b5;
-    letter-spacing: 1px;
-  }
-  .hud-timer-clock {
-    font-size: 22px;
-    font-weight: 800;
-    color: #5c84ff;
-    font-family: 'Chakra Petch', sans-serif;
-    letter-spacing: 1px;
-    text-shadow: 0 0 10px rgba(66, 106, 239, 0.7);
-    margin-top: 1px;
   }
 
   /* Table Header */
@@ -298,7 +304,7 @@
   .legend-box { width: 9px; height: 9px; border-radius: 1px; display: inline-block; }
 
   /* ----------------------------------------------------
-     2. BOTTOM-RIGHT OFFICIAL METALLIC SPECTATOR CARD
+     3. BOTTOM-RIGHT OFFICIAL METALLIC SPECTATOR CARD
      ---------------------------------------------------- */
   #official-spec-card {
     position: fixed !important;
@@ -422,7 +428,20 @@
     <source src="https://cdn.freesound.org/previews/381/381382_6142149-lq.mp3" type="audio/mpeg">
   </audio>
 
-  <!-- 1. LEFT LEADERBOARD DOCK -->
+  <!-- 1. STANDALONE CURRENT MATCH & TIMER DOCK (CENTER-TOP: CROP INDEPENDENTLY) -->
+  <div id="match-timer-dock">
+    <div class="current-match-block">
+      <div class="match-main-title">CURRENT MATCH</div>
+      <div class="match-sub-title" id="overlay-match-map">MAP - 1 - BERMUDA</div>
+    </div>
+    <div class="header-divider-line"></div>
+    <div class="timer-block">
+      <div class="timer-small-label">MATCH TIME</div>
+      <div class="hud-timer-clock" id="timer-display">00:00</div>
+    </div>
+  </div>
+
+  <!-- 2. LEFT LEADERBOARD DOCK -->
   <div class="broadcast-dock">
     <div id="elim-banner">
       <div class="skull-badge">☠</div>
@@ -434,19 +453,6 @@
     </div>
 
     <div class="hud-container">
-      <!-- Top Gold Match Bar -->
-      <div class="hud-timer-bar">
-        <div class="current-match-block">
-          <div class="match-main-title">CURRENT MATCH</div>
-          <div class="match-sub-title" id="overlay-match-map">MAP - 1 - BERMUDA</div>
-        </div>
-        <div class="divider-line"></div>
-        <div class="timer-block">
-          <div class="timer-small-label">MATCH TIME</div>
-          <div class="hud-timer-clock" id="timer-display">00:00</div>
-        </div>
-      </div>
-
       <div class="hud-header">
         <div class="col-teams">TEAMS</div>
         <div class="col-elims">ELIMS</div>
@@ -470,7 +476,7 @@
     </div>
   </div>
 
-  <!-- 2. BOTTOM-RIGHT TOURNAMENT SPECTATOR CARD -->
+  <!-- 3. BOTTOM-RIGHT TOURNAMENT SPECTATOR CARD -->
   <div id="official-spec-card">
     <div class="card-topbar">
       <span class="card-tourney-title">/// FFWS PRO TOURNAMENT ///</span>
