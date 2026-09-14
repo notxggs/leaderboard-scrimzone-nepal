@@ -16,6 +16,40 @@
     background-image: radial-gradient(circle at 50% 0%, rgba(66, 106, 239, 0.08) 0%, transparent 60%);
   }
 
+  /* AUTH SCREEN LOCK */
+  #auth-overlay {
+    position: fixed;
+    top: 0; left: 0; width: 100vw; height: 100vh;
+    background: #06080d;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 99999;
+  }
+  .auth-box {
+    background: #0c1018;
+    border: 1.5px solid #d4af37;
+    border-radius: 8px;
+    padding: 30px;
+    width: 350px;
+    text-align: center;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.9);
+  }
+  .auth-box h2 {
+    font-family: 'Teko', sans-serif;
+    font-size: 28px;
+    color: #fff;
+    margin-bottom: 4px;
+  }
+  .auth-box p {
+    font-family: 'Chakra Petch', sans-serif;
+    font-size: 11px;
+    color: #8fa0b5;
+    margin-bottom: 16px;
+  }
+
+  #main-app { display: none; }
+
   .admin-header-bar {
     display: flex;
     flex-wrap: wrap;
@@ -139,6 +173,42 @@
     font-size: 12px;
   }
   .btn-reset-scrim:hover { background: #ef4444; }
+
+  /* HISTORY SECTION */
+  .history-panel {
+    background: #0c1018;
+    border: 1px solid #1a2233;
+    border-radius: 6px;
+    padding: 14px;
+    margin-bottom: 16px;
+  }
+  .history-title {
+    font-family: 'Chakra Petch', sans-serif;
+    font-size: 13px;
+    font-weight: 800;
+    color: #d4af37;
+    letter-spacing: 1.5px;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+  }
+  .history-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+  .history-table th, .history-table td {
+    border: 1px solid #1e293b;
+    padding: 6px 12px;
+    text-align: left;
+  }
+  .history-table th {
+    background: #121824;
+    color: #94a3b8;
+    font-family: 'Chakra Petch', sans-serif;
+  }
+  .history-table td {
+    background: #06080d;
+  }
 
   .spectate-dock {
     background: #0d111a;
@@ -279,6 +349,15 @@
   }
   .btn-focus:hover { background: #426aef; }
 
+  .btn-booyah {
+    flex: 1.5;
+    background: linear-gradient(135deg, #d4af37 0%, #aa820a 100%);
+    color: #000;
+    padding: 7px;
+    font-size: 11px;
+  }
+  .btn-booyah:hover { background: #ffe082; }
+
   .btn-clear {
     flex: 1;
     background: #181c26;
@@ -294,45 +373,93 @@
 </head>
 <body>
 
-  <div class="admin-header-bar">
-    <div class="brand-title">
-      <h1>SCRIMZONE BROADCAST CONTROLLER</h1>
-      <span>AUTOMATED DISCORD & OBS DATA SYNC</span>
-    </div>
-
-    <div class="console-controls-cluster">
-      <div class="match-config-panel">
-        <span class="config-label">MATCH:</span>
-        <input type="number" id="match-number-input" class="config-input" value="1" min="1" max="20" onchange="updateMatchConfig()">
-
-        <span class="config-label">MAP:</span>
-        <select id="map-select" class="config-select" onchange="updateMatchConfig()">
-          <option value="BERMUDA">BERMUDA</option>
-          <option value="PURGATORY">PURGATORY</option>
-          <option value="KALAHARI">KALAHARI</option>
-          <option value="NEXTERRA">NEXTERRA</option>
-        </select>
-      </div>
-
-      <div class="timer-box">
-        <div class="timer-clock" id="timer-display">00:00</div>
-        <button class="btn-action" id="timer-toggle-btn" onclick="toggleTimer()">START</button>
-        <button class="btn-action" onclick="resetTimer()">RESET</button>
-      </div>
-
-      <button class="btn-gold" onclick="initializeSlots()">INIT 12 SLOTS</button>
-      <button class="btn-reset-scrim" onclick="resetFullScrim()">RESET SCRIM</button>
+  <!-- PASSWORD GATE (PASS: 00) -->
+  <div id="auth-overlay">
+    <div class="auth-box">
+      <h2>ADMIN DESK LOGIN</h2>
+      <p>Enter password to unlock panel</p>
+      <input type="password" id="pass-input" placeholder="Password (00)" style="text-align:center; font-size:18px; letter-spacing:4px;" />
+      <button class="btn-gold" onclick="checkPassword()" style="margin-top:8px;">UNLOCK</button>
+      <div id="auth-err" style="color:#ef4444; font-size:12px; margin-top:8px; display:none;">Incorrect Password (Use 00)</div>
     </div>
   </div>
 
-  <div class="spectate-dock">
-    <div class="dock-label">CLICK A TEAM TO FOCUS ON SPECTATOR OVERLAY (BOTTOM-RIGHT):</div>
-    <div class="spectate-btn-grid" id="spectate-btn-container"></div>
-  </div>
+  <div id="main-app">
+    <div class="admin-header-bar">
+      <div class="brand-title">
+        <h1>SCRIMZONE BROADCAST CONTROLLER</h1>
+        <span>AUTOMATED DISCORD & OBS DATA SYNC</span>
+      </div>
 
-  <div class="teams-grid" id="teams-container"></div>
+      <div class="console-controls-cluster">
+        <div class="match-config-panel">
+          <span class="config-label">MATCH:</span>
+          <input type="number" id="match-number-input" class="config-input" value="1" min="1" max="20" onchange="updateMatchConfig()">
+
+          <span class="config-label">MAP:</span>
+          <select id="map-select" class="config-select" onchange="updateMatchConfig()">
+            <option value="BERMUDA">BERMUDA</option>
+            <option value="PURGATORY">PURGATORY</option>
+            <option value="KALAHARI">KALAHARI</option>
+            <option value="NEXTERRA">NEXTERRA</option>
+          </select>
+        </div>
+
+        <div class="timer-box">
+          <div class="timer-clock" id="timer-display">00:00</div>
+          <button class="btn-action" id="timer-toggle-btn" onclick="toggleTimer()">START</button>
+          <button class="btn-action" onclick="resetTimer()">RESET</button>
+        </div>
+
+        <button class="btn-gold" onclick="initializeSlots()">INIT 12 SLOTS</button>
+        <button class="btn-reset-scrim" onclick="resetFullScrim()">RESET SCRIM</button>
+      </div>
+    </div>
+
+    <!-- SCRIM HISTORY & BOOYAH LEADERBOARD SECTION -->
+    <div class="history-panel">
+      <div class="history-title">🏆 SCRIM HISTORY & BOOYAH LEADERBOARD</div>
+      <table class="history-table">
+        <thead>
+          <tr>
+            <th>Slot #</th>
+            <th>Registered Team Name</th>
+            <th>Roster Summary</th>
+            <th>Total Booyahs 👑</th>
+          </tr>
+        </thead>
+        <tbody id="history-table-body">
+          <!-- Populated dynamically -->
+        </tbody>
+      </table>
+    </div>
+
+    <div class="spectate-dock">
+      <div class="dock-label">CLICK A TEAM TO FOCUS ON SPECTATOR OVERLAY (BOTTOM-RIGHT):</div>
+      <div class="spectate-btn-grid" id="spectate-btn-container"></div>
+    </div>
+
+    <div class="teams-grid" id="teams-container"></div>
+  </div>
 
 <script>
+  function checkPassword() {
+    const val = document.getElementById('pass-input').value;
+    if (val === "00") {
+      document.getElementById('auth-overlay').style.display = 'none';
+      document.getElementById('main-app').style.display = 'block';
+    } else {
+      document.getElementById('auth-err').style.display = 'block';
+    }
+  }
+
+  // Allow pressing Enter to unlock
+  document.getElementById('pass-input').addEventListener('keypress', function (e) {
+    if (e.key === 'Enter') {
+      checkPassword();
+    }
+  });
+
   const firebaseConfig = {
     apiKey: "AIzaSyBRcMrsrifYv-VDsCrTMKZuQiub30a7wEs",
     authDomain: "tournment-leaderboard.firebaseapp.com",
@@ -350,11 +477,6 @@
   let teamsData = [];
   let activeSpectateIdx = 0;
 
-  // Render immediately with placeholder state so screen is never blank
-  renderTeams();
-  renderSpectateBar();
-
-  // 1. Sync Match & Map Config
   function updateMatchConfig() {
     const matchNum = document.getElementById('match-number-input').value || "1";
     const selectedMap = document.getElementById('map-select').value || "BERMUDA";
@@ -373,7 +495,6 @@
     }
   });
 
-  // 2. Teams Sync
   db.ref('esports_data/teams').on('value', (snap) => {
     const val = snap.val();
     if (val) {
@@ -387,9 +508,9 @@
     }
     renderTeams();
     renderSpectateBar();
+    renderHistoryTable();
   });
 
-  // 3. Active Spectate Sync
   db.ref('esports_data/active_spectate').on('value', (snap) => {
     const val = snap.val();
     if (val !== null && typeof val === 'number') {
@@ -431,6 +552,28 @@
     });
   }
 
+  function renderHistoryTable() {
+    const tbody = document.getElementById('history-table-body');
+    tbody.innerHTML = '';
+
+    for (let idx = 0; idx < 12; idx++) {
+      const team = (teamsData && teamsData[idx]) ? teamsData[idx] : {};
+      const isRegistered = team.name && team.name.trim() !== '' && !team.name.toUpperCase().startsWith('SLOT ');
+      const name = isRegistered ? team.name : `SLOT ${idx + 1} (Available)`;
+      const roster = team.roster ? team.roster.filter(Boolean).join(', ') : 'None';
+      const booyahs = team.booyahs || 0;
+
+      tbody.innerHTML += `
+        <tr>
+          <td><strong>#${idx + 1}</strong></td>
+          <td style="${isRegistered ? 'color:#fff; font-weight:700;' : 'color:#64748b;'}">${name}</td>
+          <td style="color:#94a3b8; font-family:'Chakra Petch';">${roster}</td>
+          <td style="color:#d4af37; font-weight:800; font-family:'Chakra Petch';">👑 ${booyahs}</td>
+        </tr>
+      `;
+    }
+  }
+
   function renderTeams() {
     const container = document.getElementById('teams-container');
     container.innerHTML = '';
@@ -443,6 +586,7 @@
         ? team.logo 
         : `https://dummyimage.com/44x44/000/d4af37&text=${isRegistered ? name[0] : (idx + 1)}`;
       const roster = team.roster || ["-", "-", "-", "-"];
+      const booyahs = team.booyahs || 0;
 
       container.innerHTML += `
         <div class="team-card ${activeSpectateIdx === idx ? 'is-active-spec' : ''}" id="card-${idx}">
@@ -452,7 +596,7 @@
             <div class="team-info-box">
               <div class="team-name-text">${name}</div>
               <div class="status-badge ${isRegistered ? '' : 'open'}">
-                ${isRegistered ? '● REGISTERED VIA DISCORD' : '○ EMPTY SLOT'}
+                ${isRegistered ? `● REGISTERED (Booyahs: ${booyahs} 👑)` : '○ EMPTY SLOT'}
               </div>
             </div>
           </div>
@@ -468,12 +612,20 @@
           </div>
 
           <div class="card-actions">
-            <button class="btn-focus" onclick="setActiveSpectate(${idx})">FOCUS ON STREAM</button>
+            <button class="btn-focus" onclick="setActiveSpectate(${idx})">FOCUS</button>
+            ${isRegistered ? `<button class="btn-booyah" onclick="addBooyah(${idx})">BOOYAH 👑</button>` : ''}
             ${isRegistered ? `<button class="btn-clear" onclick="clearSlot(${idx})">CLEAR</button>` : ''}
           </div>
         </div>
       `;
     }
+  }
+
+  function addBooyah(idx) {
+    const current = (teamsData[idx] && teamsData[idx].booyahs) ? teamsData[idx].booyahs : 0;
+    db.ref(`esports_data/teams/${idx}/booyahs`).set(current + 1).then(() => {
+      alert(`Booyah awarded to Slot #${idx + 1} (${teamsData[idx].name})!`);
+    });
   }
 
   function initializeSlots() {
@@ -485,6 +637,7 @@
         roster: ["-", "-", "-", "-"],
         kills: 0,
         alive: 4,
+        booyahs: 0,
         players: [
           { status: "alive" }, { status: "alive" },
           { status: "alive" }, { status: "alive" }
@@ -504,6 +657,7 @@
       roster: ["-", "-", "-", "-"],
       kills: 0,
       alive: 4,
+      booyahs: 0,
       players: [
         { status: "alive" }, { status: "alive" },
         { status: "alive" }, { status: "alive" }
