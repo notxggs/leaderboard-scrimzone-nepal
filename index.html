@@ -1,15 +1,442 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Tournament Links</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ScrimZone Nepal — Official Live Scrim</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700;800&family=Rajdhani:wght@600;700;800&family=Teko:wght@700&display=swap" rel="stylesheet" />
   <style>
-    body { background: #0f1015; color: #fff; font-family: sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 90vh; gap: 15px; }
-    a { background: #ffb800; color: #000; padding: 12px 24px; text-decoration: none; font-weight: bold; border-radius: 6px; }
+    :root {
+      --bg-base: #06080d;
+      --bg-card: #0c1018;
+      --border-color: #1a2233;
+      --gold-primary: #d4af37;
+      --gold-bright: #ffe082;
+      --blue-accent: #426aef;
+      --text-white: #ffffff;
+      --text-muted: #8fa0b5;
+      --danger: #ef4444;
+      --success: #22c55e;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background-color: var(--bg-base);
+      color: #e2e8f0;
+      font-family: 'Rajdhani', sans-serif;
+      overflow-x: hidden;
+      background-image: radial-gradient(circle at 50% -10%, rgba(66, 106, 239, 0.12) 0%, transparent 65%);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      background: rgba(6, 8, 13, 0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border-color);
+      padding: 14px 24px;
+    }
+
+    .nav-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .brand-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+    }
+
+    .brand-text-main {
+      font-family: 'Teko', sans-serif;
+      font-size: 32px;
+      color: var(--text-white);
+      letter-spacing: 2px;
+      line-height: 0.9;
+    }
+
+    .brand-text-sub {
+      font-family: 'Chakra Petch', sans-serif;
+      font-size: 11px;
+      color: var(--gold-primary);
+      letter-spacing: 2px;
+      font-weight: 700;
+    }
+
+    nav ul {
+      display: flex;
+      list-style: none;
+      gap: 20px;
+      align-items: center;
+    }
+
+    nav a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-family: 'Chakra Petch', sans-serif;
+      font-weight: 700;
+      font-size: 14px;
+      letter-spacing: 1px;
+      transition: color 0.2s ease;
+    }
+
+    nav a:hover, nav a.active { color: var(--gold-primary); }
+
+    .admin-nav-link {
+      border: 1px solid var(--border-color);
+      padding: 6px 14px;
+      border-radius: 4px;
+      background: #0f1522;
+    }
+
+    .admin-nav-link:hover {
+      border-color: var(--blue-accent);
+      color: #ffffff;
+    }
+
+    main {
+      max-width: 1200px;
+      margin: 30px auto 60px;
+      padding: 0 20px;
+      flex-grow: 1;
+      width: 100%;
+    }
+
+    .scrim-status-banner {
+      background: linear-gradient(180deg, #161c28 0%, #0c1017 100%);
+      border: 1.5px solid var(--gold-primary);
+      border-radius: 8px;
+      padding: 24px;
+      margin-bottom: 30px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7), inset 0 1px 0 rgba(255, 215, 0, 0.3);
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 20px;
+    }
+
+    @media (max-width: 850px) {
+      .scrim-status-banner { grid-template-columns: 1fr; }
+    }
+
+    .scrim-main-info h1 {
+      font-family: 'Chakra Petch', sans-serif;
+      font-size: 28px;
+      font-weight: 800;
+      color: #ffffff;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .tag-live {
+      background: var(--danger);
+      color: #ffffff;
+      font-size: 11px;
+      font-weight: 800;
+      padding: 3px 8px;
+      border-radius: 3px;
+      letter-spacing: 1.5px;
+    }
+
+    .prize-pool-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+      margin: 18px 0;
+    }
+
+    .prize-pill {
+      background: #06080d;
+      border: 1px solid rgba(212, 175, 55, 0.4);
+      padding: 8px 16px;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 16px;
+      font-weight: 700;
+    }
+
+    .prize-pill span.place { color: var(--gold-bright); }
+
+    .meta-details-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      color: var(--text-muted);
+      font-family: 'Chakra Petch', sans-serif;
+      font-weight: 600;
+      font-size: 14px;
+    }
+
+    .meta-details-row strong { color: var(--text-white); }
+
+    .slots-dashboard-card {
+      background: #06080d;
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+    }
+
+    .slots-label {
+      font-family: 'Chakra Petch', sans-serif;
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 2px;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+    }
+
+    .slots-counter {
+      font-family: 'Chakra Petch', sans-serif;
+      font-size: 52px;
+      font-weight: 800;
+      color: var(--gold-primary);
+      line-height: 1;
+      text-shadow: 0 0 15px rgba(212, 175, 55, 0.4);
+    }
+
+    .slots-subtext {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-muted);
+      margin-top: 6px;
+    }
+
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 10px;
+      margin-bottom: 20px;
+    }
+
+    .section-header h2 {
+      font-family: 'Teko', sans-serif;
+      font-size: 32px;
+      letter-spacing: 1.5px;
+      color: var(--text-white);
+    }
+
+    .live-dot {
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      background: var(--success);
+      border-radius: 50%;
+      box-shadow: 0 0 8px var(--success);
+      margin-right: 6px;
+    }
+
+    .teams-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+      gap: 16px;
+    }
+
+    .team-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .card-top {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .slot-badge {
+      font-family: 'Chakra Petch', sans-serif;
+      font-size: 15px;
+      font-weight: 800;
+      color: var(--gold-primary);
+      background: #05070a;
+      border: 1px solid rgba(212, 175, 55, 0.3);
+      padding: 3px 8px;
+      border-radius: 4px;
+    }
+
+    .team-logo {
+      width: 44px;
+      height: 44px;
+      border-radius: 4px;
+      object-fit: contain;
+      background: #000;
+      border: 1px solid var(--border-color);
+      flex-shrink: 0;
+    }
+
+    .team-name {
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 20px;
+      font-weight: 800;
+      color: var(--text-white);
+      text-transform: uppercase;
+    }
+
+    .roster-box {
+      background: #06090f;
+      border: 1px solid #141b29;
+      border-radius: 4px;
+      padding: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .roster-player {
+      font-family: 'Chakra Petch', sans-serif;
+      font-size: 13px;
+      font-weight: 600;
+      color: #cbd5e1;
+    }
+
+    footer {
+      border-top: 1px solid var(--border-color);
+      padding: 24px;
+      text-align: center;
+      color: #64748b;
+      font-family: 'Chakra Petch', sans-serif;
+      font-size: 12px;
+    }
   </style>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 </head>
 <body>
-  <h2>Esports Tournament Hub</h2>
-  <a href="overlay.html" target="_blank">Open OBS Overlay</a>
-  <a href="controller.html" target="_blank">Open Admin Control Panel</a>
+
+  <header>
+    <div class="nav-container">
+      <a href="index.html" class="brand-logo">
+        <div>
+          <div class="brand-text-main">SCRIMZONE NEPAL</div>
+          <div class="brand-text-sub">OFFICIAL BROADCAST PLATFORM</div>
+        </div>
+      </a>
+      <nav>
+        <ul>
+          <li><a href="index.html" class="active">HOME</a></li>
+          <li><a href="controller.html" class="admin-nav-link">ADMIN DESK</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="scrim-status-banner">
+      <div>
+        <h1 id="scrim-title">Daily 10 Rupees By ScrimZone 🇳🇵 <span class="tag-live">LIVE</span></h1>
+        <div class="prize-pool-grid">
+          <div class="prize-pill"><span class="place">🥇 1st ·</span> Rs. 50</div>
+          <div class="prize-pill"><span class="place">🥈 2nd ·</span> Rs. 10</div>
+          <div class="prize-pill"><span>Entry ·</span> Rs 10</div>
+        </div>
+        <div class="meta-details-row">
+          <div>TIME: <strong id="scrim-time">04:00 PM</strong></div>
+          <div>MAPS: <strong>Bermuda, Purgatory, Kalahari</strong></div>
+        </div>
+      </div>
+      <div class="slots-dashboard-card">
+        <div class="slots-label">SLOTS AVAILABLE</div>
+        <div class="slots-counter" id="slot-counter-display">12/12</div>
+        <div class="slots-subtext" id="slot-availability-caption">Open for registration</div>
+      </div>
+    </section>
+
+    <section>
+      <div class="section-header">
+        <h2><span class="live-dot"></span>REGISTERED TEAMS</h2>
+        <span style="font-family:'Chakra Petch'; font-size:13px; color:var(--text-muted);" id="registered-summary-count">0 Teams Active</span>
+      </div>
+      <div class="teams-grid" id="teams-container"></div>
+    </section>
+  </main>
+
+  <footer>SCRIMZONE NEPAL • REALTIME DISCORD & OBS SYNC</footer>
+
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyBRcMrsrifYv-VDsCrTMKZuQiub30a7wEs",
+      authDomain: "tournment-leaderboard.firebaseapp.com",
+      databaseURL: "https://tournment-leaderboard-default-rtdb.firebaseio.com",
+      projectId: "tournment-leaderboard",
+      storageBucket: "tournment-leaderboard.firebasestorage.app",
+      messagingSenderId: "685244342962",
+      appId: "1:685244342962:web:d31c15a67fb9b6161f5fab",
+      measurementId: "G-RKSK1ZBC5M"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+    const MAX_SLOTS = 12;
+
+    db.ref('esports_data/teams').on('value', (snapshot) => {
+      const rawTeams = snapshot.val();
+      const container = document.getElementById('teams-container');
+      container.innerHTML = '';
+
+      if (!rawTeams || !Array.isArray(rawTeams)) {
+        container.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:40px; color:#8fa0b5;">No teams registered yet.</div>`;
+        document.getElementById('slot-counter-display').innerText = `${MAX_SLOTS}/${MAX_SLOTS}`;
+        document.getElementById('registered-summary-count').innerText = `0 Teams Active`;
+        return;
+      }
+
+      let activeCount = 0;
+      rawTeams.slice(0, MAX_SLOTS).forEach((team, idx) => {
+        const isRegistered = team && team.name && team.name.trim() !== '' && !team.name.toUpperCase().startsWith('SLOT ');
+        if (isRegistered) {
+          activeCount++;
+          const roster = team.roster || ["-", "-", "-", "-"];
+          const logo = team.logo || `https://dummyimage.com/44x44/000/d4af37&text=${team.name[0]}`;
+          
+          container.innerHTML += `
+            <div class="team-card">
+              <div class="card-top">
+                <span class="slot-badge">#${String(idx + 1).padStart(2, '0')}</span>
+                <img class="team-logo" src="${logo}" onerror="this.src='https://dummyimage.com/44x44/000/d4af37&text=T';" />
+                <div class="team-name">${team.name} ${team.booyahs ? `(👑 x${team.booyahs})` : ''}</div>
+              </div>
+              <div class="roster-box">
+                <div class="roster-player">1. ${roster[0] || '-'}</div>
+                <div class="roster-player">2. ${roster[1] || '-'}</div>
+                <div class="roster-player">3. ${roster[2] || '-'}</div>
+                <div class="roster-player">4. ${roster[3] || '-'}</div>
+              </div>
+            </div>
+          `;
+        }
+      });
+
+      const available = Math.max(0, MAX_SLOTS - activeCount);
+      document.getElementById('slot-counter-display').innerText = `${available}/${MAX_SLOTS}`;
+      document.getElementById('registered-summary-count').innerText = `${activeCount} / ${MAX_SLOTS} Teams Enrolled`;
+    });
+  </script>
 </body>
 </html>
