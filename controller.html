@@ -174,49 +174,6 @@
   }
   .btn-reset-scrim:hover { background: #ef4444; }
 
-  /* HISTORY & ARCHIVE PANEL */
-  .history-panel {
-    background: #0c1018;
-    border: 1px solid #1a2233;
-    border-radius: 6px;
-    padding: 14px;
-    margin-bottom: 16px;
-  }
-  .history-header-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 10px;
-    flex-wrap: wrap;
-    gap: 10px;
-  }
-  .history-title {
-    font-family: 'Chakra Petch', sans-serif;
-    font-size: 13px;
-    font-weight: 800;
-    color: #d4af37;
-    letter-spacing: 1.5px;
-    text-transform: uppercase;
-  }
-  .history-table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 13px;
-  }
-  .history-table th, .history-table td {
-    border: 1px solid #1e293b;
-    padding: 6px 12px;
-    text-align: left;
-  }
-  .history-table th {
-    background: #121824;
-    color: #94a3b8;
-    font-family: 'Chakra Petch', sans-serif;
-  }
-  .history-table td {
-    background: #06080d;
-  }
-
   .spectate-dock {
     background: #0d111a;
     border: 1px solid #1e293b;
@@ -423,35 +380,12 @@
       </div>
     </div>
 
-    <!-- DATE ARCHIVE & HISTORY LEADERBOARD -->
-    <div class="history-panel">
-      <div class="history-header-row">
-        <div class="history-title">📅 TOURNAMENT DATE & HISTORY ARCHIVE</div>
-        <div class="match-config-panel">
-          <span class="config-label">SELECT DATE:</span>
-          <input type="date" id="archive-date-picker" class="config-input" style="width: 140px;" onchange="switchDateArchive()">
-        </div>
-      </div>
-      <table class="history-table">
-        <thead>
-          <tr>
-            <th>Slot #</th>
-            <th>Registered Team Name</th>
-            <th>Roster Summary</th>
-            <th>Total Booyahs 👑</th>
-          </tr>
-        </thead>
-        <tbody id="history-table-body">
-          <!-- Dynamic -->
-        </tbody>
-      </table>
-    </div>
-
     <div class="spectate-dock">
       <div class="dock-label">CLICK A TEAM TO FOCUS ON SPECTATOR OVERLAY (BOTTOM-RIGHT):</div>
       <div class="spectate-btn-grid" id="spectate-btn-container"></div>
     </div>
 
+    <!-- TEAMS GRID WITH INTEGRATED BOOYAH BUTTONS -->
     <div class="teams-grid" id="teams-container"></div>
   </div>
 
@@ -461,7 +395,7 @@
     if (val === "00") {
       document.getElementById('auth-overlay').style.display = 'none';
       document.getElementById('main-app').style.display = 'block';
-      setupDefaultDate();
+      loadLiveTeams();
     } else {
       document.getElementById('auth-err').style.display = 'block';
     }
@@ -487,29 +421,8 @@
 
   let teamsData = [];
   let activeSpectateIdx = 0;
-  let currentDateKey = "";
 
-  function setupDefaultDate() {
-    const today = new Date().toISOString().split('T')[0];
-    document.getElementById('archive-date-picker').value = today;
-    currentDateKey = today.replace(/-/g, '_');
-    loadDateArchiveData();
-  }
-
-  function switchDateArchive() {
-    const rawDate = document.getElementById('archive-date-picker').value;
-    if (!rawDate) return;
-    currentDateKey = rawDate.replace(/-/g, '_');
-    loadDateArchiveData();
-  }
-
-  function getArchivepath() {
-    return `esports_data/date_archives/${currentDateKey}/teams`;
-  }
-
-  function loadDateArchiveData() {
-    // Sync with live teams path so Discord bot registrations automatically fill the active view, 
-    // while keeping historical records intact under the date archives.
+  function loadLiveTeams() {
     db.ref('esports_data/teams').on('value', (snap) => {
       const val = snap.val();
       if (val) {
@@ -519,7 +432,6 @@
       }
       renderTeams();
       renderSpectateBar();
-      renderHistoryTable();
     });
   }
 
@@ -571,27 +483,6 @@
       if (idx === activeSpectateIdx) card.classList.add('is-active-spec');
       else card.classList.remove('is-active-spec');
     });
-  }
-
-  function renderHistoryTable() {
-    const tbody = document.getElementById('history-table-body');
-    tbody.innerHTML = '';
-    for (let idx = 0; idx < 12; idx++) {
-      const team = (teamsData && teamsData[idx]) ? teamsData[idx] : {};
-      const isRegistered = team.name && team.name.trim() !== '' && !team.name.toUpperCase().startsWith('SLOT ');
-      const name = isRegistered ? team.name : `SLOT ${idx + 1} (Available)`;
-      const roster = team.roster ? team.roster.filter(Boolean).join(', ') : '---';
-      const booyahs = team.booyahs || 0;
-
-      tbody.innerHTML += `
-        <tr>
-          <td><strong>#${idx + 1}</strong></td>
-          <td style="${isRegistered ? 'color:#fff; font-weight:700;' : 'color:#64748b;'}">${name}</td>
-          <td style="color:#94a3b8; font-family:'Chakra Petch';">${roster}</td>
-          <td style="color:#d4af37; font-weight:800; font-family:'Chakra Petch';">👑 ${booyahs}</td>
-        </tr>
-      `;
-    }
   }
 
   function renderTeams() {
