@@ -2,111 +2,164 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Esports Broadcast Admin Panel</title>
+<title>Official Tournament Admin Desk</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@600;700&family=Rajdhani:wght@600;700;800&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@600;700;800&family=Rajdhani:wght@600;700;800&family=Teko:wght@700&display=swap');
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body {
-    background: #0b0e14;
+    background: #06080d;
     color: #e2e8f0;
     font-family: 'Rajdhani', sans-serif;
     padding: 16px;
+    background-image: radial-gradient(circle at 50% 0%, rgba(66, 106, 239, 0.08) 0%, transparent 60%);
   }
 
-  header {
+  /* TOP CONTROL CONSOLE */
+  .admin-header-bar {
     display: flex;
     flex-wrap: wrap;
     justify-content: space-between;
     align-items: center;
-    gap: 12px;
-    background: #121824;
-    border: 1px solid #1e293b;
+    gap: 14px;
+    background: linear-gradient(180deg, #121722 0%, #0a0d14 100%);
+    border: 1.5px solid #d4af37;
     border-radius: 8px;
     padding: 12px 20px;
     margin-bottom: 16px;
-  }
-  h1 {
-    font-family: 'Chakra Petch', sans-serif;
-    font-size: 22px;
-    color: #426aef;
-    letter-spacing: 1px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.8), inset 0 1px 0 rgba(255, 215, 0, 0.3);
   }
 
-  .header-controls {
+  .brand-title {
+    display: flex;
+    flex-direction: column;
+    line-height: 1;
+  }
+  .brand-title h1 {
+    font-family: 'Teko', sans-serif;
+    font-size: 32px;
+    color: #ffffff;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+  .brand-title span {
+    font-family: 'Chakra Petch', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    color: #d4af37;
+    letter-spacing: 2px;
+  }
+
+  .console-controls-cluster {
     display: flex;
     align-items: center;
     gap: 12px;
     flex-wrap: wrap;
   }
 
-  /* Match & Map Selectors */
-  .match-info-controls {
+  /* Map & Match Selector Suite */
+  .match-config-panel {
     display: flex;
     align-items: center;
     gap: 8px;
-    background: #0b0e14;
-    padding: 6px 12px;
+    background: #05070a;
+    padding: 6px 14px;
+    border-radius: 6px;
+    border: 1px solid rgba(212, 175, 55, 0.4);
+    box-shadow: inset 0 0 10px rgba(0,0,0,0.8);
+  }
+  .config-label {
+    font-family: 'Chakra Petch', sans-serif;
+    font-size: 11px;
+    font-weight: 800;
+    color: #d4af37;
+    letter-spacing: 1.5px;
+  }
+  .config-input, .config-select {
+    background: #111622;
+    color: #ffffff;
+    border: 1px solid #2d3748;
+    border-radius: 4px;
+    padding: 5px 8px;
+    font-family: 'Chakra Petch', sans-serif;
+    font-weight: 700;
+    font-size: 13px;
+    outline: none;
+    transition: 0.2s;
+  }
+  .config-input:focus, .config-select:focus {
+    border-color: #d4af37;
+    box-shadow: 0 0 8px rgba(212, 175, 55, 0.4);
+  }
+  .config-input { width: 55px; text-align: center; }
+
+  /* Match Timer */
+  .timer-box {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: #05070a;
+    padding: 6px 14px;
     border-radius: 6px;
     border: 1px solid #1e293b;
-    font-family: 'Chakra Petch', sans-serif;
-    font-size: 12px;
-    font-weight: 700;
-    color: #94a3b8;
-  }
-  .match-info-controls select, .match-info-controls input {
-    background: #1e293b;
-    color: #fff;
-    border: 1px solid #334155;
-    border-radius: 4px;
-    padding: 4px 8px;
-    font-family: 'Chakra Petch', sans-serif;
-    font-weight: 700;
-    outline: none;
-  }
-  .match-info-controls input { width: 60px; }
-
-  /* Timer Controls */
-  .timer-section {
-    display: flex;
-    align-items: center;
-    gap: 8px;
   }
   .timer-clock {
     font-family: 'Chakra Petch', sans-serif;
     font-size: 24px;
-    font-weight: 700;
-    color: #38bdf8;
+    font-weight: 800;
+    color: #5c84ff;
     min-width: 75px;
     text-align: center;
+    text-shadow: 0 0 10px rgba(66, 106, 239, 0.6);
   }
+
   button {
     font-family: 'Chakra Petch', sans-serif;
-    font-weight: 700;
+    font-weight: 800;
     cursor: pointer;
     border-radius: 4px;
     border: none;
     transition: 0.15s ease;
+    text-transform: uppercase;
   }
-  .btn-timer {
-    padding: 6px 12px;
+  .btn-gold {
+    background: linear-gradient(135deg, #d4af37 0%, #aa820a 100%);
+    color: #000;
+    padding: 7px 14px;
     font-size: 12px;
-    background: #1e293b;
-    color: #fff;
+    box-shadow: 0 0 10px rgba(212, 175, 55, 0.3);
   }
-  .btn-timer:hover { background: #334155; }
-  .btn-timer.active { background: #16a34a; }
+  .btn-gold:hover { background: #f0cb53; }
 
-  /* 1-Click Spectate Bar */
-  .spectate-bar-wrap {
-    background: #121824;
+  .btn-action {
+    padding: 7px 12px;
+    font-size: 12px;
+    background: #171d2b;
+    color: #cbd5e1;
+    border: 1px solid #334155;
+  }
+  .btn-action:hover { background: #263147; color: #fff; }
+  .btn-action.active { background: #16a34a; color: #fff; border-color: #22c55e; }
+
+  .btn-reset-scrim {
+    background: linear-gradient(135deg, #991b1b 0%, #dc2626 100%);
+    color: #fff;
+    padding: 7px 14px;
+    font-size: 12px;
+    box-shadow: 0 0 12px rgba(220, 38, 38, 0.4);
+  }
+  .btn-reset-scrim:hover { background: #ef4444; }
+
+  /* 1-CLICK SPECTATOR FOCUS STRIP */
+  .spectate-dock {
+    background: #0d111a;
     border: 1px solid #1e293b;
-    border-radius: 8px;
-    padding: 12px;
+    border-radius: 6px;
+    padding: 10px 14px;
     margin-bottom: 16px;
   }
-  .section-title {
-    font-size: 12px;
+  .dock-label {
+    font-size: 11px;
     font-weight: 800;
     color: #94a3b8;
     letter-spacing: 1.5px;
@@ -119,37 +172,40 @@
     gap: 8px;
   }
   .spec-btn {
-    background: #1e293b;
-    color: #cbd5e1;
-    border: 1px solid #334155;
-    padding: 8px 14px;
-    font-size: 13px;
+    background: #121824;
+    color: #94a3b8;
+    border: 1px solid #242e42;
+    padding: 8px 12px;
+    font-size: 12px;
     border-radius: 4px;
   }
   .spec-btn.current {
     background: #426aef;
     color: #fff;
     border-color: #60a5fa;
-    box-shadow: 0 0 10px rgba(66, 106, 239, 0.5);
+    box-shadow: 0 0 12px rgba(66, 106, 239, 0.5);
   }
 
-  /* Grid of 12 Teams */
+  /* 12-TEAM GRID */
   .teams-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
     gap: 14px;
   }
   .team-card {
-    background: #121824;
-    border: 1px solid #1e293b;
-    border-radius: 8px;
-    padding: 14px;
+    background: #0c1018;
+    border: 1px solid #1a2233;
+    border-radius: 6px;
+    padding: 12px;
     display: flex;
     flex-direction: column;
     gap: 10px;
+    position: relative;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.5);
   }
   .team-card.is-active-spec {
-    border-color: #426aef;
+    border: 1.5px solid #d4af37;
+    box-shadow: 0 0 15px rgba(212, 175, 55, 0.25);
   }
 
   .card-top {
@@ -159,8 +215,8 @@
   }
   .slot-tag {
     font-family: 'Chakra Petch', sans-serif;
-    font-weight: 700;
-    color: #426aef;
+    font-weight: 800;
+    color: #d4af37;
     font-size: 16px;
     min-width: 32px;
   }
@@ -170,7 +226,7 @@
     border-radius: 4px;
     object-fit: contain;
     background: #000;
-    border: 1px solid #334155;
+    border: 1px solid #242e42;
     flex-shrink: 0;
   }
   .input-group {
@@ -180,8 +236,8 @@
     width: 100%;
   }
   input[type="text"] {
-    background: #0b0e14;
-    border: 1px solid #334155;
+    background: #05070a;
+    border: 1px solid #1e293b;
     color: #fff;
     font-family: inherit;
     font-size: 14px;
@@ -195,11 +251,12 @@
     border-color: #426aef;
   }
 
+  /* Roster Member Inputs */
   .roster-section {
-    background: #0b0e14;
-    padding: 8px 10px;
+    background: #06080d;
+    padding: 8px;
     border-radius: 4px;
-    border: 1px solid #1e293b;
+    border: 1px solid #161c28;
   }
   .roster-grid {
     display: grid;
@@ -213,14 +270,15 @@
     text-transform: uppercase;
   }
 
+  /* Kill & Alive Control Bar */
   .stats-row {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background: #0b0e14;
+    background: #06080d;
     padding: 6px 10px;
     border-radius: 4px;
-    border: 1px solid #1e293b;
+    border: 1px solid #161c28;
   }
   .kill-box {
     display: flex;
@@ -230,7 +288,7 @@
   .btn-circle {
     width: 26px;
     height: 26px;
-    background: #1e293b;
+    background: #171d2b;
     color: #fff;
     font-size: 16px;
     border-radius: 4px;
@@ -242,7 +300,7 @@
   .kill-num {
     font-family: 'Chakra Petch', sans-serif;
     font-size: 20px;
-    font-weight: 700;
+    font-weight: 800;
     min-width: 24px;
     text-align: center;
   }
@@ -254,43 +312,49 @@
   .player-toggle-btn {
     padding: 4px 8px;
     font-size: 11px;
-    background: #1e293b;
+    background: #171d2b;
     color: #64748b;
-    border: 1px solid #334155;
+    border: 1px solid #2b3548;
     border-radius: 3px;
   }
   .player-toggle-btn.alive {
     background: #426aef;
     color: #fff;
     border-color: #60a5fa;
+    box-shadow: 0 0 6px rgba(66, 106, 239, 0.4);
   }
 
   .btn-save-team {
-    background: #426aef;
+    background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%);
     color: #fff;
     padding: 8px;
-    font-size: 13px;
+    font-size: 12px;
     width: 100%;
     margin-top: 4px;
+    border: 1px solid #3b82f6;
   }
-  .btn-save-team:hover { background: #3154c8; }
+  .btn-save-team:hover { background: #1d4ed8; }
 </style>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 </head>
 <body>
 
-  <header>
-    <h1>ESPORTS BROADCAST ADMIN CONTROLLER</h1>
+  <!-- ADMIN CONSOLE HEADER -->
+  <div class="admin-header-bar">
+    <div class="brand-title">
+      <h1>SCRIMZONE BROADCAST DESK</h1>
+      <span>LIVE TOURNAMENT ADMINISTRATION</span>
+    </div>
 
-    <div class="header-controls">
-      <!-- Match Number & Map Selector -->
-      <div class="match-info-controls">
-        <label>MATCH #:</label>
-        <input type="number" id="match-number-input" value="1" min="1" max="15" onchange="updateMatchConfig()">
+    <div class="console-controls-cluster">
+      <!-- MAP & MATCH SELECTOR -->
+      <div class="match-config-panel">
+        <span class="config-label">MATCH:</span>
+        <input type="number" id="match-number-input" class="config-input" value="1" min="1" max="20" onchange="updateMatchConfig()">
 
-        <label>MAP:</label>
-        <select id="map-select" onchange="updateMatchConfig()">
+        <span class="config-label">MAP:</span>
+        <select id="map-select" class="config-select" onchange="updateMatchConfig()">
           <option value="BERMUDA">BERMUDA</option>
           <option value="PURGATORY">PURGATORY</option>
           <option value="KALAHARI">KALAHARI</option>
@@ -298,22 +362,25 @@
         </select>
       </div>
 
-      <!-- Match Timer -->
-      <div class="timer-section">
+      <!-- TIMER CONTROLS -->
+      <div class="timer-box">
         <div class="timer-clock" id="timer-display">00:00</div>
-        <button class="btn-timer" id="timer-toggle-btn" onclick="toggleTimer()">START</button>
-        <button class="btn-timer" onclick="resetTimer()">RESET</button>
+        <button class="btn-action" id="timer-toggle-btn" onclick="toggleTimer()">START</button>
+        <button class="btn-action" onclick="resetTimer()">RESET TIME</button>
       </div>
-    </div>
-  </header>
 
-  <!-- Rapid Spectator Bar -->
-  <div class="spectate-bar-wrap">
-    <div class="section-title">CURRENT SPECTATING FOCUS (TAP TO CHANGE):</div>
+      <!-- RESET SCRIM / NEW MATCH -->
+      <button class="btn-reset-scrim" onclick="resetFullScrim()">RESET SCRIM</button>
+    </div>
+  </div>
+
+  <!-- QUICK 1-CLICK SPECTATOR FOCUS -->
+  <div class="spectate-dock">
+    <div class="dock-label">STREAM SPECTATOR FOCUS (CLICK TEAM TO FLIP CAMERA HUD):</div>
     <div class="spectate-btn-grid" id="spectate-btn-container"></div>
   </div>
 
-  <!-- 12-Team Card Grid -->
+  <!-- 12-TEAM GRID -->
   <div class="teams-grid" id="teams-container"></div>
 
 <script>
@@ -334,7 +401,7 @@
   let teamsData = [];
   let activeSpectateIdx = null;
 
-  // Match Config Sync
+  // Match & Map Config Handlers
   function updateMatchConfig() {
     const matchNum = document.getElementById('match-number-input').value || "1";
     const selectedMap = document.getElementById('map-select').value || "BERMUDA";
@@ -411,7 +478,7 @@
         { status: 'alive' }, { status: 'alive' }
       ];
       const roster = team.roster || ['', '', '', ''];
-      const fallbackLogo = `https://dummyimage.com/38x38/000/426aef&text=${name ? name[0] : (idx + 1)}`;
+      const fallbackLogo = `https://dummyimage.com/38x38/000/d4af37&text=${name ? name[0] : (idx + 1)}`;
 
       let playerToggles = '';
       players.slice(0, 4).forEach((p, pIdx) => {
@@ -435,7 +502,7 @@
           </div>
 
           <div class="roster-section">
-            <div class="section-title">TEAM MEMBERS (FOR AUTO-DETECTION):</div>
+            <div class="dock-label">ROSTER IGNS (FOR VISION ENGINE):</div>
             <div class="roster-grid">
               <input class="roster-input" type="text" id="r-${idx}-0" placeholder="P1 IGN" value="${roster[0] || ''}">
               <input class="roster-input" type="text" id="r-${idx}-1" placeholder="P2 IGN" value="${roster[1] || ''}">
@@ -446,7 +513,7 @@
 
           <div class="stats-row">
             <div class="kill-box">
-              <span style="font-size:12px; font-weight:800; color:#94a3b8;">KILLS:</span>
+              <span style="font-size:11px; font-weight:800; color:#94a3b8;">KILLS:</span>
               <button class="btn-circle" onclick="changeKills(${idx}, -1)">-</button>
               <span class="kill-num">${kills}</span>
               <button class="btn-circle" onclick="changeKills(${idx}, 1)">+</button>
@@ -479,11 +546,11 @@
       roster: rosterArr
     }).then(() => {
       const originalText = btn.innerText;
-      btn.innerText = 'SAVED!';
+      btn.innerText = 'SAVED TO CLOUD!';
       btn.style.background = '#16a34a';
       setTimeout(() => {
         btn.innerText = originalText;
-        btn.style.background = '#426aef';
+        btn.style.background = 'linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%)';
       }, 1000);
     });
   }
@@ -509,7 +576,32 @@
     });
   }
 
-  // Match Timer Management
+  // 1-CLICK SCRIM RESET (Kills to 0, all 4 players alive, timer reset)
+  function resetFullScrim() {
+    if (!confirm("Are you sure you want to reset all team kills, revive all squads, and reset the timer for a new match?")) {
+      return;
+    }
+
+    const resetPayload = {};
+    teamsData.forEach((t, i) => {
+      resetPayload[`teams/${i}/kills`] = 0;
+      resetPayload[`teams/${i}/alive`] = 4;
+      resetPayload[`teams/${i}/players`] = [
+        { status: 'alive' }, { status: 'alive' },
+        { status: 'alive' }, { status: 'alive' }
+      ];
+    });
+
+    resetPayload['timer'] = { running: false, seconds: 0, startTimestamp: null };
+    resetPayload['active_spectate'] = 0;
+    resetPayload['detected_player'] = "SPECTATING";
+
+    db.ref('esports_data').update(resetPayload).then(() => {
+      alert("Match Reset Successfully! All squads are ready.");
+    });
+  }
+
+  // Timer Management
   let timerState = { running: false, seconds: 0, startTimestamp: null };
   let localTimerInterval = null;
 
