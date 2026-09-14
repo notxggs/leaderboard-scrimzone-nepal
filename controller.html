@@ -16,8 +16,10 @@
 
   header {
     display: flex;
+    flex-wrap: wrap;
     justify-content: space-between;
     align-items: center;
+    gap: 12px;
     background: #121824;
     border: 1px solid #1e293b;
     border-radius: 8px;
@@ -31,18 +33,51 @@
     letter-spacing: 1px;
   }
 
+  .header-controls {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  /* Match & Map Selectors */
+  .match-info-controls {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: #0b0e14;
+    padding: 6px 12px;
+    border-radius: 6px;
+    border: 1px solid #1e293b;
+    font-family: 'Chakra Petch', sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    color: #94a3b8;
+  }
+  .match-info-controls select, .match-info-controls input {
+    background: #1e293b;
+    color: #fff;
+    border: 1px solid #334155;
+    border-radius: 4px;
+    padding: 4px 8px;
+    font-family: 'Chakra Petch', sans-serif;
+    font-weight: 700;
+    outline: none;
+  }
+  .match-info-controls input { width: 60px; }
+
   /* Timer Controls */
   .timer-section {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 8px;
   }
   .timer-clock {
     font-family: 'Chakra Petch', sans-serif;
-    font-size: 26px;
+    font-size: 24px;
     font-weight: 700;
     color: #38bdf8;
-    min-width: 80px;
+    min-width: 75px;
     text-align: center;
   }
   button {
@@ -54,8 +89,8 @@
     transition: 0.15s ease;
   }
   .btn-timer {
-    padding: 6px 14px;
-    font-size: 13px;
+    padding: 6px 12px;
+    font-size: 12px;
     background: #1e293b;
     color: #fff;
   }
@@ -104,7 +139,6 @@
     grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
     gap: 14px;
   }
-
   .team-card {
     background: #121824;
     border: 1px solid #1e293b;
@@ -113,7 +147,6 @@
     display: flex;
     flex-direction: column;
     gap: 10px;
-    position: relative;
   }
   .team-card.is-active-spec {
     border-color: #426aef;
@@ -162,7 +195,6 @@
     border-color: #426aef;
   }
 
-  /* Roster Member Inputs */
   .roster-section {
     background: #0b0e14;
     padding: 8px 10px;
@@ -181,7 +213,6 @@
     text-transform: uppercase;
   }
 
-  /* Stats Controls */
   .stats-row {
     display: flex;
     justify-content: space-between;
@@ -216,7 +247,6 @@
     text-align: center;
   }
 
-  /* Players Alive Status Toggles */
   .players-alive-box {
     display: flex;
     gap: 5px;
@@ -252,20 +282,38 @@
 
   <header>
     <h1>ESPORTS BROADCAST ADMIN CONTROLLER</h1>
-    <div class="timer-section">
-      <div class="timer-clock" id="timer-display">00:00</div>
-      <button class="btn-timer" id="timer-toggle-btn" onclick="toggleTimer()">START</button>
-      <button class="btn-timer" onclick="resetTimer()">RESET</button>
+
+    <div class="header-controls">
+      <!-- Match Number & Map Selector -->
+      <div class="match-info-controls">
+        <label>MATCH #:</label>
+        <input type="number" id="match-number-input" value="1" min="1" max="15" onchange="updateMatchConfig()">
+
+        <label>MAP:</label>
+        <select id="map-select" onchange="updateMatchConfig()">
+          <option value="BERMUDA">BERMUDA</option>
+          <option value="PURGATORY">PURGATORY</option>
+          <option value="KALAHARI">KALAHARI</option>
+          <option value="NEXTERRA">NEXTERRA</option>
+        </select>
+      </div>
+
+      <!-- Match Timer -->
+      <div class="timer-section">
+        <div class="timer-clock" id="timer-display">00:00</div>
+        <button class="btn-timer" id="timer-toggle-btn" onclick="toggleTimer()">START</button>
+        <button class="btn-timer" onclick="resetTimer()">RESET</button>
+      </div>
     </div>
   </header>
 
-  <!-- Quick Spectate Switcher -->
+  <!-- Rapid Spectator Bar -->
   <div class="spectate-bar-wrap">
     <div class="section-title">CURRENT SPECTATING FOCUS (TAP TO CHANGE):</div>
     <div class="spectate-btn-grid" id="spectate-btn-container"></div>
   </div>
 
-  <!-- 12-Team Grid -->
+  <!-- 12-Team Card Grid -->
   <div class="teams-grid" id="teams-container"></div>
 
 <script>
@@ -286,6 +334,26 @@
   let teamsData = [];
   let activeSpectateIdx = null;
 
+  // Match Config Sync
+  function updateMatchConfig() {
+    const matchNum = document.getElementById('match-number-input').value || "1";
+    const selectedMap = document.getElementById('map-select').value || "BERMUDA";
+
+    db.ref('esports_data/match_info').set({
+      match: matchNum,
+      map: selectedMap
+    });
+  }
+
+  db.ref('esports_data/match_info').on('value', (snap) => {
+    const data = snap.val();
+    if (data) {
+      if (data.match) document.getElementById('match-number-input').value = data.match;
+      if (data.map) document.getElementById('map-select').value = data.map;
+    }
+  });
+
+  // Teams Sync
   db.ref('esports_data/teams').on('value', (snap) => {
     const val = snap.val();
     if (val && Array.isArray(val)) {
@@ -295,6 +363,7 @@
     }
   });
 
+  // Active Spectate Sync
   db.ref('esports_data/active_spectate').on('value', (snap) => {
     activeSpectateIdx = snap.val();
     renderSpectateBar();
@@ -342,7 +411,6 @@
         { status: 'alive' }, { status: 'alive' }
       ];
       const roster = team.roster || ['', '', '', ''];
-
       const fallbackLogo = `https://dummyimage.com/38x38/000/426aef&text=${name ? name[0] : (idx + 1)}`;
 
       let playerToggles = '';
@@ -361,23 +429,21 @@
             <span class="slot-tag">#${idx + 1}</span>
             <img class="logo-preview" src="${logo || fallbackLogo}" onerror="this.src='${fallbackLogo}'" />
             <div class="input-group">
-              <input type="text" id="name-${idx}" placeholder="Team Name (e.g. Total Gaming)" value="${name}">
+              <input type="text" id="name-${idx}" placeholder="Team Name" value="${name}">
               <input type="text" id="logo-${idx}" placeholder="Logo URL (https://...)" value="${logo}">
             </div>
           </div>
 
-          <!-- Roster Members -->
           <div class="roster-section">
-            <div class="section-title">TEAM MEMBERS (FOR .PY AUTO-DETECTION):</div>
+            <div class="section-title">TEAM MEMBERS (FOR AUTO-DETECTION):</div>
             <div class="roster-grid">
-              <input class="roster-input" type="text" id="r-${idx}-0" placeholder="Player 1 IGN" value="${roster[0] || ''}">
-              <input class="roster-input" type="text" id="r-${idx}-1" placeholder="Player 2 IGN" value="${roster[1] || ''}">
-              <input class="roster-input" type="text" id="r-${idx}-2" placeholder="Player 3 IGN" value="${roster[2] || ''}">
-              <input class="roster-input" type="text" id="r-${idx}-3" placeholder="Player 4 IGN" value="${roster[3] || ''}">
+              <input class="roster-input" type="text" id="r-${idx}-0" placeholder="P1 IGN" value="${roster[0] || ''}">
+              <input class="roster-input" type="text" id="r-${idx}-1" placeholder="P2 IGN" value="${roster[1] || ''}">
+              <input class="roster-input" type="text" id="r-${idx}-2" placeholder="P3 IGN" value="${roster[2] || ''}">
+              <input class="roster-input" type="text" id="r-${idx}-3" placeholder="P4 IGN" value="${roster[3] || ''}">
             </div>
           </div>
 
-          <!-- Kills & Live Players -->
           <div class="stats-row">
             <div class="kill-box">
               <span style="font-size:12px; font-weight:800; color:#94a3b8;">KILLS:</span>
@@ -413,7 +479,7 @@
       roster: rosterArr
     }).then(() => {
       const originalText = btn.innerText;
-      btn.innerText = 'SAVED TO FIREBASE!';
+      btn.innerText = 'SAVED!';
       btn.style.background = '#16a34a';
       setTimeout(() => {
         btn.innerText = originalText;
@@ -443,7 +509,7 @@
     });
   }
 
-  // Timer Handlers
+  // Match Timer Management
   let timerState = { running: false, seconds: 0, startTimestamp: null };
   let localTimerInterval = null;
 
