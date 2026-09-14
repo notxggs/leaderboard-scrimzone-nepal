@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>OBS Esports Master Overlay</title>
+<title>OBS Esports Broadcast Overlay</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Teko:wght@700&family=Rajdhani:wght@700;800&family=Chakra+Petch:wght@700;800&display=swap');
 
@@ -97,7 +97,7 @@
     text-transform: uppercase;
   }
 
-  /* Leaderboard Table */
+  /* Leaderboard Master Container */
   .hud-container {
     width: fit-content;
     display: table;
@@ -110,11 +110,11 @@
     background: #000000;
   }
 
-  /* OFFICIAL GOLD CURRENT MATCH & TIMER BAR */
+  /* OFFICIAL GOLD CURRENT MATCH & TIMER BAR (FROM REFERENCE IMAGE) */
   .hud-timer-bar {
     display: table-caption;
     caption-side: top;
-    background: linear-gradient(180deg, #11141d 0%, #08090d 100%);
+    background: linear-gradient(180deg, #161b26 0%, #090c12 100%);
     border: 1.5px solid #d4af37;
     border-bottom: 2px solid #426aef;
     border-radius: 4px 4px 0 0;
@@ -298,44 +298,46 @@
   .legend-box { width: 9px; height: 9px; border-radius: 1px; display: inline-block; }
 
   /* ----------------------------------------------------
-     2. BOTTOM-RIGHT OFFICIAL SPECTATOR CARD
+     2. BOTTOM-RIGHT OFFICIAL METALLIC SPECTATOR CARD
      ---------------------------------------------------- */
   #official-spec-card {
     position: fixed !important;
-    bottom: 30px !important;
-    right: 30px !important;
-    width: 380px !important;
-    background: linear-gradient(135deg, rgba(8, 11, 16, 0.98) 0%, rgba(14, 18, 28, 0.98) 100%) !important;
-    border: 2px solid #426aef !important;
-    border-radius: 8px !important;
-    padding: 12px 16px !important;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.95), 0 0 20px rgba(66, 106, 239, 0.4) !important;
+    bottom: 25px !important;
+    right: 25px !important;
+    width: 400px !important;
+    background: linear-gradient(180deg, #161b26 0%, #090c12 100%) !important;
+    border: 1.5px solid #d4af37 !important;
+    border-top: 2px solid #5c84ff !important;
+    border-radius: 6px !important;
+    padding: 10px 16px !important;
+    box-shadow: 0 12px 35px rgba(0,0,0,0.95), inset 0 1px 0 rgba(255, 215, 0, 0.3) !important;
     display: flex !important;
     flex-direction: column !important;
     gap: 8px !important;
     z-index: 999999 !important;
+    clip-path: polygon(0 0, 94% 0, 100% 18%, 100% 100%, 0 100%);
   }
   .card-topbar {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border-bottom: 1px solid rgba(255,255,255,0.1);
-    padding-bottom: 5px;
+    border-bottom: 1px solid rgba(212, 175, 55, 0.25);
+    padding-bottom: 4px;
   }
   .card-tourney-title {
     font-family: 'Chakra Petch', sans-serif;
-    font-size: 12px;
+    font-size: 11px;
     font-weight: 800;
-    color: #cbd5e1;
+    color: #d4af37;
     letter-spacing: 1.5px;
   }
   .card-live-tag {
     background: #ef4444;
     color: #ffffff;
-    font-size: 11px;
+    font-size: 10px;
     font-weight: 800;
     padding: 2px 7px;
-    border-radius: 3px;
+    border-radius: 2px;
     letter-spacing: 1px;
     font-family: 'Chakra Petch', sans-serif;
   }
@@ -346,25 +348,25 @@
     gap: 12px;
   }
   #spec-card-logo {
-    width: 50px;
-    height: 50px;
+    width: 48px;
+    height: 48px;
     border-radius: 4px;
     object-fit: contain;
     background: #000;
-    border: 2px solid #426aef;
+    border: 1.5px solid #d4af37;
     flex-shrink: 0;
   }
   .card-info {
     display: flex;
     flex-direction: column;
     justify-content: center;
-    line-height: 1.1;
+    line-height: 1;
     overflow: hidden;
   }
   .card-player-label {
-    font-size: 12px;
+    font-size: 11px;
     font-weight: 800;
-    color: #94a3b8;
+    color: #8fa0b5;
     letter-spacing: 1px;
   }
   .card-player-name {
@@ -382,30 +384,32 @@
     color: #ffffff;
     letter-spacing: 0.8px;
     text-transform: uppercase;
+    margin-top: 1px;
   }
 
   .card-subbar {
     display: flex;
     justify-content: space-between;
-    background: #06080c;
-    border: 1px solid #1e2433;
+    background: #05070a;
+    border: 1px solid rgba(255,255,255,0.08);
     padding: 5px 10px;
-    border-radius: 4px;
+    border-radius: 3px;
     font-family: 'Chakra Petch', sans-serif;
-    font-size: 12px;
+    font-size: 11px;
     font-weight: 800;
   }
-  .card-subbar .stat-val { color: #426aef; }
+  .card-subbar .stat-val { color: #5c84ff; }
 
   .card-bottombar {
     display: flex;
     justify-content: space-between;
-    font-size: 11px;
+    font-size: 10px;
     font-weight: 800;
-    color: #64748b;
+    color: #e5b95c;
     border-top: 1px solid rgba(255,255,255,0.06);
-    padding-top: 5px;
-    letter-spacing: 1px;
+    padding-top: 4px;
+    letter-spacing: 1.5px;
+    font-family: 'Chakra Petch', sans-serif;
   }
 </style>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
@@ -430,7 +434,7 @@
     </div>
 
     <div class="hud-container">
-      <!-- Top Match Bar -->
+      <!-- Top Gold Match Bar -->
       <div class="hud-timer-bar">
         <div class="current-match-block">
           <div class="match-main-title">CURRENT MATCH</div>
@@ -466,7 +470,7 @@
     </div>
   </div>
 
-  <!-- 2. BOTTOM-RIGHT OFFICIAL SPECTATOR CARD -->
+  <!-- 2. BOTTOM-RIGHT TOURNAMENT SPECTATOR CARD -->
   <div id="official-spec-card">
     <div class="card-topbar">
       <span class="card-tourney-title">/// FFWS PRO TOURNAMENT ///</span>
@@ -474,7 +478,7 @@
     </div>
 
     <div class="card-main">
-      <img id="spec-card-logo" src="https://dummyimage.com/50x50/000/426aef&text=FF" alt="Team Logo" />
+      <img id="spec-card-logo" src="https://dummyimage.com/48x48/000/d4af37&text=FF" alt="Team Logo" />
       <div class="card-info">
         <span class="card-player-label">PLAYER: <span class="card-player-name" id="spec-player-name">SELECTING...</span></span>
         <span class="card-team-name" id="spec-team-name">WAITING FOR SPECTATE</span>
@@ -487,8 +491,8 @@
     </div>
 
     <div class="card-bottombar">
-      <span id="spec-card-map-footer">MAP 01 - BERMUDA | DAY 01</span>
-      <span style="color:#426aef;">OFFICIAL SPECTATOR CLIENT</span>
+      <span id="spec-card-map-footer">MAP - 1 - BERMUDA</span>
+      <span style="color:#5c84ff;">OFFICIAL SPECTATOR CLIENT</span>
     </div>
   </div>
 
@@ -532,7 +536,7 @@
       document.getElementById('overlay-match-map').innerText = `MAP - ${matchNum} - ${mapName}`;
       const footer = document.getElementById('spec-card-map-footer');
       if (footer) {
-        footer.innerText = `MAP 0${matchNum} - ${mapName} | DAY 01`;
+        footer.innerText = `MAP - ${matchNum} - ${mapName}`;
       }
     }
   });
@@ -568,7 +572,7 @@
     const team = cachedTeams[currentActiveTeamIdx];
 
     const teamName = team.name && team.name.trim() !== '' ? team.name : `SLOT ${currentActiveTeamIdx + 1}`;
-    const logoUrl = team.logo && team.logo.trim() !== '' ? team.logo : `https://dummyimage.com/50x50/000/426aef&text=${teamName[0]}`;
+    const logoUrl = team.logo && team.logo.trim() !== '' ? team.logo : `https://dummyimage.com/48x48/000/d4af37&text=${teamName[0]}`;
     const kills = team.kills || 0;
     const aliveCount = (team.players || []).filter(p => p.status === 'alive').length;
 
