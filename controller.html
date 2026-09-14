@@ -2,7 +2,8 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Official Tournament Admin Desk</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Official Broadcast Admin Controller</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@600;700;800&family=Rajdhani:wght@600;700;800&family=Teko:wght@700&display=swap');
 
@@ -15,7 +16,7 @@
     background-image: radial-gradient(circle at 50% 0%, rgba(66, 106, 239, 0.08) 0%, transparent 60%);
   }
 
-  /* TOP CONTROL CONSOLE */
+  /* TOP HEADER CONTROLLER */
   .admin-header-bar {
     display: flex;
     flex-wrap: wrap;
@@ -57,7 +58,6 @@
     flex-wrap: wrap;
   }
 
-  /* Map & Match Selector Suite */
   .match-config-panel {
     display: flex;
     align-items: center;
@@ -66,7 +66,6 @@
     padding: 6px 14px;
     border-radius: 6px;
     border: 1px solid rgba(212, 175, 55, 0.4);
-    box-shadow: inset 0 0 10px rgba(0,0,0,0.8);
   }
   .config-label {
     font-family: 'Chakra Petch', sans-serif;
@@ -85,11 +84,6 @@
     font-weight: 700;
     font-size: 13px;
     outline: none;
-    transition: 0.2s;
-  }
-  .config-input:focus, .config-select:focus {
-    border-color: #d4af37;
-    box-shadow: 0 0 8px rgba(212, 175, 55, 0.4);
   }
   .config-input { width: 55px; text-align: center; }
 
@@ -122,15 +116,6 @@
     transition: 0.15s ease;
     text-transform: uppercase;
   }
-  .btn-gold {
-    background: linear-gradient(135deg, #d4af37 0%, #aa820a 100%);
-    color: #000;
-    padding: 7px 14px;
-    font-size: 12px;
-    box-shadow: 0 0 10px rgba(212, 175, 55, 0.3);
-  }
-  .btn-gold:hover { background: #f0cb53; }
-
   .btn-action {
     padding: 7px 12px;
     font-size: 12px;
@@ -146,11 +131,10 @@
     color: #fff;
     padding: 7px 14px;
     font-size: 12px;
-    box-shadow: 0 0 12px rgba(220, 38, 38, 0.4);
   }
   .btn-reset-scrim:hover { background: #ef4444; }
 
-  /* 1-CLICK SPECTATOR FOCUS STRIP */
+  /* 1-CLICK SPECTATOR FOCUS DOCK */
   .spectate-dock {
     background: #0d111a;
     border: 1px solid #1e293b;
@@ -186,22 +170,21 @@
     box-shadow: 0 0 12px rgba(66, 106, 239, 0.5);
   }
 
-  /* 12-TEAM GRID */
+  /* TEAMS GRID (12 SLOTS) */
   .teams-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
     gap: 14px;
   }
   .team-card {
     background: #0c1018;
     border: 1px solid #1a2233;
     border-radius: 6px;
-    padding: 12px;
+    padding: 14px;
     display: flex;
     flex-direction: column;
     gap: 10px;
-    position: relative;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+    transition: 0.2s ease;
   }
   .team-card.is-active-spec {
     border: 1.5px solid #d4af37;
@@ -211,144 +194,111 @@
   .card-top {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 12px;
   }
   .slot-tag {
     font-family: 'Chakra Petch', sans-serif;
     font-weight: 800;
     color: #d4af37;
-    font-size: 16px;
+    font-size: 18px;
     min-width: 32px;
   }
   .logo-preview {
-    width: 38px;
-    height: 38px;
+    width: 44px;
+    height: 44px;
     border-radius: 4px;
     object-fit: contain;
     background: #000;
     border: 1px solid #242e42;
     flex-shrink: 0;
   }
-  .input-group {
+  .team-info-box {
     display: flex;
     flex-direction: column;
-    gap: 4px;
     width: 100%;
+    overflow: hidden;
   }
-  input[type="text"] {
-    background: #05070a;
-    border: 1px solid #1e293b;
-    color: #fff;
-    font-family: inherit;
-    font-size: 14px;
-    font-weight: 700;
-    padding: 6px 10px;
-    border-radius: 4px;
-    width: 100%;
+  .team-name-text {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 20px;
+    font-weight: 800;
+    color: #ffffff;
+    text-transform: uppercase;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
-  input[type="text"]:focus {
-    outline: none;
-    border-color: #426aef;
+  .status-badge {
+    font-family: 'Chakra Petch', sans-serif;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 1px;
+    color: #22c55e;
+  }
+  .status-badge.open {
+    color: #64748b;
   }
 
-  /* Roster Member Inputs */
-  .roster-section {
+  /* Roster List */
+  .roster-box {
     background: #06080d;
-    padding: 8px;
-    border-radius: 4px;
     border: 1px solid #161c28;
+    border-radius: 4px;
+    padding: 8px 12px;
   }
   .roster-grid {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 6px;
+    grid-template-columns: 1fr 1fr;
+    gap: 4px 8px;
     margin-top: 4px;
   }
-  .roster-input {
-    font-size: 12px !important;
-    padding: 5px 8px !important;
-    text-transform: uppercase;
-  }
-
-  /* Kill & Alive Control Bar */
-  .stats-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background: #06080d;
-    padding: 6px 10px;
-    border-radius: 4px;
-    border: 1px solid #161c28;
-  }
-  .kill-box {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-  .btn-circle {
-    width: 26px;
-    height: 26px;
-    background: #171d2b;
-    color: #fff;
-    font-size: 16px;
-    border-radius: 4px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  .btn-circle:hover { background: #426aef; }
-  .kill-num {
+  .roster-item {
     font-family: 'Chakra Petch', sans-serif;
-    font-size: 20px;
-    font-weight: 800;
-    min-width: 24px;
-    text-align: center;
-  }
-
-  .players-alive-box {
-    display: flex;
-    gap: 5px;
-  }
-  .player-toggle-btn {
-    padding: 4px 8px;
-    font-size: 11px;
-    background: #171d2b;
-    color: #64748b;
-    border: 1px solid #2b3548;
-    border-radius: 3px;
-  }
-  .player-toggle-btn.alive {
-    background: #426aef;
-    color: #fff;
-    border-color: #60a5fa;
-    box-shadow: 0 0 6px rgba(66, 106, 239, 0.4);
-  }
-
-  .btn-save-team {
-    background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%);
-    color: #fff;
-    padding: 8px;
     font-size: 12px;
-    width: 100%;
-    margin-top: 4px;
-    border: 1px solid #3b82f6;
+    font-weight: 600;
+    color: #cbd5e1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
-  .btn-save-team:hover { background: #1d4ed8; }
+
+  .card-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 4px;
+  }
+  .btn-focus {
+    flex: 2;
+    background: #1e293b;
+    color: #fff;
+    padding: 7px;
+    font-size: 11px;
+  }
+  .btn-focus:hover { background: #426aef; }
+
+  .btn-clear {
+    flex: 1;
+    background: #181c26;
+    color: #ef4444;
+    border: 1px solid #2d3748;
+    padding: 7px;
+    font-size: 11px;
+  }
+  .btn-clear:hover { background: #dc2626; color: #fff; }
 </style>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 </head>
 <body>
 
-  <!-- ADMIN CONSOLE HEADER -->
+  <!-- TOP CONSOLE -->
   <div class="admin-header-bar">
     <div class="brand-title">
-      <h1>SCRIMZONE BROADCAST DESK</h1>
-      <span>LIVE TOURNAMENT ADMINISTRATION</span>
+      <h1>SCRIMZONE BROADCAST CONTROLLER</h1>
+      <span>AUTOMATED DISCORD & OBS DATA SYNC</span>
     </div>
 
     <div class="console-controls-cluster">
-      <!-- MAP & MATCH SELECTOR -->
       <div class="match-config-panel">
         <span class="config-label">MATCH:</span>
         <input type="number" id="match-number-input" class="config-input" value="1" min="1" max="20" onchange="updateMatchConfig()">
@@ -362,25 +312,23 @@
         </select>
       </div>
 
-      <!-- TIMER CONTROLS -->
       <div class="timer-box">
         <div class="timer-clock" id="timer-display">00:00</div>
         <button class="btn-action" id="timer-toggle-btn" onclick="toggleTimer()">START</button>
-        <button class="btn-action" onclick="resetTimer()">RESET TIME</button>
+        <button class="btn-action" onclick="resetTimer()">RESET</button>
       </div>
 
-      <!-- RESET SCRIM / NEW MATCH -->
       <button class="btn-reset-scrim" onclick="resetFullScrim()">RESET SCRIM</button>
     </div>
   </div>
 
-  <!-- QUICK 1-CLICK SPECTATOR FOCUS -->
+  <!-- 1-CLICK SPECTATOR FOCUS (CHANGES BOTTOM-RIGHT CARD IN OBS) -->
   <div class="spectate-dock">
-    <div class="dock-label">STREAM SPECTATOR FOCUS (CLICK TEAM TO FLIP CAMERA HUD):</div>
+    <div class="dock-label">CLICK A TEAM TO FOCUS ON SPECTATOR OVERLAY (BOTTOM-RIGHT):</div>
     <div class="spectate-btn-grid" id="spectate-btn-container"></div>
   </div>
 
-  <!-- 12-TEAM GRID -->
+  <!-- AUTOMATED TEAMS CONTAINER -->
   <div class="teams-grid" id="teams-container"></div>
 
 <script>
@@ -399,9 +347,9 @@
   const db = firebase.database();
 
   let teamsData = [];
-  let activeSpectateIdx = null;
+  let activeSpectateIdx = 0;
 
-  // Match & Map Config Handlers
+  // 1. Sync Match & Map Config
   function updateMatchConfig() {
     const matchNum = document.getElementById('match-number-input').value || "1";
     const selectedMap = document.getElementById('map-select').value || "BERMUDA";
@@ -420,95 +368,40 @@
     }
   });
 
-
-  <!-- PREMIUM APPLICATIONS ADMIN SECTION -->
-<div class="spectate-dock" style="margin-top: 20px;">
-  <div class="dock-label">⭐ PREMIUM TEAM APPLICATIONS (PENDING REVIEW):</div>
-  <div id="admin-premium-container" style="display: flex; flex-direction: column; gap: 10px;">
-    <!-- Rendered dynamically -->
-  </div>
-</div>
-
-<script>
-  // Listen to premium applications
-  db.ref('esports_data/premium_applications').on('value', (snap) => {
-    const apps = snap.val();
-    const container = document.getElementById('admin-premium-container');
-    container.innerHTML = '';
-
-    if (!apps) {
-      container.innerHTML = '<div style="color:#64748b; font-size:13px; padding:6px;">No pending premium applications.</div>';
-      return;
-    }
-
-    Object.keys(apps).forEach(appId => {
-      const app = apps[appId];
-      if (app.status !== 'pending') return;
-
-      let rosterNames = (app.roster || []).map(p => `${p.name} (${p.uid})`).join(', ');
-
-      container.innerHTML += `
-        <div style="background:#0c1018; border:1px solid #d4af37; border-radius:6px; padding:12px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
-          <div style="display:flex; align-items:center; gap:12px;">
-            <img src="${app.logo}" style="width:40px; height:40px; object-fit:contain; background:#000; border-radius:4px; border:1px solid #d4af37;" />
-            <div>
-              <div style="font-family:'Teko'; font-size:24px; color:#ffe600; line-height:1;">${app.team_name} [${app.team_tag}]</div>
-              <div style="font-size:12px; color:#94a3b8;">Leader: ${app.leader_name} (${app.leader_uid}) | Discord ID: ${app.discord_user_id}</div>
-              <div style="font-size:11px; color:#64748b;">Roster: ${rosterNames}</div>
-            </div>
-          </div>
-          <div style="display:flex; gap:8px;">
-            <button class="btn-gold" onclick="approvePremium('${appId}')">APPROVE</button>
-            <button class="btn-reset-scrim" onclick="rejectPremium('${appId}')">REJECT</button>
-          </div>
-        </div>
-      `;
-    });
-  });
-
-  function approvePremium(appId) {
-    if (!confirm("Approve this Premium application? This will deduct Rs. 100 from the user's wallet, assign the Discord role, and publish the team to OBS.")) return;
-    db.ref(`esports_data/premium_applications/${appId}`).update({
-      status: 'approved_pending_bot'
-    }).then(() => alert("Approval signal sent! The Discord bot will process payment and publish to OBS shortly."));
-  }
-
-  function rejectPremium(appId) {
-    if (!confirm("Reject this Premium application?")) return;
-    db.ref(`esports_data/premium_applications/${appId}`).update({
-      status: 'rejected_pending_bot'
-    }).then(() => alert("Application rejected."));
-  }
-  
-  // Teams Sync
+  // 2. Teams Sync (Populated from Discord Bot)
   db.ref('esports_data/teams').on('value', (snap) => {
     const val = snap.val();
-    if (val && Array.isArray(val)) {
-      teamsData = val;
-      renderTeams();
-      renderSpectateBar();
-    }
+    teamsData = (val && Array.isArray(val)) ? val : [];
+    renderTeams();
+    renderSpectateBar();
   });
 
-  // Active Spectate Sync
+  // 3. Active Spectate Sync
   db.ref('esports_data/active_spectate').on('value', (snap) => {
-    activeSpectateIdx = snap.val();
-    renderSpectateBar();
-    markActiveCard();
+    const val = snap.val();
+    if (val !== null && typeof val === 'number') {
+      activeSpectateIdx = val;
+      renderSpectateBar();
+      markActiveCard();
+    }
   });
 
   function renderSpectateBar() {
     const container = document.getElementById('spectate-btn-container');
     container.innerHTML = '';
-    teamsData.forEach((team, idx) => {
-      const name = (team.name && team.name.trim() !== '') ? team.name : `SLOT ${idx + 1}`;
+    
+    for (let idx = 0; idx < 12; idx++) {
+      const team = teamsData[idx] || {};
+      const isRegistered = team.name && team.name.trim() !== '' && !team.name.toUpperCase().startsWith('SLOT ');
+      const name = isRegistered ? team.name : `SLOT ${idx + 1}`;
       const isCurrent = activeSpectateIdx === idx;
+      
       container.innerHTML += `
         <button class="spec-btn ${isCurrent ? 'current' : ''}" onclick="setActiveSpectate(${idx})">
           #${idx + 1} ${name}
         </button>
       `;
-    });
+    }
   }
 
   function setActiveSpectate(idx) {
@@ -529,139 +422,84 @@
     const container = document.getElementById('teams-container');
     container.innerHTML = '';
 
-    teamsData.forEach((team, idx) => {
-      const name = team.name || '';
-      const logo = team.logo || '';
-      const kills = team.kills || 0;
-      const players = team.players || [
-        { status: 'alive' }, { status: 'alive' },
-        { status: 'alive' }, { status: 'alive' }
-      ];
-      const roster = team.roster || ['', '', '', ''];
-      const fallbackLogo = `https://dummyimage.com/38x38/000/d4af37&text=${name ? name[0] : (idx + 1)}`;
-
-      let playerToggles = '';
-      players.slice(0, 4).forEach((p, pIdx) => {
-        const isAlive = p.status === 'alive';
-        playerToggles += `
-          <button class="player-toggle-btn ${isAlive ? 'alive' : ''}" onclick="togglePlayerStatus(${idx}, ${pIdx})">
-            P${pIdx + 1}
-          </button>
-        `;
-      });
+    for (let idx = 0; idx < 12; idx++) {
+      const team = teamsData[idx] || {};
+      const isRegistered = team.name && team.name.trim() !== '' && !team.name.toUpperCase().startsWith('SLOT ');
+      const name = isRegistered ? team.name : `SLOT ${idx + 1} (OPEN)`;
+      const logo = team.logo || `https://dummyimage.com/44x44/000/d4af37&text=${isRegistered ? name[0] : (idx + 1)}`;
+      const roster = team.roster || ["-", "-", "-", "-"];
 
       container.innerHTML += `
         <div class="team-card ${activeSpectateIdx === idx ? 'is-active-spec' : ''}" id="card-${idx}">
           <div class="card-top">
             <span class="slot-tag">#${idx + 1}</span>
-            <img class="logo-preview" src="${logo || fallbackLogo}" onerror="this.src='${fallbackLogo}'" />
-            <div class="input-group">
-              <input type="text" id="name-${idx}" placeholder="Team Name" value="${name}">
-              <input type="text" id="logo-${idx}" placeholder="Logo URL (https://...)" value="${logo}">
+            <img class="logo-preview" src="${logo}" onerror="this.src='https://dummyimage.com/44x44/000/d4af37&text=${idx + 1}';" />
+            <div class="team-info-box">
+              <div class="team-name-text">${name}</div>
+              <div class="status-badge ${isRegistered ? '' : 'open'}">
+                ${isRegistered ? '● REGISTERED VIA DISCORD' : '○ EMPTY SLOT'}
+              </div>
             </div>
           </div>
 
-          <div class="roster-section">
-            <div class="dock-label">ROSTER IGNS (FOR VISION ENGINE):</div>
+          <div class="roster-box">
+            <div class="dock-label" style="margin-bottom:2px;">ROSTER:</div>
             <div class="roster-grid">
-              <input class="roster-input" type="text" id="r-${idx}-0" placeholder="P1 IGN" value="${roster[0] || ''}">
-              <input class="roster-input" type="text" id="r-${idx}-1" placeholder="P2 IGN" value="${roster[1] || ''}">
-              <input class="roster-input" type="text" id="r-${idx}-2" placeholder="P3 IGN" value="${roster[2] || ''}">
-              <input class="roster-input" type="text" id="r-${idx}-3" placeholder="P4 IGN" value="${roster[3] || ''}">
+              <div class="roster-item">1. ${roster[0] || '-'}</div>
+              <div class="roster-item">2. ${roster[1] || '-'}</div>
+              <div class="roster-item">3. ${roster[2] || '-'}</div>
+              <div class="roster-item">4. ${roster[3] || '-'}</div>
             </div>
           </div>
 
-          <div class="stats-row">
-            <div class="kill-box">
-              <span style="font-size:11px; font-weight:800; color:#94a3b8;">KILLS:</span>
-              <button class="btn-circle" onclick="changeKills(${idx}, -1)">-</button>
-              <span class="kill-num">${kills}</span>
-              <button class="btn-circle" onclick="changeKills(${idx}, 1)">+</button>
-            </div>
-            <div class="players-alive-box">
-              ${playerToggles}
-            </div>
+          <div class="card-actions">
+            <button class="btn-focus" onclick="setActiveSpectate(${idx})">FOCUS ON STREAM</button>
+            ${isRegistered ? `<button class="btn-clear" onclick="clearSlot(${idx})">CLEAR</button>` : ''}
           </div>
-
-          <button class="btn-save-team" onclick="saveTeamInfo(${idx}, this)">SAVE TEAM #${idx + 1}</button>
         </div>
       `;
-    });
-  }
-
-  function saveTeamInfo(idx, btn) {
-    const nameVal = document.getElementById(`name-${idx}`).value.trim();
-    const logoVal = document.getElementById(`logo-${idx}`).value.trim();
-
-    const r0 = document.getElementById(`r-${idx}-0`).value.trim();
-    const r1 = document.getElementById(`r-${idx}-1`).value.trim();
-    const r2 = document.getElementById(`r-${idx}-2`).value.trim();
-    const r3 = document.getElementById(`r-${idx}-3`).value.trim();
-
-    const rosterArr = [r0, r1, r2, r3].filter(Boolean);
-
-    db.ref(`esports_data/teams/${idx}`).update({
-      name: nameVal,
-      logo: logoVal,
-      roster: rosterArr
-    }).then(() => {
-      const originalText = btn.innerText;
-      btn.innerText = 'SAVED TO CLOUD!';
-      btn.style.background = '#16a34a';
-      setTimeout(() => {
-        btn.innerText = originalText;
-        btn.style.background = 'linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%)';
-      }, 1000);
-    });
-  }
-
-  function changeKills(teamIdx, amount) {
-    const current = Number(teamsData[teamIdx].kills) || 0;
-    const updated = Math.max(0, current + amount);
-    db.ref(`esports_data/teams/${teamIdx}/kills`).set(updated);
-  }
-
-  function togglePlayerStatus(teamIdx, playerIdx) {
-    const players = teamsData[teamIdx].players || [
-      { status: 'alive' }, { status: 'alive' },
-      { status: 'alive' }, { status: 'alive' }
-    ];
-
-    players[playerIdx].status = players[playerIdx].status === 'alive' ? 'dead' : 'alive';
-    const aliveCount = players.filter(p => p.status === 'alive').length;
-
-    db.ref(`esports_data/teams/${teamIdx}`).update({
-      players: players,
-      alive: aliveCount
-    });
-  }
-
-  // 1-CLICK SCRIM RESET (Kills to 0, all 4 players alive, timer reset)
-  function resetFullScrim() {
-    if (!confirm("Are you sure you want to reset all team kills, revive all squads, and reset the timer for a new match?")) {
-      return;
     }
+  }
+
+  function clearSlot(idx) {
+    if (!confirm(`Clear Slot #${idx + 1}?`)) return;
+    db.ref(`esports_data/teams/${idx}`).set({
+      name: `SLOT ${idx + 1}`,
+      logo: "",
+      roster: ["", "", "", ""],
+      kills: 0,
+      alive: 4,
+      players: [
+        { status: "alive" }, { status: "alive" },
+        { status: "alive" }, { status: "alive" }
+      ]
+    });
+  }
+
+  function resetFullScrim() {
+    if (!confirm("Reset all 12 slots and reset timer for a new match?")) return;
 
     const resetPayload = {};
-    teamsData.forEach((t, i) => {
-      resetPayload[`teams/${i}/kills`] = 0;
-      resetPayload[`teams/${i}/alive`] = 4;
-      resetPayload[`teams/${i}/players`] = [
-        { status: 'alive' }, { status: 'alive' },
-        { status: 'alive' }, { status: 'alive' }
-      ];
-    });
-
+    for (let i = 0; i < 12; i++) {
+      resetPayload[`teams/${i}`] = {
+        name: `SLOT ${i + 1}`,
+        logo: "",
+        roster: ["", "", "", ""],
+        kills: 0,
+        alive: 4,
+        players: [
+          { status: "alive" }, { status: "alive" },
+          { status: "alive" }, { status: "alive" }
+        ]
+      };
+    }
     resetPayload['timer'] = { running: false, seconds: 0, startTimestamp: null };
     resetPayload['active_spectate'] = 0;
-    resetPayload['detected_player'] = "SPECTATING";
 
-    db.ref('esports_data').update(resetPayload).then(() => {
-      alert("Match Reset Successfully! All squads are ready.");
-    });
+    db.ref('esports_data').update(resetPayload);
   }
 
-  // Timer Management
+  // Timer Handlers
   let timerState = { running: false, seconds: 0, startTimestamp: null };
   let localTimerInterval = null;
 
