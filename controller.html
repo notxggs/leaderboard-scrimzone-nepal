@@ -1,460 +1,3 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Official Broadcast Admin Controller</title>
-<style>
-  @import url('https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@600;700;800&family=Rajdhani:wght@600;700;800&family=Teko:wght@700&display=swap');
-
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body {
-    background: #06080d;
-    color: #e2e8f0;
-    font-family: 'Rajdhani', sans-serif;
-    padding: 16px;
-    background-image: radial-gradient(circle at 50% 0%, rgba(66, 106, 239, 0.08) 0%, transparent 60%);
-  }
-
-  /* PASSWORD GATE (00) */
-  #auth-overlay {
-    position: fixed;
-    top: 0; left: 0; width: 100vw; height: 100vh;
-    background: #06080d;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 99999;
-  }
-  .auth-box {
-    background: #0c1018;
-    border: 1.5px solid #d4af37;
-    border-radius: 8px;
-    padding: 30px;
-    width: 350px;
-    text-align: center;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.9);
-  }
-  .auth-box h2 {
-    font-family: 'Teko', sans-serif;
-    font-size: 28px;
-    color: #fff;
-    margin-bottom: 4px;
-  }
-  .auth-box p {
-    font-family: 'Chakra Petch', sans-serif;
-    font-size: 11px;
-    color: #8fa0b5;
-    margin-bottom: 16px;
-  }
-
-  #main-app { display: none; }
-
-  .admin-header-bar {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
-    align-items: center;
-    gap: 14px;
-    background: linear-gradient(180deg, #121722 0%, #0a0d14 100%);
-    border: 1.5px solid #d4af37;
-    border-radius: 8px;
-    padding: 12px 20px;
-    margin-bottom: 16px;
-    box-shadow: 0 8px 25px rgba(0,0,0,0.8), inset 0 1px 0 rgba(255, 215, 0, 0.3);
-  }
-
-  .brand-title {
-    display: flex;
-    flex-direction: column;
-    line-height: 1;
-  }
-  .brand-title h1 {
-    font-family: 'Teko', sans-serif;
-    font-size: 32px;
-    color: #ffffff;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-  }
-  .brand-title span {
-    font-family: 'Chakra Petch', sans-serif;
-    font-size: 11px;
-    font-weight: 700;
-    color: #d4af37;
-    letter-spacing: 2px;
-  }
-
-  .console-controls-cluster {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    flex-wrap: wrap;
-  }
-
-  .match-config-panel {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    background: #05070a;
-    padding: 6px 14px;
-    border-radius: 6px;
-    border: 1px solid rgba(212, 175, 55, 0.4);
-  }
-  .config-label {
-    font-family: 'Chakra Petch', sans-serif;
-    font-size: 11px;
-    font-weight: 800;
-    color: #d4af37;
-    letter-spacing: 1.5px;
-  }
-  .config-input, .config-select {
-    background: #111622;
-    color: #ffffff;
-    border: 1px solid #2d3748;
-    border-radius: 4px;
-    padding: 5px 8px;
-    font-family: 'Chakra Petch', sans-serif;
-    font-weight: 700;
-    font-size: 13px;
-    outline: none;
-  }
-  .config-input { width: 55px; text-align: center; }
-
-  .timer-box {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    background: #05070a;
-    padding: 6px 14px;
-    border-radius: 6px;
-    border: 1px solid #1e293b;
-  }
-  .timer-clock {
-    font-family: 'Chakra Petch', sans-serif;
-    font-size: 24px;
-    font-weight: 800;
-    color: #5c84ff;
-    min-width: 75px;
-    text-align: center;
-    text-shadow: 0 0 10px rgba(66, 106, 239, 0.6);
-  }
-
-  button {
-    font-family: 'Chakra Petch', sans-serif;
-    font-weight: 800;
-    cursor: pointer;
-    border-radius: 4px;
-    border: none;
-    transition: 0.15s ease;
-    text-transform: uppercase;
-  }
-  .btn-action {
-    padding: 7px 12px;
-    font-size: 12px;
-    background: #171d2b;
-    color: #cbd5e1;
-    border: 1px solid #334155;
-  }
-  .btn-action:hover { background: #263147; color: #fff; }
-  .btn-action.active { background: #16a34a; color: #fff; border-color: #22c55e; }
-
-  .btn-gold {
-    background: #d4af37;
-    color: #000;
-    padding: 7px 12px;
-    font-size: 12px;
-  }
-  .btn-gold:hover { background: #ffe082; }
-
-  .btn-reset-scrim {
-    background: linear-gradient(135deg, #991b1b 0%, #dc2626 100%);
-    color: #fff;
-    padding: 7px 14px;
-    font-size: 12px;
-  }
-  .btn-reset-scrim:hover { background: #ef4444; }
-
-  /* DATE ARCHIVE & HISTORY PANEL */
-  .history-panel {
-    background: #0c1018;
-    border: 1px solid #1a2233;
-    border-radius: 6px;
-    padding: 14px;
-    margin-bottom: 16px;
-  }
-  .history-header-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 10px;
-    flex-wrap: wrap;
-    gap: 10px;
-  }
-  .history-title {
-    font-family: 'Chakra Petch', sans-serif;
-    font-size: 13px;
-    font-weight: 800;
-    color: #d4af37;
-    letter-spacing: 1.5px;
-    text-transform: uppercase;
-  }
-  .history-table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 13px;
-  }
-  .history-table th, .history-table td {
-    border: 1px solid #1e293b;
-    padding: 6px 12px;
-    text-align: left;
-  }
-  .history-table th {
-    background: #121824;
-    color: #94a3b8;
-    font-family: 'Chakra Petch', sans-serif;
-  }
-  .history-table td {
-    background: #06080d;
-  }
-
-  .spectate-dock {
-    background: #0d111a;
-    border: 1px solid #1e293b;
-    border-radius: 6px;
-    padding: 10px 14px;
-    margin-bottom: 16px;
-  }
-  .dock-label {
-    font-size: 11px;
-    font-weight: 800;
-    color: #94a3b8;
-    letter-spacing: 1.5px;
-    margin-bottom: 8px;
-    text-transform: uppercase;
-  }
-  .spectate-btn-grid {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-  }
-  .spec-btn {
-    background: #121824;
-    color: #94a3b8;
-    border: 1px solid #242e42;
-    padding: 8px 12px;
-    font-size: 12px;
-    border-radius: 4px;
-  }
-  .spec-btn.current {
-    background: #426aef;
-    color: #fff;
-    border-color: #60a5fa;
-    box-shadow: 0 0 12px rgba(66, 106, 239, 0.5);
-  }
-
-  .teams-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
-    gap: 14px;
-  }
-  .team-card {
-    background: #0c1018;
-    border: 1px solid #1a2233;
-    border-radius: 6px;
-    padding: 14px;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    transition: 0.2s ease;
-  }
-  .team-card.is-active-spec {
-    border: 1.5px solid #d4af37;
-    box-shadow: 0 0 15px rgba(212, 175, 55, 0.25);
-  }
-
-  .card-top {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-  }
-  .slot-tag {
-    font-family: 'Chakra Petch', sans-serif;
-    font-weight: 800;
-    color: #d4af37;
-    font-size: 18px;
-    min-width: 32px;
-  }
-  .logo-preview {
-    width: 44px;
-    height: 44px;
-    border-radius: 4px;
-    object-fit: contain;
-    background: #000;
-    border: 1px solid #242e42;
-    flex-shrink: 0;
-  }
-  .team-info-box {
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    overflow: hidden;
-  }
-  .team-name-text {
-    font-family: 'Rajdhani', sans-serif;
-    font-size: 20px;
-    font-weight: 800;
-    color: #ffffff;
-    text-transform: uppercase;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-  .status-badge {
-    font-family: 'Chakra Petch', sans-serif;
-    font-size: 10px;
-    font-weight: 800;
-    letter-spacing: 1px;
-    color: #22c55e;
-  }
-  .status-badge.open {
-    color: #64748b;
-  }
-
-  .roster-box {
-    background: #06080d;
-    border: 1px solid #161c28;
-    border-radius: 4px;
-    padding: 8px 12px;
-  }
-  .roster-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 4px 8px;
-    margin-top: 4px;
-  }
-  .roster-item {
-    font-family: 'Chakra Petch', sans-serif;
-    font-size: 12px;
-    font-weight: 600;
-    color: #cbd5e1;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-
-  .card-actions {
-    display: flex;
-    gap: 8px;
-    margin-top: 4px;
-  }
-  .btn-focus {
-    flex: 2;
-    background: #1e293b;
-    color: #fff;
-    padding: 7px;
-    font-size: 11px;
-  }
-  .btn-focus:hover { background: #426aef; }
-
-  .btn-booyah {
-    flex: 1.5;
-    background: linear-gradient(135deg, #d4af37 0%, #aa820a 100%);
-    color: #000;
-    padding: 7px;
-    font-size: 11px;
-  }
-  .btn-booyah:hover { background: #ffe082; }
-
-  .btn-clear {
-    flex: 1;
-    background: #181c26;
-    color: #ef4444;
-    border: 1px solid #2d3748;
-    padding: 7px;
-    font-size: 11px;
-  }
-  .btn-clear:hover { background: #dc2626; color: #fff; }
-</style>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
-</head>
-<body>
-
-  <!-- PASSWORD GATE (00) -->
-  <div id="auth-overlay">
-    <div class="auth-box">
-      <h2>ADMIN DESK LOGIN</h2>
-      <p>Enter password to unlock controller</p>
-      <input type="password" id="pass-input" placeholder="Password (00)" style="text-align:center; font-size:18px; letter-spacing:4px;" />
-      <button class="btn-gold" onclick="checkPassword()" style="margin-top:8px;">UNLOCK</button>
-      <div id="auth-err" style="color:#ef4444; font-size:12px; margin-top:8px; display:none;">Incorrect Password (Use 00)</div>
-    </div>
-  </div>
-
-  <div id="main-app">
-    <div class="admin-header-bar">
-      <div class="brand-title">
-        <h1>SCRIMZONE BROADCAST CONTROLLER</h1>
-        <span>AUTOMATED DISCORD & OBS DATA SYNC</span>
-      </div>
-
-      <div class="console-controls-cluster">
-        <div class="match-config-panel">
-          <span class="config-label">MATCH:</span>
-          <input type="number" id="match-number-input" class="config-input" value="1" min="1" max="20" onchange="updateMatchConfig()">
-
-          <span class="config-label">MAP:</span>
-          <select id="map-select" class="config-select" onchange="updateMatchConfig()">
-            <option value="BERMUDA">BERMUDA</option>
-            <option value="PURGATORY">PURGATORY</option>
-            <option value="KALAHARI">KALAHARI</option>
-            <option value="NEXTERRA">NEXTERRA</option>
-          </select>
-        </div>
-
-        <div class="timer-box">
-          <div class="timer-clock" id="timer-display">00:00</div>
-          <button class="btn-action" id="timer-toggle-btn" onclick="toggleTimer()">START</button>
-          <button class="btn-action" onclick="resetTimer()">RESET</button>
-        </div>
-
-        <button class="btn-gold" onclick="initializeSlots()">INIT SLOTS</button>
-        <button class="btn-reset-scrim" onclick="resetFullScrim()">RESET SCRIM</button>
-      </div>
-    </div>
-
-    <!-- SCRIM DATE ARCHIVE & HISTORY LEADERBOARD -->
-    <div class="history-panel">
-      <div class="history-header-row">
-        <div class="history-title">📅 TOURNAMENT DATE & HISTORY ARCHIVE</div>
-        <div class="match-config-panel">
-          <span class="config-label">SELECT DATE:</span>
-          <input type="date" id="archive-date-picker" class="config-input" style="width: 140px;" onchange="switchDateArchive()">
-        </div>
-      </div>
-      <table class="history-table">
-        <thead>
-          <tr>
-            <th>Slot #</th>
-            <th>Registered Team Name</th>
-            <th>Roster Summary</th>
-            <th>Total Booyahs 👑</th>
-          </tr>
-        </thead>
-        <tbody id="history-table-body">
-          <!-- Dynamic -->
-        </tbody>
-      </table>
-    </div>
-
-    <div class="spectate-dock">
-      <div class="dock-label">CLICK A TEAM TO FOCUS ON SPECTATOR OVERLAY (BOTTOM-RIGHT):</div>
-      <div class="spectate-btn-grid" id="spectate-btn-container"></div>
-    </div>
-
-    <div class="teams-grid" id="teams-container"></div>
-  </div>
-
 <script>
   function checkPassword() {
     const val = document.getElementById('pass-input').value;
@@ -487,37 +30,26 @@
 
   let teamsData = [];
   let activeSpectateIdx = 0;
-  let currentDateKey = "";
 
   function setupDefaultDate() {
-    // Default to today's date in YYYY-MM-DD format
     const today = new Date().toISOString().split('T')[0];
     document.getElementById('archive-date-picker').value = today;
-    currentDateKey = today.replace(/-/g, '_'); // Firebase-safe key (e.g. 2026_09_14)
-    loadDateArchiveData();
+    loadLiveTeams();
   }
 
   function switchDateArchive() {
-    const rawDate = document.getElementById('archive-date-picker').value;
-    if (!rawDate) return;
-    currentDateKey = rawDate.replace(/-/g, '_');
-    loadDateArchiveData();
+    loadLiveTeams();
   }
 
-  function getArchivepath() {
-    return `esports_data/date_archives/${currentDateKey}/teams`;
-  }
-
-  function loadDateArchiveData() {
-    db.ref(getArchivepath()).on('value', (snap) => {
+  // Connects directly to the main teams path where your Discord bot writes
+  function loadLiveTeams() {
+    db.ref('esports_data/teams').on('value', (snap) => {
       const val = snap.val();
       if (val) {
         teamsData = Array.isArray(val) ? val : Object.values(val);
       } else {
         teamsData = [];
       }
-      // Sync to live teams path for OBS overlay compatibility
-      db.ref('esports_data/teams').set(teamsData);
       renderTeams();
       renderSpectateBar();
       renderHistoryTable();
@@ -642,16 +174,15 @@
   function addBooyah(idx) {
     const current = (teamsData[idx] && teamsData[idx].booyahs) ? teamsData[idx].booyahs : 0;
     const newCount = current + 1;
-    db.ref(`${getArchivepath()}/${idx}/booyahs`).set(newCount);
     db.ref(`esports_data/teams/${idx}/booyahs`).set(newCount).then(() => {
       alert(`Booyah awarded to Slot #${idx + 1} (${teamsData[idx].name})! Total: ${newCount}`);
     });
   }
 
   function initializeSlots() {
-    const payload = {};
+    const payload = [];
     for (let i = 0; i < 12; i++) {
-      payload[i] = {
+      payload.push({
         name: `SLOT ${i + 1}`,
         logo: "",
         roster: ["-", "-", "-", "-"],
@@ -659,10 +190,10 @@
         alive: 4,
         booyahs: 0,
         players: [{ status: "alive" }, { status: "alive" }, { status: "alive" }, { status: "alive" }]
-      };
+      });
     }
-    db.ref(getArchivepath()).set(payload).then(() => {
-      alert("Initialized 12 slots for date archive: " + currentDateKey);
+    db.ref('esports_data/teams').set(payload).then(() => {
+      alert("Initialized 12 slots successfully!");
     });
   }
 
@@ -677,12 +208,11 @@
       booyahs: 0,
       players: [{ status: "alive" }, { status: "alive" }, { status: "alive" }, { status: "alive" }]
     };
-    db.ref(`${getArchivepath()}/${idx}`).set(emptySlot);
     db.ref(`esports_data/teams/${idx}`).set(emptySlot);
   }
 
   function resetFullScrim() {
-    if (!confirm("Reset all 12 slots for date archive: " + currentDateKey + "?")) return;
+    if (!confirm("Reset all 12 slots?")) return;
     initializeSlots();
     db.ref('esports_data/timer').set({ running: false, seconds: 0, startTimestamp: null });
     db.ref('esports_data/active_spectate').set(0);
@@ -742,5 +272,3 @@
     db.ref('esports_data/timer').set({ running: false, seconds: 0, startTimestamp: null });
   }
 </script>
-</body>
-</html>
