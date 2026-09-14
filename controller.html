@@ -16,7 +16,6 @@
     background-image: radial-gradient(circle at 50% 0%, rgba(66, 106, 239, 0.08) 0%, transparent 60%);
   }
 
-  /* TOP HEADER CONTROLLER */
   .admin-header-bar {
     display: flex;
     flex-wrap: wrap;
@@ -54,7 +53,7 @@
   .console-controls-cluster {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 10px;
     flex-wrap: wrap;
   }
 
@@ -87,7 +86,6 @@
   }
   .config-input { width: 55px; text-align: center; }
 
-  /* Match Timer */
   .timer-box {
     display: flex;
     align-items: center;
@@ -126,6 +124,14 @@
   .btn-action:hover { background: #263147; color: #fff; }
   .btn-action.active { background: #16a34a; color: #fff; border-color: #22c55e; }
 
+  .btn-gold {
+    background: #d4af37;
+    color: #000;
+    padding: 7px 12px;
+    font-size: 12px;
+  }
+  .btn-gold:hover { background: #ffe082; }
+
   .btn-reset-scrim {
     background: linear-gradient(135deg, #991b1b 0%, #dc2626 100%);
     color: #fff;
@@ -134,7 +140,6 @@
   }
   .btn-reset-scrim:hover { background: #ef4444; }
 
-  /* 1-CLICK SPECTATOR FOCUS DOCK */
   .spectate-dock {
     background: #0d111a;
     border: 1px solid #1e293b;
@@ -170,7 +175,6 @@
     box-shadow: 0 0 12px rgba(66, 106, 239, 0.5);
   }
 
-  /* TEAMS GRID (12 SLOTS) */
   .teams-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
@@ -239,7 +243,6 @@
     color: #64748b;
   }
 
-  /* Roster List */
   .roster-box {
     background: #06080d;
     border: 1px solid #161c28;
@@ -291,7 +294,6 @@
 </head>
 <body>
 
-  <!-- TOP CONSOLE -->
   <div class="admin-header-bar">
     <div class="brand-title">
       <h1>SCRIMZONE BROADCAST CONTROLLER</h1>
@@ -318,17 +320,16 @@
         <button class="btn-action" onclick="resetTimer()">RESET</button>
       </div>
 
+      <button class="btn-gold" onclick="initializeSlots()">INIT 12 SLOTS</button>
       <button class="btn-reset-scrim" onclick="resetFullScrim()">RESET SCRIM</button>
     </div>
   </div>
 
-  <!-- 1-CLICK SPECTATOR FOCUS (CHANGES BOTTOM-RIGHT CARD IN OBS) -->
   <div class="spectate-dock">
     <div class="dock-label">CLICK A TEAM TO FOCUS ON SPECTATOR OVERLAY (BOTTOM-RIGHT):</div>
     <div class="spectate-btn-grid" id="spectate-btn-container"></div>
   </div>
 
-  <!-- AUTOMATED TEAMS CONTAINER -->
   <div class="teams-grid" id="teams-container"></div>
 
 <script>
@@ -349,6 +350,10 @@
   let teamsData = [];
   let activeSpectateIdx = 0;
 
+  // Render immediately with placeholder state so screen is never blank
+  renderTeams();
+  renderSpectateBar();
+
   // 1. Sync Match & Map Config
   function updateMatchConfig() {
     const matchNum = document.getElementById('match-number-input').value || "1";
@@ -368,10 +373,18 @@
     }
   });
 
-  // 2. Teams Sync (Populated from Discord Bot)
+  // 2. Teams Sync
   db.ref('esports_data/teams').on('value', (snap) => {
     const val = snap.val();
-    teamsData = (val && Array.isArray(val)) ? val : [];
+    if (val) {
+      if (Array.isArray(val)) {
+        teamsData = val;
+      } else if (typeof val === 'object') {
+        teamsData = Object.values(val);
+      }
+    } else {
+      teamsData = [];
+    }
     renderTeams();
     renderSpectateBar();
   });
@@ -391,7 +404,7 @@
     container.innerHTML = '';
     
     for (let idx = 0; idx < 12; idx++) {
-      const team = teamsData[idx] || {};
+      const team = (teamsData && teamsData[idx]) ? teamsData[idx] : {};
       const isRegistered = team.name && team.name.trim() !== '' && !team.name.toUpperCase().startsWith('SLOT ');
       const name = isRegistered ? team.name : `SLOT ${idx + 1}`;
       const isCurrent = activeSpectateIdx === idx;
@@ -423,10 +436,12 @@
     container.innerHTML = '';
 
     for (let idx = 0; idx < 12; idx++) {
-      const team = teamsData[idx] || {};
+      const team = (teamsData && teamsData[idx]) ? teamsData[idx] : {};
       const isRegistered = team.name && team.name.trim() !== '' && !team.name.toUpperCase().startsWith('SLOT ');
       const name = isRegistered ? team.name : `SLOT ${idx + 1} (OPEN)`;
-      const logo = team.logo || `https://dummyimage.com/44x44/000/d4af37&text=${isRegistered ? name[0] : (idx + 1)}`;
+      const logo = (team.logo && team.logo.trim() !== '') 
+        ? team.logo 
+        : `https://dummyimage.com/44x44/000/d4af37&text=${isRegistered ? name[0] : (idx + 1)}`;
       const roster = team.roster || ["-", "-", "-", "-"];
 
       container.innerHTML += `
@@ -461,12 +476,32 @@
     }
   }
 
+  function initializeSlots() {
+    const payload = {};
+    for (let i = 0; i < 12; i++) {
+      payload[`teams/${i}`] = {
+        name: `SLOT ${i + 1}`,
+        logo: "",
+        roster: ["-", "-", "-", "-"],
+        kills: 0,
+        alive: 4,
+        players: [
+          { status: "alive" }, { status: "alive" },
+          { status: "alive" }, { status: "alive" }
+        ]
+      };
+    }
+    db.ref('esports_data').update(payload).then(() => {
+      alert("Initialized 12 slots successfully in Firebase!");
+    });
+  }
+
   function clearSlot(idx) {
     if (!confirm(`Clear Slot #${idx + 1}?`)) return;
     db.ref(`esports_data/teams/${idx}`).set({
       name: `SLOT ${idx + 1}`,
       logo: "",
-      roster: ["", "", "", ""],
+      roster: ["-", "-", "-", "-"],
       kills: 0,
       alive: 4,
       players: [
@@ -478,25 +513,9 @@
 
   function resetFullScrim() {
     if (!confirm("Reset all 12 slots and reset timer for a new match?")) return;
-
-    const resetPayload = {};
-    for (let i = 0; i < 12; i++) {
-      resetPayload[`teams/${i}`] = {
-        name: `SLOT ${i + 1}`,
-        logo: "",
-        roster: ["", "", "", ""],
-        kills: 0,
-        alive: 4,
-        players: [
-          { status: "alive" }, { status: "alive" },
-          { status: "alive" }, { status: "alive" }
-        ]
-      };
-    }
-    resetPayload['timer'] = { running: false, seconds: 0, startTimestamp: null };
-    resetPayload['active_spectate'] = 0;
-
-    db.ref('esports_data').update(resetPayload);
+    initializeSlots();
+    db.ref('esports_data/timer').set({ running: false, seconds: 0, startTimestamp: null });
+    db.ref('esports_data/active_spectate').set(0);
   }
 
   // Timer Handlers
