@@ -16,7 +16,7 @@
     background-image: radial-gradient(circle at 50% 0%, rgba(66, 106, 239, 0.08) 0%, transparent 60%);
   }
 
-  /* AUTH SCREEN LOCK */
+  /* PASSWORD GATE (00) */
   #auth-overlay {
     position: fixed;
     top: 0; left: 0; width: 100vw; height: 100vh;
@@ -174,7 +174,7 @@
   }
   .btn-reset-scrim:hover { background: #ef4444; }
 
-  /* HISTORY SECTION */
+  /* DATE ARCHIVE & HISTORY PANEL */
   .history-panel {
     background: #0c1018;
     border: 1px solid #1a2233;
@@ -182,13 +182,20 @@
     padding: 14px;
     margin-bottom: 16px;
   }
+  .history-header-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
   .history-title {
     font-family: 'Chakra Petch', sans-serif;
     font-size: 13px;
     font-weight: 800;
     color: #d4af37;
     letter-spacing: 1.5px;
-    margin-bottom: 10px;
     text-transform: uppercase;
   }
   .history-table {
@@ -373,11 +380,11 @@
 </head>
 <body>
 
-  <!-- PASSWORD GATE (PASS: 00) -->
+  <!-- PASSWORD GATE (00) -->
   <div id="auth-overlay">
     <div class="auth-box">
       <h2>ADMIN DESK LOGIN</h2>
-      <p>Enter password to unlock panel</p>
+      <p>Enter password to unlock controller</p>
       <input type="password" id="pass-input" placeholder="Password (00)" style="text-align:center; font-size:18px; letter-spacing:4px;" />
       <button class="btn-gold" onclick="checkPassword()" style="margin-top:8px;">UNLOCK</button>
       <div id="auth-err" style="color:#ef4444; font-size:12px; margin-top:8px; display:none;">Incorrect Password (Use 00)</div>
@@ -411,14 +418,20 @@
           <button class="btn-action" onclick="resetTimer()">RESET</button>
         </div>
 
-        <button class="btn-gold" onclick="initializeSlots()">INIT 12 SLOTS</button>
+        <button class="btn-gold" onclick="initializeSlots()">INIT SLOTS</button>
         <button class="btn-reset-scrim" onclick="resetFullScrim()">RESET SCRIM</button>
       </div>
     </div>
 
-    <!-- SCRIM HISTORY & BOOYAH LEADERBOARD SECTION -->
+    <!-- SCRIM DATE ARCHIVE & HISTORY LEADERBOARD -->
     <div class="history-panel">
-      <div class="history-title">🏆 SCRIM HISTORY & BOOYAH LEADERBOARD</div>
+      <div class="history-header-row">
+        <div class="history-title">📅 TOURNAMENT DATE & HISTORY ARCHIVE</div>
+        <div class="match-config-panel">
+          <span class="config-label">SELECT DATE:</span>
+          <input type="date" id="archive-date-picker" class="config-input" style="width: 140px;" onchange="switchDateArchive()">
+        </div>
+      </div>
       <table class="history-table">
         <thead>
           <tr>
@@ -429,7 +442,7 @@
           </tr>
         </thead>
         <tbody id="history-table-body">
-          <!-- Populated dynamically -->
+          <!-- Dynamic -->
         </tbody>
       </table>
     </div>
@@ -448,16 +461,14 @@
     if (val === "00") {
       document.getElementById('auth-overlay').style.display = 'none';
       document.getElementById('main-app').style.display = 'block';
+      setupDefaultDate();
     } else {
       document.getElementById('auth-err').style.display = 'block';
     }
   }
 
-  // Allow pressing Enter to unlock
   document.getElementById('pass-input').addEventListener('keypress', function (e) {
-    if (e.key === 'Enter') {
-      checkPassword();
-    }
+    if (e.key === 'Enter') checkPassword();
   });
 
   const firebaseConfig = {
@@ -476,15 +487,47 @@
 
   let teamsData = [];
   let activeSpectateIdx = 0;
+  let currentDateKey = "";
+
+  function setupDefaultDate() {
+    // Default to today's date in YYYY-MM-DD format
+    const today = new Date().toISOString().split('T')[0];
+    document.getElementById('archive-date-picker').value = today;
+    currentDateKey = today.replace(/-/g, '_'); // Firebase-safe key (e.g. 2026_09_14)
+    loadDateArchiveData();
+  }
+
+  function switchDateArchive() {
+    const rawDate = document.getElementById('archive-date-picker').value;
+    if (!rawDate) return;
+    currentDateKey = rawDate.replace(/-/g, '_');
+    loadDateArchiveData();
+  }
+
+  function getArchivepath() {
+    return `esports_data/date_archives/${currentDateKey}/teams`;
+  }
+
+  function loadDateArchiveData() {
+    db.ref(getArchivepath()).on('value', (snap) => {
+      const val = snap.val();
+      if (val) {
+        teamsData = Array.isArray(val) ? val : Object.values(val);
+      } else {
+        teamsData = [];
+      }
+      // Sync to live teams path for OBS overlay compatibility
+      db.ref('esports_data/teams').set(teamsData);
+      renderTeams();
+      renderSpectateBar();
+      renderHistoryTable();
+    });
+  }
 
   function updateMatchConfig() {
     const matchNum = document.getElementById('match-number-input').value || "1";
     const selectedMap = document.getElementById('map-select').value || "BERMUDA";
-
-    db.ref('esports_data/match_info').set({
-      match: matchNum,
-      map: selectedMap
-    });
+    db.ref('esports_data/match_info').set({ match: matchNum, map: selectedMap });
   }
 
   db.ref('esports_data/match_info').on('value', (snap) => {
@@ -493,22 +536,6 @@
       if (data.match) document.getElementById('match-number-input').value = data.match;
       if (data.map) document.getElementById('map-select').value = data.map;
     }
-  });
-
-  db.ref('esports_data/teams').on('value', (snap) => {
-    const val = snap.val();
-    if (val) {
-      if (Array.isArray(val)) {
-        teamsData = val;
-      } else if (typeof val === 'object') {
-        teamsData = Object.values(val);
-      }
-    } else {
-      teamsData = [];
-    }
-    renderTeams();
-    renderSpectateBar();
-    renderHistoryTable();
   });
 
   db.ref('esports_data/active_spectate').on('value', (snap) => {
@@ -523,13 +550,11 @@
   function renderSpectateBar() {
     const container = document.getElementById('spectate-btn-container');
     container.innerHTML = '';
-    
     for (let idx = 0; idx < 12; idx++) {
       const team = (teamsData && teamsData[idx]) ? teamsData[idx] : {};
       const isRegistered = team.name && team.name.trim() !== '' && !team.name.toUpperCase().startsWith('SLOT ');
       const name = isRegistered ? team.name : `SLOT ${idx + 1}`;
       const isCurrent = activeSpectateIdx === idx;
-      
       container.innerHTML += `
         <button class="spec-btn ${isCurrent ? 'current' : ''}" onclick="setActiveSpectate(${idx})">
           #${idx + 1} ${name}
@@ -544,23 +569,19 @@
 
   function markActiveCard() {
     document.querySelectorAll('.team-card').forEach((card, idx) => {
-      if (idx === activeSpectateIdx) {
-        card.classList.add('is-active-spec');
-      } else {
-        card.classList.remove('is-active-spec');
-      }
+      if (idx === activeSpectateIdx) card.classList.add('is-active-spec');
+      else card.classList.remove('is-active-spec');
     });
   }
 
   function renderHistoryTable() {
     const tbody = document.getElementById('history-table-body');
     tbody.innerHTML = '';
-
     for (let idx = 0; idx < 12; idx++) {
       const team = (teamsData && teamsData[idx]) ? teamsData[idx] : {};
       const isRegistered = team.name && team.name.trim() !== '' && !team.name.toUpperCase().startsWith('SLOT ');
       const name = isRegistered ? team.name : `SLOT ${idx + 1} (Available)`;
-      const roster = team.roster ? team.roster.filter(Boolean).join(', ') : 'None';
+      const roster = team.roster ? team.roster.filter(Boolean).join(', ') : '---';
       const booyahs = team.booyahs || 0;
 
       tbody.innerHTML += `
@@ -577,14 +598,11 @@
   function renderTeams() {
     const container = document.getElementById('teams-container');
     container.innerHTML = '';
-
     for (let idx = 0; idx < 12; idx++) {
       const team = (teamsData && teamsData[idx]) ? teamsData[idx] : {};
       const isRegistered = team.name && team.name.trim() !== '' && !team.name.toUpperCase().startsWith('SLOT ');
       const name = isRegistered ? team.name : `SLOT ${idx + 1} (OPEN)`;
-      const logo = (team.logo && team.logo.trim() !== '') 
-        ? team.logo 
-        : `https://dummyimage.com/44x44/000/d4af37&text=${isRegistered ? name[0] : (idx + 1)}`;
+      const logo = (team.logo && team.logo.trim() !== '') ? team.logo : `https://dummyimage.com/44x44/000/d4af37&text=${isRegistered ? name[0] : (idx + 1)}`;
       const roster = team.roster || ["-", "-", "-", "-"];
       const booyahs = team.booyahs || 0;
 
@@ -623,50 +641,48 @@
 
   function addBooyah(idx) {
     const current = (teamsData[idx] && teamsData[idx].booyahs) ? teamsData[idx].booyahs : 0;
-    db.ref(`esports_data/teams/${idx}/booyahs`).set(current + 1).then(() => {
-      alert(`Booyah awarded to Slot #${idx + 1} (${teamsData[idx].name})!`);
+    const newCount = current + 1;
+    db.ref(`${getArchivepath()}/${idx}/booyahs`).set(newCount);
+    db.ref(`esports_data/teams/${idx}/booyahs`).set(newCount).then(() => {
+      alert(`Booyah awarded to Slot #${idx + 1} (${teamsData[idx].name})! Total: ${newCount}`);
     });
   }
 
   function initializeSlots() {
     const payload = {};
     for (let i = 0; i < 12; i++) {
-      payload[`teams/${i}`] = {
+      payload[i] = {
         name: `SLOT ${i + 1}`,
         logo: "",
         roster: ["-", "-", "-", "-"],
         kills: 0,
         alive: 4,
         booyahs: 0,
-        players: [
-          { status: "alive" }, { status: "alive" },
-          { status: "alive" }, { status: "alive" }
-        ]
+        players: [{ status: "alive" }, { status: "alive" }, { status: "alive" }, { status: "alive" }]
       };
     }
-    db.ref('esports_data').update(payload).then(() => {
-      alert("Initialized 12 slots successfully in Firebase!");
+    db.ref(getArchivepath()).set(payload).then(() => {
+      alert("Initialized 12 slots for date archive: " + currentDateKey);
     });
   }
 
   function clearSlot(idx) {
     if (!confirm(`Clear Slot #${idx + 1}?`)) return;
-    db.ref(`esports_data/teams/${idx}`).set({
+    const emptySlot = {
       name: `SLOT ${idx + 1}`,
       logo: "",
       roster: ["-", "-", "-", "-"],
       kills: 0,
       alive: 4,
       booyahs: 0,
-      players: [
-        { status: "alive" }, { status: "alive" },
-        { status: "alive" }, { status: "alive" }
-      ]
-    });
+      players: [{ status: "alive" }, { status: "alive" }, { status: "alive" }, { status: "alive" }]
+    };
+    db.ref(`${getArchivepath()}/${idx}`).set(emptySlot);
+    db.ref(`esports_data/teams/${idx}`).set(emptySlot);
   }
 
   function resetFullScrim() {
-    if (!confirm("Reset all 12 slots and reset timer for a new match?")) return;
+    if (!confirm("Reset all 12 slots for date archive: " + currentDateKey + "?")) return;
     initializeSlots();
     db.ref('esports_data/timer').set({ running: false, seconds: 0, startTimestamp: null });
     db.ref('esports_data/active_spectate').set(0);
@@ -715,27 +731,15 @@
   function toggleTimer() {
     if (timerState.running) {
       const elapsed = Math.floor((Date.now() - timerState.startTimestamp) / 1000);
-      db.ref('esports_data/timer').set({
-        running: false,
-        seconds: elapsed,
-        startTimestamp: null
-      });
+      db.ref('esports_data/timer').set({ running: false, seconds: elapsed, startTimestamp: null });
     } else {
       const currentSeconds = timerState.seconds || 0;
-      db.ref('esports_data/timer').set({
-        running: true,
-        seconds: currentSeconds,
-        startTimestamp: Date.now() - (currentSeconds * 1000)
-      });
+      db.ref('esports_data/timer').set({ running: true, seconds: currentSeconds, startTimestamp: Date.now() - (currentSeconds * 1000) });
     }
   }
 
   function resetTimer() {
-    db.ref('esports_data/timer').set({
-      running: false,
-      seconds: 0,
-      startTimestamp: null
-    });
+    db.ref('esports_data/timer').set({ running: false, seconds: 0, startTimestamp: null });
   }
 </script>
 </body>
