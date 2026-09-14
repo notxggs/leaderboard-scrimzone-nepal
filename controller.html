@@ -35,18 +35,8 @@
     text-align: center;
     box-shadow: 0 10px 30px rgba(0,0,0,0.9);
   }
-  .auth-box h2 {
-    font-family: 'Teko', sans-serif;
-    font-size: 28px;
-    color: #fff;
-    margin-bottom: 4px;
-  }
-  .auth-box p {
-    font-family: 'Chakra Petch', sans-serif;
-    font-size: 11px;
-    color: #8fa0b5;
-    margin-bottom: 16px;
-  }
+  .auth-box h2 { font-family: 'Teko', sans-serif; font-size: 28px; color: #fff; margin-bottom: 4px; }
+  .auth-box p { font-family: 'Chakra Petch', sans-serif; font-size: 11px; color: #8fa0b5; margin-bottom: 16px; }
 
   #main-app { display: none; }
 
@@ -61,276 +51,49 @@
     border-radius: 8px;
     padding: 12px 20px;
     margin-bottom: 16px;
-    box-shadow: 0 8px 25px rgba(0,0,0,0.8), inset 0 1px 0 rgba(255, 215, 0, 0.3);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.8);
   }
 
-  .brand-title {
-    display: flex;
-    flex-direction: column;
-    line-height: 1;
-  }
-  .brand-title h1 {
-    font-family: 'Teko', sans-serif;
-    font-size: 32px;
-    color: #ffffff;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-  }
-  .brand-title span {
-    font-family: 'Chakra Petch', sans-serif;
-    font-size: 11px;
-    font-weight: 700;
-    color: #d4af37;
-    letter-spacing: 2px;
-  }
+  .brand-title h1 { font-family: 'Teko', sans-serif; font-size: 32px; color: #ffffff; letter-spacing: 2px; text-transform: uppercase; line-height: 0.9; }
+  .brand-title span { font-family: 'Chakra Petch', sans-serif; font-size: 11px; color: #d4af37; letter-spacing: 2px; font-weight: 700; }
 
-  .console-controls-cluster {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    flex-wrap: wrap;
-  }
-
-  .match-config-panel {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    background: #05070a;
-    padding: 6px 14px;
-    border-radius: 6px;
-    border: 1px solid rgba(212, 175, 55, 0.4);
-  }
-  .config-label {
-    font-family: 'Chakra Petch', sans-serif;
-    font-size: 11px;
-    font-weight: 800;
-    color: #d4af37;
-    letter-spacing: 1.5px;
-  }
-  .config-input, .config-select {
-    background: #111622;
-    color: #ffffff;
-    border: 1px solid #2d3748;
-    border-radius: 4px;
-    padding: 5px 8px;
-    font-family: 'Chakra Petch', sans-serif;
-    font-weight: 700;
-    font-size: 13px;
-    outline: none;
-  }
+  .console-controls-cluster { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+  .match-config-panel { display: flex; align-items: center; gap: 8px; background: #05070a; padding: 6px 14px; border-radius: 6px; border: 1px solid rgba(212, 175, 55, 0.4); }
+  .config-label { font-family: 'Chakra Petch', sans-serif; font-size: 11px; font-weight: 800; color: #d4af37; letter-spacing: 1.5px; }
+  .config-input, .config-select { background: #111622; color: #ffffff; border: 1px solid #2d3748; border-radius: 4px; padding: 5px 8px; font-family: 'Chakra Petch', sans-serif; font-weight: 700; font-size: 13px; outline: none; }
   .config-input { width: 55px; text-align: center; }
 
-  .timer-box {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    background: #05070a;
-    padding: 6px 14px;
-    border-radius: 6px;
-    border: 1px solid #1e293b;
-  }
-  .timer-clock {
-    font-family: 'Chakra Petch', sans-serif;
-    font-size: 24px;
-    font-weight: 800;
-    color: #5c84ff;
-    min-width: 75px;
-    text-align: center;
-    text-shadow: 0 0 10px rgba(66, 106, 239, 0.6);
-  }
-
-  button {
-    font-family: 'Chakra Petch', sans-serif;
-    font-weight: 800;
-    cursor: pointer;
-    border-radius: 4px;
-    border: none;
-    transition: 0.15s ease;
-    text-transform: uppercase;
-  }
-  .btn-action {
-    padding: 7px 12px;
-    font-size: 12px;
-    background: #171d2b;
-    color: #cbd5e1;
-    border: 1px solid #334155;
-  }
+  button { font-family: 'Chakra Petch', sans-serif; font-weight: 800; cursor: pointer; border-radius: 4px; border: none; transition: 0.15s ease; text-transform: uppercase; }
+  .btn-action { padding: 7px 12px; font-size: 12px; background: #171d2b; color: #cbd5e1; border: 1px solid #334155; }
   .btn-action:hover { background: #263147; color: #fff; }
-  .btn-action.active { background: #16a34a; color: #fff; border-color: #22c55e; }
-
-  .btn-gold {
-    background: #d4af37;
-    color: #000;
-    padding: 7px 12px;
-    font-size: 12px;
-  }
+  .btn-gold { background: #d4af37; color: #000; padding: 7px 12px; font-size: 12px; }
   .btn-gold:hover { background: #ffe082; }
+  .btn-reset-scrim { background: #dc2626; color: #fff; padding: 7px 14px; font-size: 12px; }
 
-  .btn-reset-scrim {
-    background: linear-gradient(135deg, #991b1b 0%, #dc2626 100%);
-    color: #fff;
-    padding: 7px 14px;
-    font-size: 12px;
-  }
-  .btn-reset-scrim:hover { background: #ef4444; }
+  .spectate-dock { background: #0d111a; border: 1px solid #1e293b; border-radius: 6px; padding: 10px 14px; margin-bottom: 16px; }
+  .dock-label { font-size: 11px; font-weight: 800; color: #94a3b8; letter-spacing: 1.5px; margin-bottom: 8px; text-transform: uppercase; }
+  .spectate-btn-grid { display: flex; flex-wrap: wrap; gap: 8px; }
+  .spec-btn { background: #121824; color: #94a3b8; border: 1px solid #242e42; padding: 8px 12px; font-size: 12px; border-radius: 4px; }
+  .spec-btn.current { background: #426aef; color: #fff; border-color: #60a5fa; }
 
-  .spectate-dock {
-    background: #0d111a;
-    border: 1px solid #1e293b;
-    border-radius: 6px;
-    padding: 10px 14px;
-    margin-bottom: 16px;
-  }
-  .dock-label {
-    font-size: 11px;
-    font-weight: 800;
-    color: #94a3b8;
-    letter-spacing: 1.5px;
-    margin-bottom: 8px;
-    text-transform: uppercase;
-  }
-  .spectate-btn-grid {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-  }
-  .spec-btn {
-    background: #121824;
-    color: #94a3b8;
-    border: 1px solid #242e42;
-    padding: 8px 12px;
-    font-size: 12px;
-    border-radius: 4px;
-  }
-  .spec-btn.current {
-    background: #426aef;
-    color: #fff;
-    border-color: #60a5fa;
-    box-shadow: 0 0 12px rgba(66, 106, 239, 0.5);
-  }
+  .teams-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(360px, 1fr)); gap: 14px; }
+  .team-card { background: #0c1018; border: 1px solid #1a2233; border-radius: 6px; padding: 14px; display: flex; flex-direction: column; gap: 10px; }
+  .team-card.is-active-spec { border: 1.5px solid #d4af37; box-shadow: 0 0 15px rgba(212, 175, 55, 0.25); }
 
-  .teams-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
-    gap: 14px;
-  }
-  .team-card {
-    background: #0c1018;
-    border: 1px solid #1a2233;
-    border-radius: 6px;
-    padding: 14px;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    transition: 0.2s ease;
-  }
-  .team-card.is-active-spec {
-    border: 1.5px solid #d4af37;
-    box-shadow: 0 0 15px rgba(212, 175, 55, 0.25);
-  }
+  .card-top { display: flex; align-items: center; gap: 12px; }
+  .slot-tag { font-family: 'Chakra Petch', sans-serif; font-weight: 800; color: #d4af37; font-size: 18px; min-width: 32px; }
+  .logo-preview { width: 44px; height: 44px; border-radius: 4px; object-fit: contain; background: #000; border: 1px solid #242e42; flex-shrink: 0; }
+  .team-name-text { font-family: 'Rajdhani', sans-serif; font-size: 20px; font-weight: 800; color: #ffffff; text-transform: uppercase; }
+  .status-badge { font-family: 'Chakra Petch', sans-serif; font-size: 10px; font-weight: 800; color: #22c55e; }
+  .status-badge.open { color: #64748b; }
 
-  .card-top {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-  }
-  .slot-tag {
-    font-family: 'Chakra Petch', sans-serif;
-    font-weight: 800;
-    color: #d4af37;
-    font-size: 18px;
-    min-width: 32px;
-  }
-  .logo-preview {
-    width: 44px;
-    height: 44px;
-    border-radius: 4px;
-    object-fit: contain;
-    background: #000;
-    border: 1px solid #242e42;
-    flex-shrink: 0;
-  }
-  .team-info-box {
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    overflow: hidden;
-  }
-  .team-name-text {
-    font-family: 'Rajdhani', sans-serif;
-    font-size: 20px;
-    font-weight: 800;
-    color: #ffffff;
-    text-transform: uppercase;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-  .status-badge {
-    font-family: 'Chakra Petch', sans-serif;
-    font-size: 10px;
-    font-weight: 800;
-    letter-spacing: 1px;
-    color: #22c55e;
-  }
-  .status-badge.open {
-    color: #64748b;
-  }
+  .roster-box { background: #06080d; border: 1px solid #161c28; border-radius: 4px; padding: 8px 12px; }
+  .roster-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4px 8px; margin-top: 4px; font-family: 'Chakra Petch', sans-serif; font-size: 12px; color: #cbd5e1; }
 
-  .roster-box {
-    background: #06080d;
-    border: 1px solid #161c28;
-    border-radius: 4px;
-    padding: 8px 12px;
-  }
-  .roster-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 4px 8px;
-    margin-top: 4px;
-  }
-  .roster-item {
-    font-family: 'Chakra Petch', sans-serif;
-    font-size: 12px;
-    font-weight: 600;
-    color: #cbd5e1;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-
-  .card-actions {
-    display: flex;
-    gap: 8px;
-    margin-top: 4px;
-  }
-  .btn-focus {
-    flex: 2;
-    background: #1e293b;
-    color: #fff;
-    padding: 7px;
-    font-size: 11px;
-  }
-  .btn-focus:hover { background: #426aef; }
-
-  .btn-booyah {
-    flex: 1.5;
-    background: linear-gradient(135deg, #d4af37 0%, #aa820a 100%);
-    color: #000;
-    padding: 7px;
-    font-size: 11px;
-  }
-  .btn-booyah:hover { background: #ffe082; }
-
-  .btn-clear {
-    flex: 1;
-    background: #181c26;
-    color: #ef4444;
-    border: 1px solid #2d3748;
-    padding: 7px;
-    font-size: 11px;
-  }
-  .btn-clear:hover { background: #dc2626; color: #fff; }
+  .card-actions { display: flex; gap: 8px; margin-top: 4px; }
+  .btn-focus { flex: 2; background: #1e293b; color: #fff; padding: 7px; font-size: 11px; }
+  .btn-booyah { flex: 1.5; background: linear-gradient(135deg, #d4af37 0%, #aa820a 100%); color: #000; padding: 7px; font-size: 11px; }
+  .btn-clear { flex: 1; background: #181c26; color: #ef4444; border: 1px solid #2d3748; padding: 7px; font-size: 11px; }
 </style>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
@@ -354,12 +117,10 @@
         <h1>SCRIMZONE BROADCAST CONTROLLER</h1>
         <span>AUTOMATED DISCORD & OBS DATA SYNC</span>
       </div>
-
       <div class="console-controls-cluster">
         <div class="match-config-panel">
           <span class="config-label">MATCH:</span>
           <input type="number" id="match-number-input" class="config-input" value="1" min="1" max="20" onchange="updateMatchConfig()">
-
           <span class="config-label">MAP:</span>
           <select id="map-select" class="config-select" onchange="updateMatchConfig()">
             <option value="BERMUDA">BERMUDA</option>
@@ -368,31 +129,22 @@
             <option value="NEXTERRA">NEXTERRA</option>
           </select>
         </div>
-
-        <div class="timer-box">
-          <div class="timer-clock" id="timer-display">00:00</div>
-          <button class="btn-action" id="timer-toggle-btn" onclick="toggleTimer()">START</button>
-          <button class="btn-action" onclick="resetTimer()">RESET</button>
-        </div>
-
         <button class="btn-gold" onclick="initializeSlots()">INIT SLOTS</button>
-        <button class="btn-reset-scrim" onclick="resetFullScrim()">RESET SCRIM</button>
+        <button class="btn-reset-scrim" onclick="resetFullScrim()">RESET</button>
       </div>
     </div>
 
     <div class="spectate-dock">
-      <div class="dock-label">CLICK A TEAM TO FOCUS ON SPECTATOR OVERLAY (BOTTOM-RIGHT):</div>
+      <div class="dock-label">CLICK TEAM TO FOCUS ON SPECTATOR OVERLAY (BOTTOM-RIGHT):</div>
       <div class="spectate-btn-grid" id="spectate-btn-container"></div>
     </div>
 
-    <!-- TEAMS GRID WITH INTEGRATED BOOYAH BUTTONS -->
     <div class="teams-grid" id="teams-container"></div>
   </div>
 
 <script>
   function checkPassword() {
-    const val = document.getElementById('pass-input').value;
-    if (val === "00") {
+    if (document.getElementById('pass-input').value === "00") {
       document.getElementById('auth-overlay').style.display = 'none';
       document.getElementById('main-app').style.display = 'block';
       loadLiveTeams();
@@ -400,10 +152,6 @@
       document.getElementById('auth-err').style.display = 'block';
     }
   }
-
-  document.getElementById('pass-input').addEventListener('keypress', function (e) {
-    if (e.key === 'Enter') checkPassword();
-  });
 
   const firebaseConfig = {
     apiKey: "AIzaSyBRcMrsrifYv-VDsCrTMKZuQiub30a7wEs",
@@ -418,70 +166,43 @@
 
   firebase.initializeApp(firebaseConfig);
   const db = firebase.database();
-
-  let teamsData = [];
-  let activeSpectateIdx = 0;
+  let teamsData = [], activeSpectateIdx = 0;
 
   function loadLiveTeams() {
     db.ref('esports_data/teams').on('value', (snap) => {
       const val = snap.val();
-      if (val) {
-        teamsData = Array.isArray(val) ? val : Object.values(val);
-      } else {
-        teamsData = [];
-      }
+      teamsData = val ? (Array.isArray(val) ? val : Object.values(val)) : [];
       renderTeams();
       renderSpectateBar();
     });
   }
 
   function updateMatchConfig() {
-    const matchNum = document.getElementById('match-number-input').value || "1";
-    const selectedMap = document.getElementById('map-select').value || "BERMUDA";
-    db.ref('esports_data/match_info').set({ match: matchNum, map: selectedMap });
+    db.ref('esports_data/match_info').set({
+      match: document.getElementById('match-number-input').value || "1",
+      map: document.getElementById('map-select').value || "BERMUDA"
+    });
   }
 
-  db.ref('esports_data/match_info').on('value', (snap) => {
-    const data = snap.val();
-    if (data) {
-      if (data.match) document.getElementById('match-number-input').value = data.match;
-      if (data.map) document.getElementById('map-select').value = data.map;
-    }
-  });
-
   db.ref('esports_data/active_spectate').on('value', (snap) => {
-    const val = snap.val();
-    if (val !== null && typeof val === 'number') {
-      activeSpectateIdx = val;
-      renderSpectateBar();
-      markActiveCard();
-    }
+    activeSpectateIdx = snap.val() || 0;
+    renderSpectateBar();
+    markActiveCard();
   });
 
   function renderSpectateBar() {
     const container = document.getElementById('spectate-btn-container');
     container.innerHTML = '';
     for (let idx = 0; idx < 12; idx++) {
-      const team = (teamsData && teamsData[idx]) ? teamsData[idx] : {};
-      const isRegistered = team.name && team.name.trim() !== '' && !team.name.toUpperCase().startsWith('SLOT ');
-      const name = isRegistered ? team.name : `SLOT ${idx + 1}`;
-      const isCurrent = activeSpectateIdx === idx;
-      container.innerHTML += `
-        <button class="spec-btn ${isCurrent ? 'current' : ''}" onclick="setActiveSpectate(${idx})">
-          #${idx + 1} ${name}
-        </button>
-      `;
+      const team = teamsData[idx] || {};
+      const name = (team.name && !team.name.startsWith('SLOT ')) ? team.name : `SLOT ${idx + 1}`;
+      container.innerHTML += `<button class="spec-btn ${activeSpectateIdx === idx ? 'current' : ''}" onclick="db.ref('esports_data/active_spectate').set(${idx})">#${idx + 1} ${name}</button>`;
     }
-  }
-
-  function setActiveSpectate(idx) {
-    db.ref('esports_data/active_spectate').set(idx);
   }
 
   function markActiveCard() {
     document.querySelectorAll('.team-card').forEach((card, idx) => {
-      if (idx === activeSpectateIdx) card.classList.add('is-active-spec');
-      else card.classList.remove('is-active-spec');
+      card.classList.toggle('is-active-spec', idx === activeSpectateIdx);
     });
   }
 
@@ -489,38 +210,32 @@
     const container = document.getElementById('teams-container');
     container.innerHTML = '';
     for (let idx = 0; idx < 12; idx++) {
-      const team = (teamsData && teamsData[idx]) ? teamsData[idx] : {};
+      const team = teamsData[idx] || {};
       const isRegistered = team.name && team.name.trim() !== '' && !team.name.toUpperCase().startsWith('SLOT ');
       const name = isRegistered ? team.name : `SLOT ${idx + 1} (OPEN)`;
-      const logo = (team.logo && team.logo.trim() !== '') ? team.logo : `https://dummyimage.com/44x44/000/d4af37&text=${isRegistered ? name[0] : (idx + 1)}`;
+      const logo = team.logo || `https://dummyimage.com/44x44/000/d4af37&text=${isRegistered ? name[0] : (idx + 1)}`;
       const roster = team.roster || ["-", "-", "-", "-"];
       const booyahs = team.booyahs || 0;
 
       container.innerHTML += `
-        <div class="team-card ${activeSpectateIdx === idx ? 'is-active-spec' : ''}" id="card-${idx}">
+        <div class="team-card ${activeSpectateIdx === idx ? 'is-active-spec' : ''}">
           <div class="card-top">
             <span class="slot-tag">#${idx + 1}</span>
-            <img class="logo-preview" src="${logo}" onerror="this.src='https://dummyimage.com/44x44/000/d4af37&text=${idx + 1}';" />
+            <img class="logo-preview" src="${logo}" />
             <div class="team-info-box">
               <div class="team-name-text">${name}</div>
-              <div class="status-badge ${isRegistered ? '' : 'open'}">
-                ${isRegistered ? `● REGISTERED (Booyahs: ${booyahs} 👑)` : '○ EMPTY SLOT'}
-              </div>
+              <div class="status-badge ${isRegistered ? '' : 'open'}">${isRegistered ? `● REGISTERED (Booyahs: ${booyahs} 👑)` : '○ EMPTY SLOT'}</div>
             </div>
           </div>
-
           <div class="roster-box">
-            <div class="dock-label" style="margin-bottom:2px;">ROSTER:</div>
+            <div class="dock-label">ROSTER:</div>
             <div class="roster-grid">
-              <div class="roster-item">1. ${roster[0] || '-'}</div>
-              <div class="roster-item">2. ${roster[1] || '-'}</div>
-              <div class="roster-item">3. ${roster[2] || '-'}</div>
-              <div class="roster-item">4. ${roster[3] || '-'}</div>
+              <div>1. ${roster[0]}</div><div>2. ${roster[1]}</div>
+              <div>3. ${roster[2]}</div><div>4. ${roster[3]}</div>
             </div>
           </div>
-
           <div class="card-actions">
-            <button class="btn-focus" onclick="setActiveSpectate(${idx})">FOCUS</button>
+            <button class="btn-focus" onclick="db.ref('esports_data/active_spectate').set(${idx})">FOCUS</button>
             ${isRegistered ? `<button class="btn-booyah" onclick="addBooyah(${idx})">BOOYAH 👑</button>` : ''}
             ${isRegistered ? `<button class="btn-clear" onclick="clearSlot(${idx})">CLEAR</button>` : ''}
           </div>
@@ -531,103 +246,28 @@
 
   function addBooyah(idx) {
     const current = (teamsData[idx] && teamsData[idx].booyahs) ? teamsData[idx].booyahs : 0;
-    const newCount = current + 1;
-    db.ref(`esports_data/teams/${idx}/booyahs`).set(newCount).then(() => {
-      alert(`Booyah awarded to Slot #${idx + 1} (${teamsData[idx].name})! Total: ${newCount}`);
+    db.ref(`esports_data/teams/${idx}/booyahs`).set(current + 1).then(() => {
+      alert(`Booyah awarded to Slot #${idx + 1}!`);
     });
   }
 
   function initializeSlots() {
     const payload = [];
     for (let i = 0; i < 12; i++) {
-      payload.push({
-        name: `SLOT ${i + 1}`,
-        logo: "",
-        roster: ["-", "-", "-", "-"],
-        kills: 0,
-        alive: 4,
-        booyahs: 0,
-        players: [{ status: "alive" }, { status: "alive" }, { status: "alive" }, { status: "alive" }]
-      });
+      payload.push({ name: `SLOT ${i + 1}`, logo: "", roster: ["-", "-", "-", "-"], booyahs: 0 });
     }
-    db.ref('esports_data/teams').set(payload).then(() => {
-      alert("Initialized 12 slots successfully!");
-    });
+    db.ref('esports_data/teams').set(payload).then(() => alert("Initialized 12 slots!"));
   }
 
   function clearSlot(idx) {
     if (!confirm(`Clear Slot #${idx + 1}?`)) return;
-    const emptySlot = {
-      name: `SLOT ${idx + 1}`,
-      logo: "",
-      roster: ["-", "-", "-", "-"],
-      kills: 0,
-      alive: 4,
-      booyahs: 0,
-      players: [{ status: "alive" }, { status: "alive" }, { status: "alive" }, { status: "alive" }]
-    };
-    db.ref(`esports_data/teams/${idx}`).set(emptySlot);
+    db.ref(`esports_data/teams/${idx}`).set({ name: `SLOT ${idx + 1}`, logo: "", roster: ["-", "-", "-", "-"], booyahs: 0 });
   }
 
   function resetFullScrim() {
-    if (!confirm("Reset all 12 slots?")) return;
+    if (!confirm("Reset all slots?")) return;
     initializeSlots();
-    db.ref('esports_data/timer').set({ running: false, seconds: 0, startTimestamp: null });
     db.ref('esports_data/active_spectate').set(0);
-  }
-
-  // Timer Handlers
-  let timerState = { running: false, seconds: 0, startTimestamp: null };
-  let localTimerInterval = null;
-
-  db.ref('esports_data/timer').on('value', (snap) => {
-    const val = snap.val();
-    if (val) {
-      timerState = val;
-      const btn = document.getElementById('timer-toggle-btn');
-      if (timerState.running) {
-        btn.innerText = 'PAUSE';
-        btn.classList.add('active');
-      } else {
-        btn.innerText = 'START';
-        btn.classList.remove('active');
-      }
-      updateTimerDisplay();
-    }
-  });
-
-  function formatTime(totalSec) {
-    const m = String(Math.floor(totalSec / 60)).padStart(2, '0');
-    const s = String(totalSec % 60).padStart(2, '0');
-    return `${m}:${s}`;
-  }
-
-  function updateTimerDisplay() {
-    clearInterval(localTimerInterval);
-    if (timerState.running && timerState.startTimestamp) {
-      localTimerInterval = setInterval(() => {
-        const elapsed = Math.floor((Date.now() - timerState.startTimestamp) / 1000);
-        document.getElementById('timer-display').innerText = formatTime(elapsed);
-      }, 1000);
-      const elapsed = Math.floor((Date.now() - timerState.startTimestamp) / 1000);
-      document.getElementById('timer-display').innerText = formatTime(elapsed);
-    } else {
-      document.getElementById('timer-display').innerText = formatTime(timerState.seconds || 0);
-    }
-  }
-
-  function toggleTimer() {
-    if (timerState.running) {
-      const elapsed = Math.floor((Date.now() - timerState.startTimestamp) / 1000);
-      db.ref('esports_data/timer').set({ running: false, seconds: elapsed, startTimestamp: null });
-    } else {
-      const currentSeconds = timerState.seconds || 0;
-      db.ref('esports_data/timer').set({ running: true, seconds: currentSeconds, startTimestamp: Date.now() - (currentSeconds * 1000) });
-    }
-  }
-
-  function resetTimer() {
-    db.ref('esports_data/timer').set({ running: false, seconds: 0, startTimestamp: null });
   }
 </script>
 </body>
