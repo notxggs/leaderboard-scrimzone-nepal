@@ -20,8 +20,7 @@
   }
 
   /* ----------------------------------------------------
-     1. EXACT 1:1 TOURNAMENT CURRENT MATCH & TIMER BAR
-     (Slanted outward diagonal left edge "/" + bronze backing plate)
+     1. STANDALONE TOURNAMENT CURRENT MATCH & TIMER BAR
      ---------------------------------------------------- */
   #match-timer-dock {
     position: fixed;
@@ -35,7 +34,6 @@
     filter: drop-shadow(0 12px 25px rgba(0, 0, 0, 0.95));
   }
 
-  /* Bronze Backing Shield Plate (Behind top-left) */
   .header-crest {
     position: absolute;
     top: -10px;
@@ -49,7 +47,6 @@
     z-index: 998;
   }
 
-  /* Top Gold Lip Trim */
   .header-top-lip {
     position: absolute;
     top: -6px;
@@ -62,7 +59,6 @@
     z-index: 1002;
   }
 
-  /* Outer Gold Slanted Frame: Starts inward at top, flares OUT at bottom (/) */
   .match-outer-frame {
     position: relative;
     background: linear-gradient(180deg, #f3d483 0%, #a4792a 50%, #453210 100%);
@@ -71,7 +67,6 @@
     z-index: 999;
   }
 
-  /* Dark Metallic Body Plate */
   .match-inner-plate {
     background: linear-gradient(180deg, #0d121a 0%, #06080d 100%);
     clip-path: polygon(35px 0%, 100% 0%, 100% 100%, 0% 100%);
@@ -79,7 +74,6 @@
     display: flex;
   }
 
-  /* Inner Precision Gold Pinstripe Box */
   .match-pinstripe-box {
     display: flex;
     align-items: center;
@@ -91,29 +85,6 @@
     background: linear-gradient(90deg, #101929 0%, #070a0f 100%);
   }
 
-  /* Tiny Corner Accents */
-  .match-pinstripe-box::before {
-    content: '';
-    position: absolute;
-    top: 5px;
-    left: 36px;
-    width: 6px;
-    height: 1px;
-    background: #ffd700;
-    box-shadow: 0 0 4px #ffd700;
-  }
-  .match-pinstripe-box::after {
-    content: '';
-    position: absolute;
-    bottom: 3px;
-    right: 3px;
-    width: 4px;
-    height: 4px;
-    background: #d4af37;
-    border-radius: 50%;
-  }
-
-  /* Typography */
   .current-match-block {
     display: flex;
     flex-direction: column;
@@ -174,7 +145,7 @@
   }
 
   /* ----------------------------------------------------
-     2. LEFT DOCK: LEADERBOARD & ELIMINATION BANNER
+     2. CLEAN LEFT DOCK: CURRENT TEAMS (NAMES & LOGOS ONLY)
      ---------------------------------------------------- */
   .broadcast-dock {
     position: fixed;
@@ -187,71 +158,6 @@
     z-index: 100;
   }
 
-  #elim-banner {
-    width: 100%;
-    background: linear-gradient(135deg, rgba(20, 5, 8, 0.98) 0%, rgba(200, 20, 30, 0.95) 50%, rgba(15, 3, 5, 0.98) 100%);
-    border: 2px solid #ff2233;
-    border-radius: 6px;
-    padding: 8px 14px;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    box-shadow: 0 0 30px rgba(255, 30, 50, 0.85);
-    transform: translateY(-160%) scale(0.9);
-    opacity: 0;
-    pointer-events: none;
-    transition: transform 0.45s cubic-bezier(0.19, 1, 0.22, 1), opacity 0.3s ease;
-  }
-  #elim-banner.show {
-    transform: translateY(0) scale(1);
-    opacity: 1;
-    animation: bannerAlertGlow 1s infinite alternate ease-in-out;
-  }
-  @keyframes bannerAlertGlow {
-    0% { box-shadow: 0 0 15px rgba(255, 0, 0, 0.7); }
-    100% { box-shadow: 0 0 35px rgba(255, 0, 0, 1); }
-  }
-
-  .skull-badge {
-    font-size: 32px;
-    line-height: 1;
-    filter: drop-shadow(0 0 10px #ff0033);
-    flex-shrink: 0;
-  }
-  #banner-logo {
-    width: 40px;
-    height: 40px;
-    border-radius: 4px;
-    object-fit: contain;
-    border: 2px solid #ff2233;
-    background: #000;
-    flex-shrink: 0;
-  }
-  .banner-text-box {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    line-height: 0.95;
-    white-space: nowrap;
-  }
-  .banner-primary {
-    font-family: 'Teko', sans-serif;
-    font-size: 28px;
-    letter-spacing: 1px;
-    color: #ffffff;
-    text-transform: uppercase;
-  }
-  .banner-primary span { color: #ffe600; font-size: 32px; }
-  .banner-tagline {
-    font-family: 'Chakra Petch', sans-serif;
-    font-size: 11px;
-    font-weight: 800;
-    color: #ff9999;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-  }
-
-  /* Leaderboard Master Table */
   .hud-container {
     width: fit-content;
     display: table;
@@ -270,63 +176,52 @@
     color: #ffffff;
     font-weight: 800;
     font-size: 15px;
-    letter-spacing: 1px;
+    letter-spacing: 1.5px;
   }
   .hud-header .col-teams {
     display: table-cell;
     text-align: left;
-    padding: 6px 20px 6px 20px;
+    padding: 8px 30px 8px 20px;
     white-space: nowrap;
-    min-width: 170px;
-  }
-  .hud-header .col-elims {
-    display: table-cell;
-    text-align: center;
-    padding: 6px 12px;
-    width: 65px;
-  }
-  .hud-header .col-alive {
-    display: table-cell;
-    text-align: center;
-    padding: 6px 16px;
-    width: 80px;
+    min-width: 250px;
   }
 
   .hud-body { display: table-row-group; }
+
   .hud-row {
     display: table-row;
     background: #0a0d14;
-    transition: background 0.3s ease;
+    transition: background 0.2s ease;
   }
   .hud-row:nth-child(even) { background: #0c1018; }
-  .hud-row.eliminated-row { background: #000000 !important; }
-  .hud-row.eliminated-row .team-name { color: #3b4252 !important; }
-  .hud-row.eliminated-row .rank-tag { color: #2d3340 !important; }
-  .hud-row.eliminated-row .elims-cell { color: #3b4252 !important; }
-  .hud-row.eliminated-row .team-logo { filter: grayscale(1) opacity(0.2); }
 
   .team-cell {
     display: table-cell;
     vertical-align: middle;
-    padding: 5px 20px 5px 10px;
+    padding: 7px 20px 7px 14px;
     white-space: nowrap;
     border-bottom: 1px solid rgba(255,255,255,0.04);
   }
-  .team-cell-inner { display: flex; align-items: center; gap: 8px; }
-  .rank-tag {
-    color: #426aef;
-    font-size: 17px;
+  .team-cell-inner {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .slot-tag {
+    color: #5c8cf8;
+    font-size: 18px;
     font-weight: 800;
-    min-width: 22px;
+    min-width: 26px;
     text-align: right;
     font-family: 'Chakra Petch', sans-serif;
   }
   .team-logo {
-    width: 24px;
-    height: 24px;
+    width: 28px;
+    height: 28px;
     object-fit: contain;
-    border-radius: 3px;
+    border-radius: 4px;
     background: #000;
+    border: 1px solid #1e2433;
   }
   .team-name {
     font-weight: 800;
@@ -334,63 +229,17 @@
     color: #ffffff;
     letter-spacing: 0.8px;
     line-height: 1;
+    text-transform: uppercase;
   }
-  .elims-cell {
-    display: table-cell;
-    vertical-align: middle;
-    text-align: center;
-    font-size: 21px;
-    font-weight: 800;
-    color: #ffffff;
-    border-left: 1px solid rgba(255, 255, 255, 0.12);
-    border-right: 1px solid rgba(255, 255, 255, 0.12);
-    border-bottom: 1px solid rgba(255,255,255,0.04);
-    font-family: 'Chakra Petch', sans-serif;
-    padding: 0 10px;
-  }
-  .alive-cell {
-    display: table-cell;
-    vertical-align: middle;
-    padding: 0 14px;
-    border-bottom: 1px solid rgba(255,255,255,0.04);
-  }
-  .alive-bars { display: flex; justify-content: center; align-items: center; gap: 4px; }
-  .bar {
-    width: 6px;
-    height: 20px;
-    border-radius: 1px;
-    transition: background 0.2s ease;
-  }
-  .bar.status-alive {
-    background: #426aef;
-    box-shadow: 0 0 6px rgba(66, 106, 239, 0.7);
-  }
-  .bar.status-dead {
-    background: #141720;
-    border: 1px solid #1e2433;
-  }
-  .hud-legend {
-    display: table-caption;
-    caption-side: bottom;
-    background: #000000;
-    border-top: 1px solid rgba(255, 255, 255, 0.12);
-    color: #ffffff;
-    padding: 6px 14px;
-    font-size: 13px;
-    font-weight: 800;
-  }
-  .legend-inner { display: flex; align-items: center; justify-content: space-evenly; }
-  .legend-item { display: flex; align-items: center; gap: 6px; }
-  .legend-box { width: 9px; height: 9px; border-radius: 1px; display: inline-block; }
 
   /* ----------------------------------------------------
-     3. BOTTOM-RIGHT OFFICIAL METALLIC SPECTATOR CARD
+     3. BOTTOM-RIGHT OFFICIAL SPECTATOR CARD
      ---------------------------------------------------- */
   #official-spec-card {
     position: fixed !important;
     bottom: 25px !important;
     right: 25px !important;
-    width: 400px !important;
+    width: 380px !important;
     background: linear-gradient(180deg, #161b26 0%, #090c12 100%) !important;
     border: 1.5px solid #d4af37 !important;
     border-top: 2px solid #5c84ff !important;
@@ -446,50 +295,32 @@
     display: flex;
     flex-direction: column;
     justify-content: center;
-    line-height: 1;
+    line-height: 1.1;
     overflow: hidden;
   }
-  .card-player-label {
-    font-size: 11px;
+  .card-slot-label {
+    font-size: 12px;
     font-weight: 800;
-    color: #8fa0b5;
+    color: #5c8cf8;
+    font-family: 'Chakra Petch', sans-serif;
     letter-spacing: 1px;
   }
-  .card-player-name {
-    font-family: 'Teko', sans-serif;
-    font-size: 26px;
-    color: #ffe600;
+  .card-team-name {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 24px;
+    font-weight: 800;
+    color: #ffffff;
     letter-spacing: 1px;
+    text-transform: uppercase;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
   }
-  .card-team-name {
-    font-size: 15px;
-    font-weight: 800;
-    color: #ffffff;
-    letter-spacing: 0.8px;
-    text-transform: uppercase;
-    margin-top: 1px;
-  }
-
-  .card-subbar {
-    display: flex;
-    justify-content: space-between;
-    background: #05070a;
-    border: 1px solid rgba(255,255,255,0.08);
-    padding: 5px 10px;
-    border-radius: 3px;
-    font-family: 'Chakra Petch', sans-serif;
-    font-size: 11px;
-    font-weight: 800;
-  }
-  .card-subbar .stat-val { color: #5c84ff; }
 
   .card-bottombar {
     display: flex;
     justify-content: space-between;
-    font-size: 10px;
+    font-size: 11px;
     font-weight: 800;
     color: #e5b95c;
     border-top: 1px solid rgba(255,255,255,0.06);
@@ -503,11 +334,7 @@
 </head>
 <body>
 
-  <audio id="elimination-audio" preload="auto">
-    <source src="https://cdn.freesound.org/previews/381/381382_6142149-lq.mp3" type="audio/mpeg">
-  </audio>
-
-  <!-- 1. STANDALONE CURRENT MATCH & TIMER BAR (OUTWARD DIAGONAL LEFT SLANT) -->
+  <!-- 1. STANDALONE CURRENT MATCH & TIMER BAR -->
   <div id="match-timer-dock">
     <div class="header-crest"></div>
     <div class="header-top-lip"></div>
@@ -528,64 +355,34 @@
     </div>
   </div>
 
-  <!-- 2. LEFT LEADERBOARD DOCK -->
+  <!-- 2. CURRENT TEAMS LIST (LOGO + NAME ONLY) -->
   <div class="broadcast-dock">
-    <div id="elim-banner">
-      <div class="skull-badge">☠</div>
-      <img id="banner-logo" src="" alt="logo" />
-      <div class="banner-text-box">
-        <div class="banner-primary"><span id="banner-team-name">TEAM</span> WIPED</div>
-        <div class="banner-tagline">ALL PLAYERS K.I.A</div>
-      </div>
-    </div>
-
     <div class="hud-container">
       <div class="hud-header">
-        <div class="col-teams">TEAMS</div>
-        <div class="col-elims">ELIMS</div>
-        <div class="col-alive">ALIVE</div>
+        <div class="col-teams">PLAYING TEAMS</div>
       </div>
-
       <div class="hud-body" id="hud-body"></div>
-
-      <div class="hud-legend">
-        <div class="legend-inner">
-          <div class="legend-item">
-            <span class="legend-box" style="background:#426aef; box-shadow: 0 0 6px #426aef;"></span>
-            <span>ALIVE</span>
-          </div>
-          <div class="legend-item">
-            <span class="legend-box" style="background:#141720; border: 1px solid #333;"></span>
-            <span>ELIMINATED</span>
-          </div>
-        </div>
-      </div>
     </div>
   </div>
 
-  <!-- 3. BOTTOM-RIGHT TOURNAMENT SPECTATOR CARD -->
+  <!-- 3. BOTTOM-RIGHT SPECTATOR FOCUS CARD -->
   <div id="official-spec-card">
     <div class="card-topbar">
-      <span class="card-tourney-title">/// FFWS PRO TOURNAMENT ///</span>
-      <span class="card-live-tag">LIVE FEED</span>
+      <span class="card-tourney-title">/// SCRIMZONE NEPAL ///</span>
+      <span class="card-live-tag">LIVE</span>
     </div>
 
     <div class="card-main">
       <img id="spec-card-logo" src="https://dummyimage.com/48x48/000/d4af37&text=FF" alt="Team Logo" />
       <div class="card-info">
-        <span class="card-player-label">PLAYER: <span class="card-player-name" id="spec-player-name">SELECTING...</span></span>
-        <span class="card-team-name" id="spec-team-name">WAITING FOR SPECTATE</span>
+        <span class="card-slot-label" id="spec-slot-label">FOCUS: SLOT 1</span>
+        <span class="card-team-name" id="spec-team-name">WAITING FOR TEAMS</span>
       </div>
-    </div>
-
-    <div class="card-subbar">
-      <span>TEAM ELIMS: <span class="stat-val" id="spec-team-kills">0</span></span>
-      <span>SQUAD: <span class="stat-val" id="spec-squad-alive">4/4 ALIVE</span></span>
     </div>
 
     <div class="card-bottombar">
       <span id="spec-card-map-footer">MAP - 1 - BERMUDA</span>
-      <span style="color:#5c84ff;">OFFICIAL SPECTATOR CLIENT</span>
+      <span style="color:#5c84ff;">OFFICIAL BROADCAST</span>
     </div>
   </div>
 
@@ -605,21 +402,9 @@
   const db = firebase.database();
 
   let cachedTeams = [];
-  let previousTeams = [];
-  let bannerTimer = null;
   let currentActiveTeamIdx = 0;
 
-  function showEliminationBanner(name, logo) {
-    const banner = document.getElementById('elim-banner');
-    document.getElementById('banner-team-name').innerText = name || 'UNKNOWN';
-    document.getElementById('banner-logo').src = logo || 'https://dummyimage.com/40x40/000/fff&text=#';
-    banner.classList.add('show');
-
-    clearTimeout(bannerTimer);
-    bannerTimer = setTimeout(() => banner.classList.remove('show'), 4200);
-  }
-
-  // 1. Match & Map Config Listener
+  // 1. Match & Map Listener
   db.ref('esports_data/match_info').on('value', (snap) => {
     const data = snap.val();
     if (data) {
@@ -634,17 +419,17 @@
     }
   });
 
-  // 2. Teams & Leaderboard Listener
+  // 2. Teams Listener (Renders Logo + Team Name Only)
   db.ref('esports_data/teams').on('value', (snapshot) => {
     const teams = snapshot.val();
     if (teams && Array.isArray(teams)) {
       cachedTeams = teams;
-      renderOverlay(teams);
+      renderTeams(teams);
       updateSpectatorCard();
     }
   });
 
-  // 3. Active Spectate Team + Player Listener
+  // 3. Active Spectate Focus Listener
   db.ref('esports_data/active_spectate').on('value', (snap) => {
     const val = snap.val();
     if (val !== null && typeof val === 'number') {
@@ -653,26 +438,16 @@
     }
   });
 
-  db.ref('esports_data/detected_player').on('value', (snap) => {
-    const val = snap.val();
-    if (val) {
-      document.getElementById('spec-player-name').innerText = val;
-    }
-  });
-
   function updateSpectatorCard() {
     if (!cachedTeams || !cachedTeams[currentActiveTeamIdx]) return;
     const team = cachedTeams[currentActiveTeamIdx];
 
-    const teamName = team.name && team.name.trim() !== '' ? team.name : `SLOT ${currentActiveTeamIdx + 1}`;
-    const logoUrl = team.logo && team.logo.trim() !== '' ? team.logo : `https://dummyimage.com/48x48/000/d4af37&text=${teamName[0]}`;
-    const kills = team.kills || 0;
-    const aliveCount = (team.players || []).filter(p => p.status === 'alive').length;
+    const teamName = (team.name && team.name.trim() !== '') ? team.name : `SLOT ${currentActiveTeamIdx + 1}`;
+    const logoUrl = (team.logo && team.logo.trim() !== '') ? team.logo : `https://dummyimage.com/48x48/000/d4af37&text=${teamName[0]}`;
 
     document.getElementById('spec-card-logo').src = logoUrl;
+    document.getElementById('spec-slot-label').innerText = `FOCUS: SLOT ${currentActiveTeamIdx + 1}`;
     document.getElementById('spec-team-name').innerText = teamName;
-    document.getElementById('spec-team-kills').innerText = kills;
-    document.getElementById('spec-squad-alive').innerText = `${aliveCount}/4 ALIVE`;
   }
 
   // 4. Timer Listener
@@ -707,62 +482,22 @@
     }
   }
 
-  function renderOverlay(teams) {
-    if (previousTeams.length > 0) {
-      teams.forEach((curr, idx) => {
-        const prev = previousTeams[idx];
-        if (prev) {
-          const prevAlive = (prev.players || []).some(p => p.status !== 'dead');
-          const currAlive = (curr.players || []).some(p => p.status !== 'dead');
-          if (prevAlive && !currAlive) {
-            const label = curr.name && curr.name.trim() !== '' ? curr.name : `SLOT ${idx + 1}`;
-            showEliminationBanner(label, curr.logo);
-          }
-        }
-      });
-    }
-    previousTeams = JSON.parse(JSON.stringify(teams));
-
+  function renderTeams(teams) {
     const container = document.getElementById('hud-body');
     container.innerHTML = '';
 
-    const indexedTeams = teams.map((team, index) => ({ ...team, originalIndex: index }));
-    indexedTeams.sort((a, b) => {
-      const elimsA = Number(a.kills) || 0;
-      const elimsB = Number(b.kills) || 0;
-      if (elimsB !== elimsA) return elimsB - elimsA;
-      return (Number(b.alive) || 0) - (Number(a.alive) || 0);
-    });
-
-    indexedTeams.forEach((team, rankIndex) => {
-      const elims = Number(team.kills) || 0;
-      const players = team.players || [
-        { status: 'alive' }, { status: 'alive' },
-        { status: 'alive' }, { status: 'alive' }
-      ];
-
-      const isEliminated = players.every(p => p.status === 'dead');
-
-      let barsHtml = '';
-      players.slice(0, 4).forEach(p => {
-        barsHtml += `<div class="bar status-${p.status === 'dead' ? 'dead' : 'alive'}"></div>`;
-      });
-
-      const displayName = team.name && team.name.trim() !== '' ? team.name : `SLOT ${team.originalIndex + 1}`;
-      const displayLogo = team.logo && team.logo.trim() !== '' ? team.logo : `https://dummyimage.com/24x24/000/426aef&text=${displayName[0]}`;
+    teams.slice(0, 12).forEach((team, idx) => {
+      const displayName = (team.name && team.name.trim() !== '') ? team.name : `SLOT ${idx + 1}`;
+      const displayLogo = (team.logo && team.logo.trim() !== '') ? team.logo : `https://dummyimage.com/28x28/000/426aef&text=${displayName[0]}`;
 
       container.innerHTML += `
-        <div class="hud-row ${isEliminated ? 'eliminated-row' : ''}">
+        <div class="hud-row">
           <div class="team-cell">
             <div class="team-cell-inner">
-              <span class="rank-tag">#${rankIndex + 1}</span>
-              <img class="team-logo" src="${displayLogo}" />
+              <span class="slot-tag">#${idx + 1}</span>
+              <img class="team-logo" src="${displayLogo}" onerror="this.src='https://dummyimage.com/28x28/000/426aef&text=${displayName[0]}';" />
               <span class="team-name">${displayName}</span>
             </div>
-          </div>
-          <div class="elims-cell">${elims}</div>
-          <div class="alive-cell">
-            <div class="alive-bars">${barsHtml}</div>
           </div>
         </div>
       `;
