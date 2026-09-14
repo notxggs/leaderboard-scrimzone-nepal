@@ -6,376 +6,52 @@
 <title>OBS Esports Broadcast Overlay</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Teko:wght@700&family=Rajdhani:wght@700;800&family=Chakra+Petch:wght@700;800&display=swap');
-
   * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { width: 100vw; height: 100vh; background: transparent; font-family: 'Rajdhani', sans-serif; overflow: hidden; user-select: none; position: relative; }
 
-  html, body {
-    width: 100vw;
-    height: 100vh;
-    background: transparent;
-    font-family: 'Rajdhani', sans-serif;
-    overflow: hidden;
-    user-select: none;
-    position: relative;
-  }
+  /* Top Match Header */
+  #match-timer-dock { position: fixed; top: 30px; left: 50%; transform: translateX(-50%); display: flex; align-items: center; justify-content: center; z-index: 1000; filter: drop-shadow(0 12px 25px rgba(0, 0, 0, 0.95)); }
+  .match-outer-frame { background: linear-gradient(180deg, #f3d483 0%, #a4792a 50%, #453210 100%); padding: 2.5px; clip-path: polygon(36px 0%, 100% 0%, 100% 100%, 0% 100%); }
+  .match-inner-plate { background: linear-gradient(180deg, #0d121a 0%, #06080d 100%); clip-path: polygon(35px 0%, 100% 0%, 100% 100%, 0% 100%); padding: 3px; display: flex; }
+  .match-pinstripe-box { display: flex; align-items: center; border: 1px solid rgba(220, 185, 90, 0.5); clip-path: polygon(34px 0%, 100% 0%, 100% 100%, 0% 100%); padding: 8px 24px 8px 38px; gap: 18px; background: #070a0f; }
+  .match-main-title { font-size: 26px; font-weight: 800; color: #ffffff; letter-spacing: 2px; text-transform: uppercase; line-height: 1; }
+  .match-sub-title { font-family: 'Chakra Petch', sans-serif; font-size: 13px; font-weight: 700; color: #e5b95c; letter-spacing: 2.5px; text-transform: uppercase; margin-top: 4px; }
 
-  /* 1. STANDALONE TOURNAMENT CURRENT MATCH & TIMER BAR */
-  #match-timer-dock {
-    position: fixed;
-    top: 30px;
-    left: 50%;
-    transform: translateX(-50%);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 1000;
-    filter: drop-shadow(0 12px 25px rgba(0, 0, 0, 0.95));
-  }
-
-  .header-crest {
-    position: absolute;
-    top: -10px;
-    left: -12px;
-    width: 60px;
-    height: 48px;
-    background: linear-gradient(135deg, #7a5c28 0%, #453214 100%);
-    border: 1.5px solid #a88438;
-    clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
-    border-radius: 4px 0 0 0;
-    z-index: 998;
-  }
-
-  .header-top-lip {
-    position: absolute;
-    top: -6px;
-    left: 45px;
-    width: 220px;
-    height: 7px;
-    background: linear-gradient(180deg, #ffe082 0%, #c9972c 70%, #684a12 100%);
-    clip-path: polygon(8% 0%, 92% 0%, 100% 100%, 0% 100%);
-    box-shadow: 0 -2px 6px rgba(255, 215, 0, 0.5);
-    z-index: 1002;
-  }
-
-  .match-outer-frame {
-    position: relative;
-    background: linear-gradient(180deg, #f3d483 0%, #a4792a 50%, #453210 100%);
-    padding: 2.5px;
-    clip-path: polygon(36px 0%, 100% 0%, 100% 100%, 0% 100%);
-    z-index: 999;
-  }
-
-  .match-inner-plate {
-    background: linear-gradient(180deg, #0d121a 0%, #06080d 100%);
-    clip-path: polygon(35px 0%, 100% 0%, 100% 100%, 0% 100%);
-    padding: 3px;
-    display: flex;
-  }
-
-  .match-pinstripe-box {
-    display: flex;
-    align-items: center;
-    border: 1px solid rgba(220, 185, 90, 0.5);
-    clip-path: polygon(34px 0%, 100% 0%, 100% 100%, 0% 100%);
-    padding: 8px 24px 8px 38px;
-    gap: 18px;
-    position: relative;
-    background: linear-gradient(90deg, #101929 0%, #070a0f 100%);
-  }
-
-  .current-match-block {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    line-height: 0.95;
-  }
-  .match-main-title {
-    font-family: 'Rajdhani', sans-serif;
-    font-size: 28px;
-    font-weight: 800;
-    color: #ffffff;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    text-shadow: 0 2px 5px rgba(0,0,0,0.9);
-  }
-  .match-sub-title {
-    font-family: 'Chakra Petch', sans-serif;
-    font-size: 13px;
-    font-weight: 700;
-    color: #e5b95c;
-    letter-spacing: 2.5px;
-    text-transform: uppercase;
-    margin-top: 4px;
-    text-shadow: 0 0 10px rgba(229, 185, 92, 0.5);
-  }
-
-  .header-divider-line {
-    width: 1.5px;
-    height: 40px;
-    background: linear-gradient(180deg, transparent 0%, rgba(255, 255, 255, 0.25) 50%, transparent 100%);
-  }
-
-  .timer-block {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    line-height: 0.95;
-    min-width: 95px;
-  }
-  .timer-small-label {
-    font-family: 'Chakra Petch', sans-serif;
-    font-size: 12px;
-    font-weight: 700;
-    color: #8fa0b5;
-    letter-spacing: 1.5px;
-    text-transform: uppercase;
-  }
-  .hud-timer-clock {
-    font-family: 'Chakra Petch', sans-serif;
-    font-size: 32px;
-    font-weight: 800;
-    color: #5c8cf8;
-    letter-spacing: 1.5px;
-    text-shadow: 0 0 12px rgba(92, 140, 248, 0.7);
-    margin-top: 2px;
-  }
-
-  /* 2. PLAYING TEAMS DOCK WITH BOOYAH TROPHIES */
-  .broadcast-dock {
-    position: fixed;
-    top: 50px;
-    left: 20px;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    width: fit-content;
-    z-index: 100;
-  }
-
-  .hud-container {
-    width: fit-content;
-    display: table;
-    border-collapse: separate;
-    border-spacing: 0;
-    box-shadow: 0 12px 35px rgba(0,0,0,0.9);
-    border: 2px solid #426aef;
-    border-radius: 6px;
-    overflow: hidden;
-    background: #000000;
-  }
-
-  .hud-header {
-    display: table-row;
-    background: #426aef;
-    color: #ffffff;
-    font-weight: 800;
-    font-size: 15px;
-    letter-spacing: 1.5px;
-  }
-  .hud-header .col-teams {
-    display: table-cell;
-    text-align: left;
-    padding: 8px 30px 8px 20px;
-    white-space: nowrap;
-    min-width: 280px;
-  }
-  .hud-header .col-booyah {
-    display: table-cell;
-    text-align: center;
-    padding: 8px 20px;
-    min-width: 110px;
-  }
-
+  /* Left Playing Teams Dock */
+  .broadcast-dock { position: fixed; top: 50px; left: 20px; display: flex; flex-direction: column; z-index: 100; }
+  .hud-container { display: table; border-collapse: separate; border-spacing: 0; box-shadow: 0 12px 35px rgba(0,0,0,0.9); border: 2px solid #426aef; border-radius: 6px; overflow: hidden; background: #000000; }
+  .hud-header { display: table-row; background: #426aef; color: #ffffff; font-weight: 800; font-size: 15px; letter-spacing: 1.5px; }
+  .hud-header .col-teams { display: table-cell; padding: 8px 30px 8px 20px; white-space: nowrap; min-width: 280px; }
+  .hud-header .col-booyah { display: table-cell; text-align: center; padding: 8px 20px; min-width: 110px; }
   .hud-body { display: table-row-group; }
-
-  .hud-row {
-    display: table-row;
-    background: #0a0d14;
-    transition: background 0.2s ease;
-  }
+  .hud-row { display: table-row; background: #0a0d14; }
   .hud-row:nth-child(even) { background: #0c1018; }
+  .team-cell { display: table-cell; vertical-align: middle; padding: 7px 20px 7px 14px; white-space: nowrap; border-bottom: 1px solid rgba(255,255,255,0.04); }
+  .team-cell-inner { display: flex; align-items: center; gap: 12px; }
+  .slot-tag { color: #5c8cf8; font-size: 18px; font-weight: 800; min-width: 26px; text-align: right; font-family: 'Chakra Petch', sans-serif; }
+  .team-logo { width: 28px; height: 28px; object-fit: contain; border-radius: 4px; background: #000; border: 1px solid #1e2433; }
+  .team-name { font-weight: 800; font-size: 20px; color: #ffffff; letter-spacing: 0.8px; text-transform: uppercase; }
+  .booyah-cell { display: table-cell; vertical-align: middle; text-align: center; border-left: 1px solid rgba(255,255,255,0.08); border-bottom: 1px solid rgba(255,255,255,0.04); padding: 0 12px; }
+  .booyah-badge-wrap { display: flex; align-items: center; justify-content: center; gap: 6px; }
+  .booyah-num { font-family: 'Chakra Petch', sans-serif; font-size: 18px; font-weight: 800; color: #ffd700; }
+  .booyah-label { font-family: 'Chakra Petch', sans-serif; font-size: 9px; font-weight: 700; color: #94a3b8; letter-spacing: 1px; }
 
-  .team-cell {
-    display: table-cell;
-    vertical-align: middle;
-    padding: 7px 20px 7px 14px;
-    white-space: nowrap;
-    border-bottom: 1px solid rgba(255,255,255,0.04);
-  }
-  .team-cell-inner {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-  }
-  .slot-tag {
-    color: #5c8cf8;
-    font-size: 18px;
-    font-weight: 800;
-    min-width: 26px;
-    text-align: right;
-    font-family: 'Chakra Petch', sans-serif;
-  }
-  .team-logo {
-    width: 28px;
-    height: 28px;
-    object-fit: contain;
-    border-radius: 4px;
-    background: #000;
-    border: 1px solid #1e2433;
-  }
-  .team-name {
-    font-weight: 800;
-    font-size: 20px;
-    color: #ffffff;
-    letter-spacing: 0.8px;
-    line-height: 1;
-    text-transform: uppercase;
-  }
-
-  .booyah-cell {
-    display: table-cell;
-    vertical-align: middle;
-    text-align: center;
-    border-left: 1px solid rgba(255,255,255,0.08);
-    border-bottom: 1px solid rgba(255,255,255,0.04);
-    padding: 0 12px;
-  }
-  .booyah-badge-wrap {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 6px;
-  }
-  .trophy-icon {
-    font-size: 18px;
-  }
-  .booyah-details {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    line-height: 1;
-  }
-  .booyah-num {
-    font-family: 'Chakra Petch', sans-serif;
-    font-size: 18px;
-    font-weight: 800;
-    color: #ffd700;
-  }
-  .booyah-label {
-    font-family: 'Chakra Petch', sans-serif;
-    font-size: 9px;
-    font-weight: 700;
-    color: #94a3b8;
-    letter-spacing: 1px;
-    margin-top: 1px;
-  }
-
-  /* 3. BOTTOM-RIGHT SPECTATOR CARD */
-  #official-spec-card {
-    position: fixed !important;
-    bottom: 25px !important;
-    right: 25px !important;
-    width: 380px !important;
-    background: linear-gradient(180deg, #161b26 0%, #090c12 100%) !important;
-    border: 1.5px solid #d4af37 !important;
-    border-top: 2px solid #5c84ff !important;
-    border-radius: 6px !important;
-    padding: 10px 16px !important;
-    box-shadow: 0 12px 35px rgba(0,0,0,0.95), inset 0 1px 0 rgba(255, 215, 0, 0.3) !important;
-    display: flex !important;
-    flex-direction: column !important;
-    gap: 8px !important;
-    z-index: 999999 !important;
-    clip-path: polygon(0 0, 94% 0, 100% 18%, 100% 100%, 0 100%);
-  }
-  .card-topbar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    border-bottom: 1px solid rgba(212, 175, 55, 0.25);
-    padding-bottom: 4px;
-  }
-  .card-tourney-title {
-    font-family: 'Chakra Petch', sans-serif;
-    font-size: 11px;
-    font-weight: 800;
-    color: #d4af37;
-    letter-spacing: 1.5px;
-  }
-  .card-live-tag {
-    background: #ef4444;
-    color: #ffffff;
-    font-size: 10px;
-    font-weight: 800;
-    padding: 2px 7px;
-    border-radius: 2px;
-    letter-spacing: 1px;
-    font-family: 'Chakra Petch', sans-serif;
-  }
-
-  .card-main {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-  }
-  #spec-card-logo {
-    width: 48px;
-    height: 48px;
-    border-radius: 4px;
-    object-fit: contain;
-    background: #000;
-    border: 1.5px solid #d4af37;
-    flex-shrink: 0;
-  }
-  .card-info {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    line-height: 1.1;
-    overflow: hidden;
-  }
-  .card-slot-label {
-    font-size: 12px;
-    font-weight: 800;
-    color: #5c8cf8;
-    font-family: 'Chakra Petch', sans-serif;
-    letter-spacing: 1px;
-  }
-  .card-team-name {
-    font-family: 'Rajdhani', sans-serif;
-    font-size: 24px;
-    font-weight: 800;
-    color: #ffffff;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-
-  .card-bottombar {
-    display: flex;
-    justify-content: space-between;
-    font-size: 11px;
-    font-weight: 800;
-    color: #e5b95c;
-    border-top: 1px solid rgba(255,255,255,0.06);
-    padding-top: 4px;
-    letter-spacing: 1.5px;
-    font-family: 'Chakra Petch', sans-serif;
-  }
+  /* Bottom-Right Spectator Focus Card */
+  #official-spec-card { position: fixed !important; bottom: 25px !important; right: 25px !important; width: 380px !important; background: linear-gradient(180deg, #161b26 0%, #090c12 100%) !important; border: 1.5px solid #d4af37 !important; border-top: 2px solid #5c84ff !important; border-radius: 6px !important; padding: 10px 16px !important; box-shadow: 0 12px 35px rgba(0,0,0,0.95); display: flex !important; flex-direction: column !important; gap: 8px !important; z-index: 999999 !important; clip-path: polygon(0 0, 94% 0, 100% 18%, 100% 100%, 0 100%); }
+  .card-topbar { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(212, 175, 55, 0.25); padding-bottom: 4px; font-family: 'Chakra Petch', sans-serif; font-size: 11px; font-weight: 800; color: #d4af37; }
+  .card-live-tag { background: #ef4444; color: #ffffff; font-size: 10px; padding: 2px 7px; border-radius: 2px; }
+  .card-main { display: flex; align-items: center; gap: 12px; }
+  #spec-card-logo { width: 48px; height: 48px; border-radius: 4px; object-fit: contain; background: #000; border: 1.5px solid #d4af37; }
+  .card-slot-label { font-size: 12px; font-weight: 800; color: #5c8cf8; font-family: 'Chakra Petch', sans-serif; }
+  .card-team-name { font-family: 'Rajdhani', sans-serif; font-size: 24px; font-weight: 800; color: #ffffff; text-transform: uppercase; }
+  .card-bottombar { display: flex; justify-content: space-between; font-size: 11px; font-weight: 800; color: #e5b95c; border-top: 1px solid rgba(255,255,255,0.06); padding-top: 4px; font-family: 'Chakra Petch', sans-serif; }
 </style>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 </head>
 <body>
 
-  <!-- 1. STANDALONE CURRENT MATCH & TIMER BAR -->
   <div id="match-timer-dock">
-    <div class="header-crest"></div>
-    <div class="header-top-lip"></div>
     <div class="match-outer-frame">
       <div class="match-inner-plate">
         <div class="match-pinstripe-box">
@@ -383,17 +59,11 @@
             <div class="match-main-title">CURRENT MATCH</div>
             <div class="match-sub-title" id="overlay-match-map">MAP - 1 - BERMUDA</div>
           </div>
-          <div class="header-divider-line"></div>
-          <div class="timer-block">
-            <div class="timer-small-label">MATCH TIME</div>
-            <div class="hud-timer-clock" id="timer-display">00:00</div>
-          </div>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- 2. CURRENT TEAMS DOCK WITH BOOYAH TROPHIES -->
   <div class="broadcast-dock">
     <div class="hud-container">
       <div class="hud-header">
@@ -404,24 +74,21 @@
     </div>
   </div>
 
-  <!-- 3. BOTTOM-RIGHT SPECTATOR FOCUS CARD -->
   <div id="official-spec-card">
     <div class="card-topbar">
-      <span class="card-tourney-title">/// SCRIMZONE NEPAL ///</span>
+      <span>/// SCRIMZONE NEPAL ///</span>
       <span class="card-live-tag">LIVE</span>
     </div>
-
     <div class="card-main">
-      <img id="spec-card-logo" src="https://dummyimage.com/48x48/000/d4af37&text=FF" alt="Team Logo" />
+      <img id="spec-card-logo" src="https://dummyimage.com/48x48/000/d4af37&text=FF" alt="Logo" />
       <div class="card-info">
         <span class="card-slot-label" id="spec-slot-label">FOCUS: SLOT 1</span>
-        <span class="card-team-name" id="spec-team-name">WAITING FOR TEAMS</span>
+        <span class="card-team-name" id="spec-team-name">WAITING</span>
       </div>
     </div>
-
     <div class="card-bottombar">
       <span id="spec-card-map-footer">MAP - 1 - BERMUDA</span>
-      <span style="color:#5c84ff;">OFFICIAL BROADCAST</span>
+      <span style="color:#5c84ff;">BROADCAST</span>
     </div>
   </div>
 
@@ -439,112 +106,53 @@
 
   firebase.initializeApp(firebaseConfig);
   const db = firebase.database();
-
-  let cachedTeams = [];
-  let currentActiveTeamIdx = 0;
+  let cachedTeams = [], currentActiveTeamIdx = 0;
 
   db.ref('esports_data/match_info').on('value', (snap) => {
-    const data = snap.val();
-    if (data) {
-      const matchNum = data.match || "1";
-      const mapName = data.map || "BERMUDA";
-      document.getElementById('overlay-match-map').innerText = `MAP - ${matchNum} - ${mapName}`;
-      const footer = document.getElementById('spec-card-map-footer');
-      if (footer) footer.innerText = `MAP - ${matchNum} - ${mapName}`;
-    }
+    const data = snap.val() || {};
+    document.getElementById('overlay-match-map').innerText = `MAP - ${data.match || "1"} - ${data.map || "BERMUDA"}`;
+    document.getElementById('spec-card-map-footer').innerText = `MAP - ${data.match || "1"} - ${data.map || "BERMUDA"}`;
   });
 
   db.ref('esports_data/teams').on('value', (snapshot) => {
-    const teams = snapshot.val();
-    if (teams && Array.isArray(teams)) {
-      cachedTeams = teams;
-      renderTeams(teams);
-      updateSpectatorCard();
-    }
+    cachedTeams = snapshot.val() || [];
+    renderTeams(cachedTeams);
+    updateSpectatorCard();
   });
 
   db.ref('esports_data/active_spectate').on('value', (snap) => {
-    const val = snap.val();
-    if (val !== null && typeof val === 'number') {
-      currentActiveTeamIdx = val;
-      updateSpectatorCard();
-    }
+    currentActiveTeamIdx = snap.val() || 0;
+    updateSpectatorCard();
   });
 
   function updateSpectatorCard() {
-    if (!cachedTeams || !cachedTeams[currentActiveTeamIdx]) return;
-    const team = cachedTeams[currentActiveTeamIdx];
-    const teamName = (team.name && team.name.trim() !== '') ? team.name : `SLOT ${currentActiveTeamIdx + 1}`;
-    const logoUrl = (team.logo && team.logo.trim() !== '') ? team.logo : `https://dummyimage.com/48x48/000/d4af37&text=${teamName[0]}`;
-
-    document.getElementById('spec-card-logo').src = logoUrl;
+    const team = cachedTeams[currentActiveTeamIdx] || {};
+    const name = (team.name && !team.name.startsWith('SLOT ')) ? team.name : `SLOT ${currentActiveTeamIdx + 1}`;
+    document.getElementById('spec-card-logo').src = team.logo || `https://dummyimage.com/48x48/000/d4af37&text=${name[0]}`;
     document.getElementById('spec-slot-label').innerText = `FOCUS: SLOT ${currentActiveTeamIdx + 1}`;
-    document.getElementById('spec-team-name').innerText = teamName;
-  }
-
-  let timerState = { running: false, seconds: 0, startTimestamp: null };
-  let localTimerInterval = null;
-
-  db.ref('esports_data/timer').on('value', (snapshot) => {
-    const val = snapshot.val();
-    if (val) {
-      timerState = val;
-      updateTimerUI();
-    }
-  });
-
-  function formatTime(totalSec) {
-    const m = String(Math.floor(totalSec / 60)).padStart(2, '0');
-    const s = String(totalSec % 60).padStart(2, '0');
-    return `${m}:${s}`;
-  }
-
-  function updateTimerUI() {
-    clearInterval(localTimerInterval);
-    if (timerState.running && timerState.startTimestamp) {
-      localTimerInterval = setInterval(() => {
-        const elapsed = Math.floor((Date.now() - timerState.startTimestamp) / 1000);
-        document.getElementById('timer-display').innerText = formatTime(elapsed);
-      }, 1000);
-      const elapsed = Math.floor((Date.now() - timerState.startTimestamp) / 1000);
-      document.getElementById('timer-display').innerText = formatTime(elapsed);
-    } else {
-      document.getElementById('timer-display').innerText = formatTime(timerState.seconds || 0);
-    }
+    document.getElementById('spec-team-name').innerText = name;
   }
 
   function renderTeams(teams) {
     const container = document.getElementById('hud-body');
     container.innerHTML = '';
-
     teams.slice(0, 12).forEach((team, idx) => {
-      const displayName = (team.name && team.name.trim() !== '') ? team.name : `SLOT ${idx + 1}`;
-      const displayLogo = (team.logo && team.logo.trim() !== '') ? team.logo : `https://dummyimage.com/28x28/000/426aef&text=${displayName[0]}`;
+      const name = (team.name && !team.name.startsWith('SLOT ')) ? team.name : `SLOT ${idx + 1}`;
+      const logo = team.logo || `https://dummyimage.com/28x28/000/426aef&text=${name[0]}`;
       const booyahs = team.booyahs || 0;
-
-      let booyahHtml = '';
-      if (booyahs > 0) {
-        booyahHtml = `
-          <div class="booyah-badge-wrap">
-            <span class="trophy-icon">🏆</span>
-            <div class="booyah-details">
-              <span class="booyah-num">${booyahs}</span>
-              <span class="booyah-label">BOOYAH x${booyahs}</span>
-            </div>
-          </div>
-        `;
-      }
 
       container.innerHTML += `
         <div class="hud-row">
           <div class="team-cell">
             <div class="team-cell-inner">
               <span class="slot-tag">#${idx + 1}</span>
-              <img class="team-logo" src="${displayLogo}" onerror="this.src='https://dummyimage.com/28x28/000/426aef&text=${displayName[0]}';" />
-              <span class="team-name">${displayName}</span>
+              <img class="team-logo" src="${logo}" />
+              <span class="team-name">${name}</span>
             </div>
           </div>
-          <div class="booyah-cell">${booyahHtml}</div>
+          <div class="booyah-cell">
+            ${booyahs > 0 ? `<div class="booyah-badge-wrap"><span>🏆</span><div style="display:flex;flex-direction:column;align-items:flex-start;"><span class="booyah-num">${booyahs}</span><span class="booyah-label">BOOYAH x${booyahs}</span></div></div>` : ''}
+          </div>
         </div>
       `;
     });
