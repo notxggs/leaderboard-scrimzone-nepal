@@ -74,36 +74,6 @@
   .btn-gold:hover { background: #ffe082; }
   .btn-reset-scrim { background: #dc2626; color: #fff; padding: 7px 14px; font-size: 12px; }
 
-  /* OVERVIEW / HISTORY TABLE PANEL */
-  .history-panel {
-    background: #0c1018;
-    border: 1px solid #1a2233;
-    border-radius: 6px;
-    padding: 14px;
-    margin-bottom: 16px;
-  }
-  .history-title {
-    font-family: 'Chakra Petch', sans-serif;
-    font-size: 13px;
-    font-weight: 800;
-    color: #d4af37;
-    letter-spacing: 1.5px;
-    margin-bottom: 10px;
-    text-transform: uppercase;
-  }
-  .history-table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 13px;
-  }
-  .history-table th, .history-table td {
-    border: 1px solid #1e293b;
-    padding: 6px 12px;
-    text-align: left;
-  }
-  .history-table th { background: #121824; color: #94a3b8; font-family: 'Chakra Petch', sans-serif; }
-  .history-table td { background: #06080d; }
-
   .spectate-dock { background: #0d111a; border: 1px solid #1e293b; border-radius: 6px; padding: 10px 14px; margin-bottom: 16px; }
   .dock-label { font-size: 11px; font-weight: 800; color: #94a3b8; letter-spacing: 1.5px; margin-bottom: 8px; text-transform: uppercase; }
   .spectate-btn-grid { display: flex; flex-wrap: wrap; gap: 8px; }
@@ -164,7 +134,6 @@
           </select>
         </div>
 
-        <!-- TIMER CONTROL BUTTONS -->
         <div class="timer-box">
           <div class="timer-clock" id="timer-display">00:00</div>
           <button class="btn-action" id="timer-toggle-btn" onclick="toggleTimer()">START</button>
@@ -176,30 +145,11 @@
       </div>
     </div>
 
-    <!-- OVERVIEW / HISTORY TABLE PANEL -->
-    <div class="history-panel">
-      <div class="history-title">🏆 SCRIM OVERVIEW & BOOYAH LEADERBOARD 🏆</div>
-      <table class="history-table">
-        <thead>
-          <tr>
-            <th>Slot #</th>
-            <th>Registered Team Name</th>
-            <th>Roster Summary</th>
-            <th>Total Booyahs 🏆</th>
-          </tr>
-        </thead>
-        <tbody id="history-table-body">
-          <!-- Dynamic -->
-        </tbody>
-      </table>
-    </div>
-
     <div class="spectate-dock">
       <div class="dock-label">CLICK TEAM TO FOCUS ON SPECTATOR OVERLAY (BOTTOM-RIGHT):</div>
       <div class="spectate-btn-grid" id="spectate-btn-container"></div>
     </div>
 
-    <!-- TEAMS GRID WITH BOOYAH BUTTONS -->
     <div class="teams-grid" id="teams-container"></div>
   </div>
 
@@ -235,7 +185,6 @@
       teamsData = val ? (Array.isArray(val) ? val : Object.values(val)) : [];
       renderTeams();
       renderSpectateBar();
-      renderHistoryTable();
     });
   }
 
@@ -266,27 +215,6 @@
     document.querySelectorAll('.team-card').forEach((card, idx) => {
       card.classList.toggle('is-active-spec', idx === activeSpectateIdx);
     });
-  }
-
-  function renderHistoryTable() {
-    const tbody = document.getElementById('history-table-body');
-    tbody.innerHTML = '';
-    for (let idx = 0; idx < 12; idx++) {
-      const team = teamsData[idx] || {};
-      const isRegistered = team.name && team.name.trim() !== '' && !team.name.toUpperCase().startsWith('SLOT ');
-      const name = isRegistered ? team.name : `SLOT ${idx + 1} (Available)`;
-      const roster = team.roster ? team.roster.filter(Boolean).join(', ') : '---';
-      const booyahs = team.booyahs || 0;
-
-      tbody.innerHTML += `
-        <tr>
-          <td><strong>#${idx + 1}</strong></td>
-          <td style="${isRegistered ? 'color:#fff; font-weight:700;' : 'color:#64748b;'}">${name}</td>
-          <td style="color:#94a3b8; font-family:'Chakra Petch';">${roster}</td>
-          <td style="color:#d4af37; font-weight:800; font-family:'Chakra Petch';">🏆 ${booyahs}</td>
-        </tr>
-      `;
-    }
   }
 
   function renderTeams() {
@@ -330,9 +258,7 @@
   function addBooyah(idx) {
     const current = (teamsData[idx] && teamsData[idx].booyahs) ? teamsData[idx] : 0;
     const currentCount = typeof current === 'object' ? (current.booyahs || 0) : current;
-    db.ref(`esports_data/teams/${idx}/booyahs`).set(currentCount + 1).then(() => {
-      alert(`Booyah 🏆 awarded successfully!`);
-    });
+    db.ref(`esports_data/teams/${idx}/booyahs`).set(currentCount + 1);
   }
 
   function initializeSlots() {
@@ -340,7 +266,7 @@
     for (let i = 0; i < 12; i++) {
       payload.push({ name: `SLOT ${i + 1}`, logo: "", roster: ["-", "-", "-", "-"], booyahs: 0 });
     }
-    db.ref('esports_data/teams').set(payload).then(() => alert("Initialized 12 slots!"));
+    db.ref('esports_data/teams').set(payload);
   }
 
   function clearSlot(idx) {
