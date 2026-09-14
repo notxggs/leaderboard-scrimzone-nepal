@@ -20,76 +20,133 @@
   }
 
   /* ----------------------------------------------------
-     1. SEPARATE STANDALONE HEADER: CURRENT MATCH & TIMER
-     (Located top-center: ready to Alt-crop cleanly in OBS)
+     1. EXACT 1:1 TOURNAMENT CURRENT MATCH & TIMER BAR
      ---------------------------------------------------- */
   #match-timer-dock {
     position: fixed;
-    top: 25px;
+    top: 30px;
     left: 50%;
     transform: translateX(-50%);
-    background: linear-gradient(180deg, #161b26 0%, #090c12 100%);
-    border: 1.5px solid #d4af37;
-    border-top: 2px solid #5c84ff;
-    border-radius: 6px;
-    padding: 6px 16px;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.85), inset 0 1px 0 rgba(255, 215, 0, 0.4);
     display: flex;
     align-items: center;
-    gap: 14px;
+    justify-content: center;
     z-index: 1000;
   }
 
+  /* Top Gold Metallic Accent Badge */
+  .header-crest {
+    position: absolute;
+    top: -9px;
+    left: 18%;
+    width: 210px;
+    height: 10px;
+    background: linear-gradient(180deg, #ffe082 0%, #b8860b 60%, #795548 100%);
+    clip-path: polygon(10% 0%, 90% 0%, 100% 100%, 0% 100%);
+    box-shadow: 0 -2px 8px rgba(255, 215, 0, 0.4);
+    z-index: 1001;
+  }
+
+  /* Outer Chamfer Cut Gold Frame */
+  .match-outer-frame {
+    background: linear-gradient(180deg, #e6c875 0%, #9e7d3b 50%, #4a3b1a 100%);
+    padding: 2px;
+    clip-path: polygon(32px 0%, 100% 0%, 100% 100%, 0% 100%, 0% 100%);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.95), 0 0 15px rgba(212, 175, 55, 0.2);
+  }
+
+  /* Dark Inner Plate with Gold Inset Trim */
+  .match-inner-plate {
+    background: linear-gradient(180deg, #0f141c 0%, #06080c 100%);
+    clip-path: polygon(31px 0%, 100% 0%, 100% 100%, 0% 100%, 0% 100%);
+    padding: 3px;
+    display: flex;
+  }
+
+  /* Inner Precision Gold Pinstripe */
+  .match-pinstripe-box {
+    display: flex;
+    align-items: center;
+    border: 1px solid rgba(212, 175, 55, 0.45);
+    clip-path: polygon(29px 0%, 100% 0%, 100% 100%, 0% 100%, 0% 100%);
+    padding: 8px 24px 8px 38px;
+    gap: 18px;
+    position: relative;
+    background: linear-gradient(90deg, rgba(16, 26, 44, 0.9) 0%, rgba(7, 10, 15, 0.95) 100%);
+  }
+
+  /* Corner Accent Dot */
+  .match-pinstripe-box::after {
+    content: '';
+    position: absolute;
+    bottom: 3px;
+    right: 3px;
+    width: 4px;
+    height: 4px;
+    background: #d4af37;
+    border-radius: 50%;
+    box-shadow: 0 0 4px #ffd700;
+  }
+
+  /* Left Side: CURRENT MATCH & MAP */
   .current-match-block {
     display: flex;
     flex-direction: column;
+    align-items: center;
     justify-content: center;
-    line-height: 1;
+    line-height: 0.9;
   }
   .match-main-title {
     font-family: 'Rajdhani', sans-serif;
-    font-size: 20px;
+    font-size: 27px;
     font-weight: 800;
     color: #ffffff;
-    letter-spacing: 1.5px;
+    letter-spacing: 2px;
     text-transform: uppercase;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.8);
   }
   .match-sub-title {
     font-family: 'Chakra Petch', sans-serif;
-    font-size: 11px;
+    font-size: 13px;
     font-weight: 700;
     color: #e5b95c;
-    letter-spacing: 1.5px;
+    letter-spacing: 2.5px;
     text-transform: uppercase;
-    margin-top: 2px;
+    margin-top: 4px;
+    text-shadow: 0 0 8px rgba(229, 185, 92, 0.4);
   }
+
+  /* Vertical Subtle Separator Line */
   .header-divider-line {
     width: 1px;
-    height: 32px;
-    background: rgba(255, 255, 255, 0.15);
+    height: 42px;
+    background: linear-gradient(180deg, transparent 0%, rgba(255, 255, 255, 0.25) 50%, transparent 100%);
   }
+
+  /* Right Side: MATCH TIME & CLOCK */
   .timer-block {
     display: flex;
     flex-direction: column;
-    align-items: flex-end;
+    align-items: center;
     justify-content: center;
-    line-height: 1;
+    line-height: 0.9;
+    min-width: 90px;
   }
   .timer-small-label {
     font-family: 'Chakra Petch', sans-serif;
-    font-size: 10px;
+    font-size: 12px;
     font-weight: 700;
     color: #8fa0b5;
-    letter-spacing: 1px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
   }
   .hud-timer-clock {
-    font-size: 24px;
-    font-weight: 800;
-    color: #5c84ff;
     font-family: 'Chakra Petch', sans-serif;
-    letter-spacing: 1px;
-    text-shadow: 0 0 10px rgba(66, 106, 239, 0.7);
-    margin-top: 1px;
+    font-size: 32px;
+    font-weight: 800;
+    color: #5c8cf8;
+    letter-spacing: 1.5px;
+    text-shadow: 0 0 12px rgba(92, 140, 248, 0.65);
+    margin-top: 2px;
   }
 
   /* ----------------------------------------------------
@@ -170,7 +227,7 @@
     text-transform: uppercase;
   }
 
-  /* Leaderboard Master Container */
+  /* Leaderboard Master Table */
   .hud-container {
     width: fit-content;
     display: table;
@@ -183,7 +240,6 @@
     background: #000000;
   }
 
-  /* Table Header */
   .hud-header {
     display: table-row;
     background: #426aef;
@@ -423,21 +479,27 @@
 </head>
 <body>
 
-  <!-- Wipeout Audio -->
   <audio id="elimination-audio" preload="auto">
     <source src="https://cdn.freesound.org/previews/381/381382_6142149-lq.mp3" type="audio/mpeg">
   </audio>
 
-  <!-- 1. STANDALONE CURRENT MATCH & TIMER DOCK (CENTER-TOP: CROP INDEPENDENTLY) -->
+  <!-- 1. STANDALONE CURRENT MATCH & TIMER BAR -->
   <div id="match-timer-dock">
-    <div class="current-match-block">
-      <div class="match-main-title">CURRENT MATCH</div>
-      <div class="match-sub-title" id="overlay-match-map">MAP - 1 - BERMUDA</div>
-    </div>
-    <div class="header-divider-line"></div>
-    <div class="timer-block">
-      <div class="timer-small-label">MATCH TIME</div>
-      <div class="hud-timer-clock" id="timer-display">00:00</div>
+    <div class="header-crest"></div>
+    <div class="match-outer-frame">
+      <div class="match-inner-plate">
+        <div class="match-pinstripe-box">
+          <div class="current-match-block">
+            <div class="match-main-title">CURRENT MATCH</div>
+            <div class="match-sub-title" id="overlay-match-map">MAP - 1 - BERMUDA</div>
+          </div>
+          <div class="header-divider-line"></div>
+          <div class="timer-block">
+            <div class="timer-small-label">MATCH TIME</div>
+            <div class="hud-timer-clock" id="timer-display">00:00</div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 
