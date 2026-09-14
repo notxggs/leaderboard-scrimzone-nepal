@@ -21,6 +21,7 @@
 
   /* ----------------------------------------------------
      1. EXACT 1:1 TOURNAMENT CURRENT MATCH & TIMER BAR
+     (Slanted outward diagonal left edge "/" + bronze backing plate)
      ---------------------------------------------------- */
   #match-timer-dock {
     position: fixed;
@@ -31,50 +32,76 @@
     align-items: center;
     justify-content: center;
     z-index: 1000;
+    filter: drop-shadow(0 12px 25px rgba(0, 0, 0, 0.95));
   }
 
-  /* Top Gold Metallic Accent Badge */
+  /* Bronze Backing Shield Plate (Behind top-left) */
   .header-crest {
     position: absolute;
-    top: -9px;
-    left: 18%;
-    width: 210px;
-    height: 10px;
-    background: linear-gradient(180deg, #ffe082 0%, #b8860b 60%, #795548 100%);
-    clip-path: polygon(10% 0%, 90% 0%, 100% 100%, 0% 100%);
-    box-shadow: 0 -2px 8px rgba(255, 215, 0, 0.4);
-    z-index: 1001;
+    top: -10px;
+    left: -12px;
+    width: 60px;
+    height: 48px;
+    background: linear-gradient(135deg, #7a5c28 0%, #453214 100%);
+    border: 1.5px solid #a88438;
+    clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+    border-radius: 4px 0 0 0;
+    z-index: 998;
   }
 
-  /* Outer Chamfer Cut Gold Frame */
+  /* Top Gold Lip Trim */
+  .header-top-lip {
+    position: absolute;
+    top: -6px;
+    left: 45px;
+    width: 220px;
+    height: 7px;
+    background: linear-gradient(180deg, #ffe082 0%, #c9972c 70%, #684a12 100%);
+    clip-path: polygon(8% 0%, 92% 0%, 100% 100%, 0% 100%);
+    box-shadow: 0 -2px 6px rgba(255, 215, 0, 0.5);
+    z-index: 1002;
+  }
+
+  /* Outer Gold Slanted Frame: Starts inward at top, flares OUT at bottom (/) */
   .match-outer-frame {
-    background: linear-gradient(180deg, #e6c875 0%, #9e7d3b 50%, #4a3b1a 100%);
-    padding: 2px;
-    clip-path: polygon(32px 0%, 100% 0%, 100% 100%, 0% 100%, 0% 100%);
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.95), 0 0 15px rgba(212, 175, 55, 0.2);
+    position: relative;
+    background: linear-gradient(180deg, #f3d483 0%, #a4792a 50%, #453210 100%);
+    padding: 2.5px;
+    clip-path: polygon(36px 0%, 100% 0%, 100% 100%, 0% 100%);
+    z-index: 999;
   }
 
-  /* Dark Inner Plate with Gold Inset Trim */
+  /* Dark Metallic Body Plate */
   .match-inner-plate {
-    background: linear-gradient(180deg, #0f141c 0%, #06080c 100%);
-    clip-path: polygon(31px 0%, 100% 0%, 100% 100%, 0% 100%, 0% 100%);
+    background: linear-gradient(180deg, #0d121a 0%, #06080d 100%);
+    clip-path: polygon(35px 0%, 100% 0%, 100% 100%, 0% 100%);
     padding: 3px;
     display: flex;
   }
 
-  /* Inner Precision Gold Pinstripe */
+  /* Inner Precision Gold Pinstripe Box */
   .match-pinstripe-box {
     display: flex;
     align-items: center;
-    border: 1px solid rgba(212, 175, 55, 0.45);
-    clip-path: polygon(29px 0%, 100% 0%, 100% 100%, 0% 100%, 0% 100%);
+    border: 1px solid rgba(220, 185, 90, 0.5);
+    clip-path: polygon(34px 0%, 100% 0%, 100% 100%, 0% 100%);
     padding: 8px 24px 8px 38px;
     gap: 18px;
     position: relative;
-    background: linear-gradient(90deg, rgba(16, 26, 44, 0.9) 0%, rgba(7, 10, 15, 0.95) 100%);
+    background: linear-gradient(90deg, #101929 0%, #070a0f 100%);
   }
 
-  /* Corner Accent Dot */
+  /* Tiny Corner Accents */
+  .match-pinstripe-box::before {
+    content: '';
+    position: absolute;
+    top: 5px;
+    left: 36px;
+    width: 6px;
+    height: 1px;
+    background: #ffd700;
+    box-shadow: 0 0 4px #ffd700;
+  }
   .match-pinstripe-box::after {
     content: '';
     position: absolute;
@@ -84,25 +111,24 @@
     height: 4px;
     background: #d4af37;
     border-radius: 50%;
-    box-shadow: 0 0 4px #ffd700;
   }
 
-  /* Left Side: CURRENT MATCH & MAP */
+  /* Typography */
   .current-match-block {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    line-height: 0.9;
+    line-height: 0.95;
   }
   .match-main-title {
     font-family: 'Rajdhani', sans-serif;
-    font-size: 27px;
+    font-size: 28px;
     font-weight: 800;
     color: #ffffff;
     letter-spacing: 2px;
     text-transform: uppercase;
-    text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+    text-shadow: 0 2px 5px rgba(0,0,0,0.9);
   }
   .match-sub-title {
     font-family: 'Chakra Petch', sans-serif;
@@ -112,24 +138,22 @@
     letter-spacing: 2.5px;
     text-transform: uppercase;
     margin-top: 4px;
-    text-shadow: 0 0 8px rgba(229, 185, 92, 0.4);
+    text-shadow: 0 0 10px rgba(229, 185, 92, 0.5);
   }
 
-  /* Vertical Subtle Separator Line */
   .header-divider-line {
-    width: 1px;
-    height: 42px;
+    width: 1.5px;
+    height: 40px;
     background: linear-gradient(180deg, transparent 0%, rgba(255, 255, 255, 0.25) 50%, transparent 100%);
   }
 
-  /* Right Side: MATCH TIME & CLOCK */
   .timer-block {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    line-height: 0.9;
-    min-width: 90px;
+    line-height: 0.95;
+    min-width: 95px;
   }
   .timer-small-label {
     font-family: 'Chakra Petch', sans-serif;
@@ -145,7 +169,7 @@
     font-weight: 800;
     color: #5c8cf8;
     letter-spacing: 1.5px;
-    text-shadow: 0 0 12px rgba(92, 140, 248, 0.65);
+    text-shadow: 0 0 12px rgba(92, 140, 248, 0.7);
     margin-top: 2px;
   }
 
@@ -483,9 +507,10 @@
     <source src="https://cdn.freesound.org/previews/381/381382_6142149-lq.mp3" type="audio/mpeg">
   </audio>
 
-  <!-- 1. STANDALONE CURRENT MATCH & TIMER BAR -->
+  <!-- 1. STANDALONE CURRENT MATCH & TIMER BAR (OUTWARD DIAGONAL LEFT SLANT) -->
   <div id="match-timer-dock">
     <div class="header-crest"></div>
+    <div class="header-top-lip"></div>
     <div class="match-outer-frame">
       <div class="match-inner-plate">
         <div class="match-pinstripe-box">
