@@ -19,9 +19,7 @@
     position: relative;
   }
 
-  /* ----------------------------------------------------
-     1. STANDALONE TOURNAMENT CURRENT MATCH & TIMER BAR
-     ---------------------------------------------------- */
+  /* 1. STANDALONE TOURNAMENT CURRENT MATCH & TIMER BAR */
   #match-timer-dock {
     position: fixed;
     top: 30px;
@@ -144,9 +142,7 @@
     margin-top: 2px;
   }
 
-  /* ----------------------------------------------------
-     2. CLEAN LEFT DOCK: CURRENT TEAMS (NAMES & LOGOS ONLY)
-     ---------------------------------------------------- */
+  /* 2. PLAYING TEAMS DOCK WITH BOOYAH TROPHIES */
   .broadcast-dock {
     position: fixed;
     top: 50px;
@@ -183,7 +179,13 @@
     text-align: left;
     padding: 8px 30px 8px 20px;
     white-space: nowrap;
-    min-width: 250px;
+    min-width: 280px;
+  }
+  .hud-header .col-booyah {
+    display: table-cell;
+    text-align: center;
+    padding: 8px 20px;
+    min-width: 110px;
   }
 
   .hud-body { display: table-row-group; }
@@ -232,9 +234,45 @@
     text-transform: uppercase;
   }
 
-  /* ----------------------------------------------------
-     3. BOTTOM-RIGHT OFFICIAL SPECTATOR CARD
-     ---------------------------------------------------- */
+  .booyah-cell {
+    display: table-cell;
+    vertical-align: middle;
+    text-align: center;
+    border-left: 1px solid rgba(255,255,255,0.08);
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    padding: 0 12px;
+  }
+  .booyah-badge-wrap {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+  }
+  .trophy-icon {
+    font-size: 18px;
+  }
+  .booyah-details {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    line-height: 1;
+  }
+  .booyah-num {
+    font-family: 'Chakra Petch', sans-serif;
+    font-size: 18px;
+    font-weight: 800;
+    color: #ffd700;
+  }
+  .booyah-label {
+    font-family: 'Chakra Petch', sans-serif;
+    font-size: 9px;
+    font-weight: 700;
+    color: #94a3b8;
+    letter-spacing: 1px;
+    margin-top: 1px;
+  }
+
+  /* 3. BOTTOM-RIGHT SPECTATOR CARD */
   #official-spec-card {
     position: fixed !important;
     bottom: 25px !important;
@@ -355,11 +393,12 @@
     </div>
   </div>
 
-  <!-- 2. CURRENT TEAMS LIST (LOGO + NAME ONLY) -->
+  <!-- 2. CURRENT TEAMS DOCK WITH BOOYAH TROPHIES -->
   <div class="broadcast-dock">
     <div class="hud-container">
       <div class="hud-header">
         <div class="col-teams">PLAYING TEAMS</div>
+        <div class="col-booyah"></div>
       </div>
       <div class="hud-body" id="hud-body"></div>
     </div>
@@ -404,22 +443,17 @@
   let cachedTeams = [];
   let currentActiveTeamIdx = 0;
 
-  // 1. Match & Map Listener
   db.ref('esports_data/match_info').on('value', (snap) => {
     const data = snap.val();
     if (data) {
       const matchNum = data.match || "1";
       const mapName = data.map || "BERMUDA";
-
       document.getElementById('overlay-match-map').innerText = `MAP - ${matchNum} - ${mapName}`;
       const footer = document.getElementById('spec-card-map-footer');
-      if (footer) {
-        footer.innerText = `MAP - ${matchNum} - ${mapName}`;
-      }
+      if (footer) footer.innerText = `MAP - ${matchNum} - ${mapName}`;
     }
   });
 
-  // 2. Teams Listener (Renders Logo + Team Name Only)
   db.ref('esports_data/teams').on('value', (snapshot) => {
     const teams = snapshot.val();
     if (teams && Array.isArray(teams)) {
@@ -429,7 +463,6 @@
     }
   });
 
-  // 3. Active Spectate Focus Listener
   db.ref('esports_data/active_spectate').on('value', (snap) => {
     const val = snap.val();
     if (val !== null && typeof val === 'number') {
@@ -441,7 +474,6 @@
   function updateSpectatorCard() {
     if (!cachedTeams || !cachedTeams[currentActiveTeamIdx]) return;
     const team = cachedTeams[currentActiveTeamIdx];
-
     const teamName = (team.name && team.name.trim() !== '') ? team.name : `SLOT ${currentActiveTeamIdx + 1}`;
     const logoUrl = (team.logo && team.logo.trim() !== '') ? team.logo : `https://dummyimage.com/48x48/000/d4af37&text=${teamName[0]}`;
 
@@ -450,7 +482,6 @@
     document.getElementById('spec-team-name').innerText = teamName;
   }
 
-  // 4. Timer Listener
   let timerState = { running: false, seconds: 0, startTimestamp: null };
   let localTimerInterval = null;
 
@@ -489,6 +520,20 @@
     teams.slice(0, 12).forEach((team, idx) => {
       const displayName = (team.name && team.name.trim() !== '') ? team.name : `SLOT ${idx + 1}`;
       const displayLogo = (team.logo && team.logo.trim() !== '') ? team.logo : `https://dummyimage.com/28x28/000/426aef&text=${displayName[0]}`;
+      const booyahs = team.booyahs || 0;
+
+      let booyahHtml = '';
+      if (booyahs > 0) {
+        booyahHtml = `
+          <div class="booyah-badge-wrap">
+            <span class="trophy-icon">🏆</span>
+            <div class="booyah-details">
+              <span class="booyah-num">${booyahs}</span>
+              <span class="booyah-label">BOOYAH x${booyahs}</span>
+            </div>
+          </div>
+        `;
+      }
 
       container.innerHTML += `
         <div class="hud-row">
@@ -499,6 +544,7 @@
               <span class="team-name">${displayName}</span>
             </div>
           </div>
+          <div class="booyah-cell">${booyahHtml}</div>
         </div>
       `;
     });
