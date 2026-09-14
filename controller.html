@@ -420,6 +420,66 @@
     }
   });
 
+
+  <!-- PREMIUM APPLICATIONS ADMIN SECTION -->
+<div class="spectate-dock" style="margin-top: 20px;">
+  <div class="dock-label">⭐ PREMIUM TEAM APPLICATIONS (PENDING REVIEW):</div>
+  <div id="admin-premium-container" style="display: flex; flex-direction: column; gap: 10px;">
+    <!-- Rendered dynamically -->
+  </div>
+</div>
+
+<script>
+  // Listen to premium applications
+  db.ref('esports_data/premium_applications').on('value', (snap) => {
+    const apps = snap.val();
+    const container = document.getElementById('admin-premium-container');
+    container.innerHTML = '';
+
+    if (!apps) {
+      container.innerHTML = '<div style="color:#64748b; font-size:13px; padding:6px;">No pending premium applications.</div>';
+      return;
+    }
+
+    Object.keys(apps).forEach(appId => {
+      const app = apps[appId];
+      if (app.status !== 'pending') return;
+
+      let rosterNames = (app.roster || []).map(p => `${p.name} (${p.uid})`).join(', ');
+
+      container.innerHTML += `
+        <div style="background:#0c1018; border:1px solid #d4af37; border-radius:6px; padding:12px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
+          <div style="display:flex; align-items:center; gap:12px;">
+            <img src="${app.logo}" style="width:40px; height:40px; object-fit:contain; background:#000; border-radius:4px; border:1px solid #d4af37;" />
+            <div>
+              <div style="font-family:'Teko'; font-size:24px; color:#ffe600; line-height:1;">${app.team_name} [${app.team_tag}]</div>
+              <div style="font-size:12px; color:#94a3b8;">Leader: ${app.leader_name} (${app.leader_uid}) | Discord ID: ${app.discord_user_id}</div>
+              <div style="font-size:11px; color:#64748b;">Roster: ${rosterNames}</div>
+            </div>
+          </div>
+          <div style="display:flex; gap:8px;">
+            <button class="btn-gold" onclick="approvePremium('${appId}')">APPROVE</button>
+            <button class="btn-reset-scrim" onclick="rejectPremium('${appId}')">REJECT</button>
+          </div>
+        </div>
+      `;
+    });
+  });
+
+  function approvePremium(appId) {
+    if (!confirm("Approve this Premium application? This will deduct Rs. 100 from the user's wallet, assign the Discord role, and publish the team to OBS.")) return;
+    db.ref(`esports_data/premium_applications/${appId}`).update({
+      status: 'approved_pending_bot'
+    }).then(() => alert("Approval signal sent! The Discord bot will process payment and publish to OBS shortly."));
+  }
+
+  function rejectPremium(appId) {
+    if (!confirm("Reject this Premium application?")) return;
+    db.ref(`esports_data/premium_applications/${appId}`).update({
+      status: 'rejected_pending_bot'
+    }).then(() => alert("Application rejected."));
+  }
+  
   // Teams Sync
   db.ref('esports_data/teams').on('value', (snap) => {
     const val = snap.val();
