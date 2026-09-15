@@ -7,104 +7,44 @@
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
   <style>
-    body {
-      background: #0b101a;
-      color: #fff;
-      font-family: 'Inter', sans-serif;
-      margin: 0; padding: 20px;
-    }
-    
-    .panel-container {
-      background: #111724;
-      border: 1px solid #1f2b40;
-      border-radius: 8px;
-      padding: 20px;
-      max-width: 1200px;
-      margin: 0 auto;
-    }
-
-    .header-title {
-      font-family: 'Teko', sans-serif;
-      color: #ffb300;
-      font-size: 32px;
-      line-height: 1;
-      letter-spacing: 1px;
-    }
+    body { background: #0b101a; color: #fff; font-family: 'Inter', sans-serif; margin: 0; padding: 20px; }
+    .panel-container { background: #111724; border: 1px solid #1f2b40; border-radius: 8px; padding: 20px; max-width: 1200px; margin: 0 auto; }
+    .header-title { font-family: 'Teko', sans-serif; color: #ffb300; font-size: 32px; line-height: 1; letter-spacing: 1px; }
     .header-sub { font-size: 11px; color: #5c728a; text-transform: uppercase; margin-bottom: 20px; }
 
-    .control-bar {
-      display: flex;
-      align-items: center;
-      gap: 15px;
-      background: #0d121c;
-      padding: 12px 20px;
-      border-radius: 8px;
-      border: 1px solid #1f2b40;
-      margin-bottom: 20px;
-      flex-wrap: wrap;
-    }
-
+    /* SECTIONS */
+    .section-box { background: #0d121c; padding: 15px 20px; border-radius: 8px; border: 1px solid #1f2b40; margin-bottom: 20px; }
+    .section-title { font-size: 12px; color: #5c728a; font-weight: 700; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 1px; }
+    
+    .control-row { display: flex; align-items: center; gap: 15px; flex-wrap: wrap; }
     .ctrl-item { display: flex; align-items: center; gap: 8px; }
-    .ctrl-label { font-size: 12px; color: #5c728a; font-weight: 700; }
-    select, input {
-      background: #000;
-      border: 1px solid #2a3a52;
-      color: #fff;
-      padding: 6px;
-      border-radius: 4px;
-      font-family: 'Inter';
-      font-weight: 700;
-    }
+    .ctrl-label { font-size: 12px; color: #90a4ae; font-weight: 700; }
+    select, input { background: #000; border: 1px solid #2a3a52; color: #fff; padding: 8px 12px; border-radius: 4px; font-family: 'Inter'; font-weight: 700; }
+    
+    .timer-box { font-family: 'Teko', sans-serif; font-size: 28px; color: #4fc3f7; background: #000; padding: 0 15px; border-radius: 4px; border: 1px solid #2a3a52; line-height: 1.2; }
 
-    .timer-box {
-      font-family: 'Teko', sans-serif;
-      font-size: 28px;
-      color: #4fc3f7;
-      background: #000;
-      padding: 0 15px;
-      border-radius: 4px;
-      border: 1px solid #2a3a52;
-      line-height: 1.2;
-    }
-
-    button {
-      font-family: 'Inter'; font-weight: 700; font-size: 12px;
-      padding: 8px 16px; border: none; border-radius: 4px; cursor: pointer;
-    }
+    /* BUTTONS */
+    button { font-family: 'Inter'; font-weight: 700; font-size: 12px; padding: 10px 16px; border: none; border-radius: 4px; cursor: pointer; text-transform: uppercase; transition: 0.2s; }
     .btn-gold { background: #ffb300; color: #000; }
     .btn-gold:hover { background: #ffa000; }
     .btn-red { background: #e53935; color: #fff; }
+    .btn-blue { background: #1976d2; color: #fff; }
+    .btn-blue:hover { background: #1565c0; }
     .btn-dark { background: #1f2b40; color: #fff; }
 
-    .focus-bar {
-      background: #0d121c; border: 1px solid #1f2b40; padding: 15px;
-      border-radius: 8px; margin-bottom: 20px;
-    }
-    .focus-grid { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
-    .btn-focus { background: #151e2e; border: 1px solid #2a3a52; color: #fff; padding: 6px 12px; border-radius: 4px; }
-    .btn-focus.active { background: #1976d2; border-color: #42a5f5; }
+    /* SCENE SWITCHER */
+    .scene-btns { display: flex; gap: 10px; }
+    .btn-scene { background: #151e2e; border: 1px solid #2a3a52; color: #cfd8dc; }
+    .btn-scene.active { background: #00c853; border-color: #00e676; color: #000; }
 
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 15px;
-    }
-
-    .team-card {
-      background: #111724; border: 1px solid #1f2b40;
-      border-radius: 8px; padding: 15px;
-    }
-    .team-card.focused { border-color: #ffb300; }
-    
+    /* GRID */
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px; }
+    .team-card { background: #111724; border: 1px solid #1f2b40; border-radius: 8px; padding: 15px; }
+    .team-card.focused { border-color: #ffb300; box-shadow: 0 0 10px rgba(255,179,0,0.1); }
     .card-head { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
     .slot-num { font-family: 'Teko'; font-size: 24px; color: #ffb300; }
     .team-name { font-weight: 700; font-size: 14px; }
-    
-    .roster {
-      background: #0d121c; border: 1px solid #1a2436; padding: 10px;
-      font-size: 11px; color: #5c728a; border-radius: 4px; line-height: 1.6; margin-bottom: 12px;
-    }
-
+    .roster { background: #0d121c; border: 1px solid #1a2436; padding: 10px; font-size: 11px; color: #5c728a; border-radius: 4px; line-height: 1.6; margin-bottom: 12px; }
     .card-actions { display: flex; justify-content: space-between; align-items: center; }
     .booyah-ctrl { display: flex; background: #000; border-radius: 4px; border: 1px solid #2a3a52; }
     .booyah-btn { background: none; color: #fff; padding: 4px 10px; }
@@ -117,46 +57,92 @@
     <div class="header-title">SCRIMZONE BROADCAST CONTROLLER</div>
     <div class="header-sub">AUTOMATED DISCORD & OBS DATA SYNC</div>
 
-    <div class="control-bar">
-      <!-- ADDED oninput ALONG WITH onchange TO GUARANTEE INSTANT UPDATES -->
-      <div class="ctrl-item">
-        <span class="ctrl-label">MATCH:</span>
-        <input type="number" id="match-input" value="1" min="1" max="15" style="width:50px;" onchange="updateMeta()" oninput="updateMeta()">
+    <!-- SCENE SWITCHER -->
+    <div class="section-box">
+      <div class="section-title">1. BROADCAST SCENES (OBS OVERLAY SWITCHER)</div>
+      <div class="scene-btns" id="scene-buttons">
+        <button class="btn-scene active" onclick="setScene('live')">🔴 LIVE MATCH</button>
+        <button class="btn-scene" onclick="setScene('winner')">🏆 WINNER SCREEN</button>
+        <button class="btn-scene" onclick="setScene('upnext')">⏭️ UP NEXT SCREEN</button>
       </div>
-      <div class="ctrl-item">
-        <span class="ctrl-label">MAP:</span>
-        <select id="map-select" onchange="updateMeta()" oninput="updateMeta()">
-          <option value="BERMUDA">BERMUDA</option>
-          <option value="PURGATORY">PURGATORY</option>
-          <option value="KALAHARI">KALAHARI</option>
-          <option value="NEXTERRA">NEXTERRA</option>
-          <option value="ALPINE">ALPINE</option>
-        </select>
-      </div>
-
-      <div class="ctrl-item" style="margin-left: 20px;">
-        <div class="timer-box" id="timer-text">00:00</div>
-        <button class="btn-gold" id="btn-timer" onclick="toggleTimer()">START</button>
-        <button class="btn-dark" onclick="resetTimer()">RESET</button>
-      </div>
-
-      <div style="flex-grow: 1;"></div>
-      <button class="btn-gold" onclick="initSlots()">INIT 12 SLOTS</button>
-      <button class="btn-red" onclick="resetAll()">RESET SCRIM</button>
     </div>
 
-    <div class="focus-bar">
-      <div class="ctrl-label">CLICK A TEAM TO FOCUS ON SPECTATOR OVERLAY:</div>
-      <div class="focus-grid" id="focus-btns"></div>
+    <!-- MATCH & TIMER -->
+    <div class="section-box">
+      <div class="section-title">2. CURRENT MATCH CONTROL</div>
+      <div class="control-row">
+        <div class="ctrl-item">
+          <span class="ctrl-label">MATCH:</span>
+          <input type="number" id="match-input" value="1" min="1" max="15" style="width:60px;" onchange="updateMeta()" oninput="updateMeta()">
+        </div>
+        <div class="ctrl-item">
+          <span class="ctrl-label">MAP:</span>
+          <select id="map-select" onchange="updateMeta()" oninput="updateMeta()">
+            <option value="BERMUDA">BERMUDA</option>
+            <option value="PURGATORY">PURGATORY</option>
+            <option value="KALAHARI">KALAHARI</option>
+            <option value="NEXTERRA">NEXTERRA</option>
+            <option value="ALPINE">ALPINE</option>
+          </select>
+        </div>
+        <div class="ctrl-item" style="margin-left: 20px;">
+          <div class="timer-box" id="timer-text">00:00</div>
+          <button class="btn-gold" id="btn-timer" onclick="toggleTimer()">START</button>
+          <button class="btn-dark" onclick="resetTimer()">RESET</button>
+        </div>
+        <div style="flex-grow: 1;"></div>
+        <button class="btn-gold" onclick="initSlots()">INIT 12 SLOTS</button>
+        <button class="btn-red" onclick="resetAll()">WIPE SCRIM</button>
+      </div>
     </div>
 
-    <div class="grid" id="team-grid"></div>
+    <!-- WINNER & UP NEXT SETTINGS -->
+    <div class="control-row" style="margin-bottom: 20px;">
+      <div class="section-box" style="flex: 1; margin-bottom: 0;">
+        <div class="section-title">3. SELECT WINNER</div>
+        <div class="control-row">
+          <select id="winner-select" style="width: 100%; max-width: 250px;"></select>
+          <button class="btn-blue" onclick="setWinner()">SET WINNER</button>
+        </div>
+      </div>
+
+      <div class="section-box" style="flex: 1; margin-bottom: 0;">
+        <div class="section-title">4. UP NEXT SETTINGS</div>
+        <div class="control-row">
+          <input type="number" id="next-match-input" value="2" min="1" style="width:60px;" title="Next Match #">
+          <select id="next-map-select">
+            <option value="BERMUDA">BERMUDA</option>
+            <option value="PURGATORY">PURGATORY</option>
+            <option value="KALAHARI">KALAHARI</option>
+            <option value="NEXTERRA">NEXTERRA</option>
+          </select>
+          <button class="btn-blue" onclick="setUpNext()">SET UP NEXT</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- PLAYING TEAMS -->
+    <div class="section-box" style="background: transparent; border: none; padding: 0;">
+      <div class="section-title">5. PLAYING TEAMS & CAMERA FOCUS</div>
+      <div class="grid" id="team-grid"></div>
+    </div>
+
   </div>
 
   <script>
-    firebase.initializeApp({
-      databaseURL: "https://tournment-leaderboard-default-rtdb.firebaseio.com"
-    });
+    // 🔥 EXACT FIREBASE CONFIGURATION INJECTED HERE
+    const firebaseConfig = {
+      apiKey: "AIzaSyBRcMrsrifYv-VDsCrTMKZuQiub30a7wEs",
+      authDomain: "tournment-leaderboard.firebaseapp.com",
+      databaseURL: "https://tournment-leaderboard-default-rtdb.firebaseio.com",
+      projectId: "tournment-leaderboard",
+      storageBucket: "tournment-leaderboard.firebasestorage.app",
+      messagingSenderId: "685244342962",
+      appId: "1:685244342962:web:d31c15a67fb9b6161f5fab",
+      measurementId: "G-RKSK1ZBC5M"
+    };
+
+    firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
     let teamsList = [];
@@ -165,13 +151,16 @@
     let tRun = false;
     let tInt = null;
 
-    // 1. SYNC META (Map, Match, Focus)
+    // 1. SYNC META
     db.ref("esports_data/config").on("value", snap => {
       const cfg = snap.val() || {};
       if (cfg.match) document.getElementById("match-input").value = cfg.match;
       if (cfg.map) document.getElementById("map-select").value = cfg.map;
+      if (cfg.next_match) document.getElementById("next-match-input").value = cfg.next_match;
+      if (cfg.next_map) document.getElementById("next-map-select").value = cfg.next_map;
+      
       focusIdx = cfg.focused_index || 0;
-      buildFocusBar();
+      updateSceneButtons(cfg.scene || 'live');
       buildGrid();
     });
 
@@ -186,9 +175,21 @@
     // 3. SYNC TEAMS
     db.ref("esports_data/teams").on("value", snap => {
       teamsList = snap.val() || Array(12).fill({ name: "OPEN SLOT", booyahs: 0 });
-      buildFocusBar();
+      buildWinnerDropdown();
       buildGrid();
     });
+
+    // --- CONTROLS ---
+    function setScene(sceneName) {
+      db.ref("esports_data/config").update({ scene: sceneName });
+    }
+
+    function updateSceneButtons(active) {
+      const btns = document.getElementById("scene-buttons").children;
+      btns[0].className = `btn-scene ${active === 'live' ? 'active' : ''}`;
+      btns[1].className = `btn-scene ${active === 'winner' ? 'active' : ''}`;
+      btns[2].className = `btn-scene ${active === 'upnext' ? 'active' : ''}`;
+    }
 
     function updateMeta() {
       db.ref("esports_data/config").update({
@@ -197,8 +198,17 @@
       });
     }
 
-    function setFocus(idx) {
-      db.ref("esports_data/config").update({ focused_index: idx });
+    function setFocus(idx) { db.ref("esports_data/config").update({ focused_index: idx }); }
+    
+    function setWinner() {
+      const wId = parseInt(document.getElementById("winner-select").value);
+      db.ref("esports_data/config").update({ winner_id: wId }).then(()=> alert("Winner Set! Change Scene to WINNER SCREEN to view."));
+    }
+
+    function setUpNext() {
+      const nm = parseInt(document.getElementById("next-match-input").value);
+      const nmap = document.getElementById("next-map-select").value;
+      db.ref("esports_data/config").update({ next_match: nm, next_map: nmap }).then(()=> alert("Up Next Set! Change Scene to UP NEXT SCREEN to view."));
     }
 
     function updateBooyah(idx, change) {
@@ -208,19 +218,13 @@
       db.ref(`esports_data/teams/${idx}/booyahs`).set(val);
     }
 
-    function toggleTimer() {
-      db.ref("esports_data/timer").update({ running: !tRun, seconds: tSecs });
-    }
-
-    function resetTimer() {
-      db.ref("esports_data/timer").set({ running: false, seconds: 0 });
-    }
+    function toggleTimer() { db.ref("esports_data/timer").update({ running: !tRun, seconds: tSecs }); }
+    function resetTimer() { db.ref("esports_data/timer").set({ running: false, seconds: 0 }); }
 
     function renderTime() {
       const m = Math.floor(tSecs / 60).toString().padStart(2, '0');
       const s = (tSecs % 60).toString().padStart(2, '0');
       document.getElementById("timer-text").innerText = `${m}:${s}`;
-      
       const btn = document.getElementById("btn-timer");
       if (tRun) {
         btn.innerText = "PAUSE";
@@ -246,20 +250,18 @@
 
     function resetAll() {
       if(confirm("Wipe everything? Timer, map, and teams?")) {
-        initSlots();
-        resetTimer();
-        db.ref("esports_data/config").set({ match: 1, map: "BERMUDA", focused_index: 0 });
+        initSlots(); resetTimer();
+        db.ref("esports_data/config").set({ match: 1, map: "BERMUDA", focused_index: 0, scene: 'live' });
       }
     }
 
-    function buildFocusBar() {
-      const bar = document.getElementById("focus-btns");
-      bar.innerHTML = "";
-      for (let i=0; i<12; i++) {
-        const t = teamsList[i] || {};
-        const name = (t.name && !t.name.includes("OPEN")) ? t.name.substring(0,8) : `SLOT ${i+1}`;
-        bar.innerHTML += `<button class="btn-focus ${focusIdx === i ? 'active':''}" onclick="setFocus(${i})">#${i+1} ${name}</button>`;
-      }
+    function buildWinnerDropdown() {
+      const sel = document.getElementById("winner-select");
+      sel.innerHTML = "";
+      teamsList.forEach((t, i) => {
+        const name = t.name || t.teamName || `Slot ${i+1}`;
+        sel.innerHTML += `<option value="${i}">#${i+1} - ${name}</option>`;
+      });
     }
 
     function buildGrid() {
@@ -279,7 +281,7 @@
             </div>
             <div class="roster">${roster}</div>
             <div class="card-actions">
-              <button class="btn-dark" onclick="setFocus(${i})">FOCUS</button>
+              <button class="btn-dark" onclick="setFocus(${i})">FOCUS CAM</button>
               <div class="booyah-ctrl">
                 <button class="booyah-btn" onclick="updateBooyah(${i}, -1)">-</button>
                 <span class="booyah-val">${booyahs} 🏆</span>
