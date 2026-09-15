@@ -4,22 +4,24 @@
   <meta charset="UTF-8">
   <title>ScrimZone Nepal — Broadcast Master Controller</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <!-- Fonts & Icons -->
   <link href="https://fonts.googleapis.com/css2?family=Teko:wght@500;700&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
   <style>
     :root {
-      --bg: #0b0e14;
-      --panel-bg: #121824;
-      --card-bg: #182234;
-      --border: #223049;
+      --bg: #070a10;
+      --panel-bg: #0e141f;
+      --card-bg: #141d2d;
+      --border: #1f2b40;
       --accent: #ff9800;
       --accent-hover: #e68900;
       --danger: #e53935;
+      --danger-hover: #c62828;
       --success: #00c853;
+      --success-hover: #009624;
       --text: #ffffff;
-      --text-muted: #8899ac;
+      --text-muted: #7e8fa4;
+      --active-blue: #1976d2;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -27,7 +29,96 @@
       background: var(--bg);
       color: var(--text);
       font-family: 'Inter', sans-serif;
-      padding: 20px;
+      padding: 16px 20px;
+      min-height: 100vh;
+    }
+
+    /* LOGIN SCREEN MODAL */
+    #login-screen {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(7, 10, 16, 0.98);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 99999;
+    }
+
+    .login-box {
+      background: var(--panel-bg);
+      border: 2px solid var(--border);
+      border-radius: 12px;
+      padding: 32px 28px;
+      max-width: 360px;
+      width: 90%;
+      text-align: center;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.8);
+    }
+
+    .login-title {
+      font-family: 'Teko', sans-serif;
+      font-size: 32px;
+      color: var(--accent);
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      line-height: 1;
+      margin-bottom: 4px;
+    }
+
+    .login-sub {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-bottom: 24px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .pin-input {
+      background: #090e17;
+      color: #fff;
+      border: 2px solid var(--border);
+      border-radius: 8px;
+      padding: 12px;
+      font-size: 24px;
+      letter-spacing: 6px;
+      text-align: center;
+      width: 100%;
+      outline: none;
+      margin-bottom: 16px;
+      transition: 0.2s;
+    }
+
+    .pin-input:focus {
+      border-color: var(--accent);
+    }
+
+    .btn-login {
+      width: 100%;
+      background: var(--accent);
+      color: #000;
+      font-weight: 700;
+      font-size: 14px;
+      padding: 12px;
+      border-radius: 6px;
+      border: none;
+      cursor: pointer;
+      text-transform: uppercase;
+    }
+
+    .btn-login:hover {
+      background: var(--accent-hover);
+    }
+
+    .login-error {
+      color: var(--danger);
+      font-size: 12px;
+      margin-top: 10px;
+      display: none;
+    }
+
+    /* CONTROLLER INTERFACE */
+    #main-content {
+      display: none;
     }
 
     header {
@@ -36,284 +127,490 @@
       align-items: center;
       background: var(--panel-bg);
       border: 1px solid var(--border);
-      padding: 16px 24px;
-      border-radius: 10px;
-      margin-bottom: 20px;
+      padding: 12px 20px;
+      border-radius: 8px;
+      margin-bottom: 12px;
+      gap: 16px;
+      flex-wrap: wrap;
     }
 
-    h1 {
+    .brand-title {
       font-family: 'Teko', sans-serif;
-      font-size: 32px;
+      font-size: 28px;
       letter-spacing: 1px;
       color: var(--accent);
+      line-height: 1;
+      text-transform: uppercase;
+    }
+    .brand-sub {
+      font-size: 11px;
+      color: var(--text-muted);
+      letter-spacing: 0.5px;
       text-transform: uppercase;
     }
 
-    .header-actions {
+    .broadcast-controls {
       display: flex;
-      gap: 12px;
       align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .control-group {
+      display: flex;
+      align-items: center;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 4px 8px;
+      gap: 8px;
+    }
+    .control-label {
+      font-family: 'Teko', sans-serif;
+      font-size: 18px;
+      color: var(--text-muted);
+      letter-spacing: 0.5px;
+    }
+
+    select, input[type="number"] {
+      background: #090e17;
+      color: #fff;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 4px 8px;
+      font-family: 'Inter', sans-serif;
+      font-weight: 600;
+      font-size: 13px;
+      outline: none;
+    }
+
+    .timer-display {
+      font-family: 'Teko', sans-serif;
+      font-size: 32px;
+      letter-spacing: 2px;
+      color: #64b5f6;
+      background: #090e17;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 0 14px;
+      min-width: 85px;
+      text-align: center;
+      line-height: 1.2;
     }
 
     button {
       font-family: 'Inter', sans-serif;
       font-weight: 600;
-      font-size: 13px;
-      padding: 9px 16px;
-      border-radius: 6px;
+      font-size: 12px;
+      padding: 7px 14px;
+      border-radius: 5px;
       border: none;
       cursor: pointer;
-      transition: 0.2s ease;
+      transition: 0.15s ease;
       display: inline-flex;
       align-items: center;
-      gap: 6px;
+      gap: 5px;
+      text-transform: uppercase;
     }
-
+    .btn-start { background: var(--success); color: #000; }
+    .btn-start:hover { background: var(--success-hover); }
+    .btn-pause { background: #ffb300; color: #000; }
+    .btn-reset { background: #37474f; color: #fff; }
+    .btn-reset:hover { background: #455a64; }
     .btn-primary { background: var(--accent); color: #000; }
     .btn-primary:hover { background: var(--accent-hover); }
     .btn-danger { background: var(--danger); color: #fff; }
-    .btn-secondary { background: #223049; color: #fff; }
-    .btn-secondary:hover { background: #2f4263; }
-    .btn-success { background: var(--success); color: #000; }
+    .btn-danger:hover { background: var(--danger-hover); }
+    .btn-secondary { background: #1c2738; color: #fff; }
+    .btn-secondary:hover { background: #26354a; }
 
-    /* Slots Grid */
+    /* Spectator Quick-Focus Bar */
+    .focus-bar-container {
+      background: var(--panel-bg);
+      border: 1px solid var(--border);
+      padding: 10px 16px;
+      border-radius: 8px;
+      margin-bottom: 16px;
+    }
+    .focus-title {
+      font-size: 11px;
+      color: var(--text-muted);
+      font-weight: 600;
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .focus-buttons {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+    .btn-focus-team {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      color: #cfd8dc;
+      padding: 5px 12px;
+      font-size: 11px;
+      border-radius: 4px;
+    }
+    .btn-focus-team:hover { background: #1e2b40; }
+    .btn-focus-team.active {
+      background: var(--active-blue);
+      border-color: #42a5f5;
+      color: #fff;
+      font-weight: 700;
+    }
+
+    /* 12 Slot Grid */
     .grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 16px;
-      margin-bottom: 30px;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 14px;
+      margin-bottom: 24px;
     }
 
     .slot-card {
       background: var(--panel-bg);
       border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 16px;
+      border-radius: 8px;
+      padding: 14px;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
       position: relative;
-      overflow: hidden;
     }
-
-    .slot-card.active-team {
+    .slot-card.focused {
       border-color: var(--accent);
+      box-shadow: 0 0 10px rgba(255, 152, 0, 0.2);
     }
 
     .slot-header {
       display: flex;
       align-items: center;
-      gap: 12px;
-      margin-bottom: 12px;
+      gap: 10px;
+      margin-bottom: 10px;
     }
-
-    .slot-num {
+    .slot-idx {
       font-family: 'Teko', sans-serif;
-      font-size: 26px;
-      background: #182234;
-      padding: 2px 10px;
-      border-radius: 6px;
+      font-size: 24px;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      padding: 2px 8px;
+      border-radius: 4px;
       color: var(--accent);
+      line-height: 1;
     }
-
     .team-logo {
-      width: 44px;
-      height: 44px;
+      width: 38px;
+      height: 38px;
       border-radius: 6px;
       object-fit: cover;
-      background: #1c273c;
-      border: 1px solid #2a3d5e;
+      background: #090e17;
+      border: 1px solid var(--border);
     }
-
-    .team-info h3 {
-      font-size: 15px;
+    .team-name {
+      font-size: 14px;
       font-weight: 700;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
       max-width: 140px;
     }
-
-    .booyah-badge {
-      font-size: 12px;
-      color: #ffca28;
-      font-weight: 700;
-      display: flex;
-      align-items: center;
-      gap: 4px;
-      margin-top: 2px;
+    .slot-status-text {
+      font-size: 11px;
+      color: var(--text-muted);
     }
 
     .roster-box {
       background: var(--card-bg);
+      border: 1px solid #182234;
       border-radius: 6px;
-      padding: 8px 12px;
+      padding: 8px 10px;
       margin-bottom: 12px;
-      font-size: 12px;
-      color: var(--text-muted);
-      line-height: 1.6;
+      font-size: 11px;
+      color: #90a4ae;
+      line-height: 1.5;
     }
 
-    .slot-actions {
+    .slot-footer {
       display: flex;
-      gap: 6px;
       justify-content: space-between;
+      align-items: center;
+      gap: 8px;
     }
-
-    .booyah-control {
+    .booyah-group {
       display: flex;
       align-items: center;
-      background: #182234;
-      border-radius: 6px;
+      background: var(--card-bg);
       border: 1px solid var(--border);
+      border-radius: 4px;
     }
-
-    .booyah-btn {
+    .booyah-step {
       background: transparent;
-      color: var(--text);
-      padding: 4px 10px;
-      font-size: 14px;
+      color: #fff;
+      padding: 4px 8px;
+      font-size: 12px;
     }
-
-    .booyah-count {
+    .booyah-num {
+      font-size: 12px;
+      font-weight: 700;
+      color: #ffca28;
       padding: 0 4px;
-      font-weight: bold;
-      font-size: 13px;
-      color: var(--accent);
     }
 
-    /* Modal Styling */
+    /* Double Confirmation Modal */
     .modal-overlay {
       position: fixed;
       top: 0; left: 0; right: 0; bottom: 0;
-      background: rgba(0, 0, 0, 0.8);
+      background: rgba(0, 0, 0, 0.85);
       display: none;
       align-items: center;
       justify-content: center;
-      z-index: 1000;
+      z-index: 9999;
     }
-
-    .modal-box {
+    .modal-card {
       background: var(--panel-bg);
       border: 2px solid var(--border);
-      border-radius: 12px;
+      border-radius: 10px;
       padding: 24px;
-      max-width: 440px;
+      max-width: 420px;
       width: 90%;
       text-align: center;
     }
+    .modal-card h2 { font-size: 20px; margin-bottom: 8px; color: #ffb74d; }
+    .modal-card p { font-size: 13px; color: var(--text-muted); margin-bottom: 20px; line-height: 1.5; }
+    .modal-card .btn-row { display: flex; justify-content: center; gap: 10px; }
 
-    .modal-box h2 { font-size: 20px; margin-bottom: 8px; }
-    .modal-box p { color: var(--text-muted); font-size: 14px; margin-bottom: 20px; }
-    .modal-btns { display: flex; justify-content: center; gap: 12px; }
-
-    /* History Audit Table */
-    .history-section {
+    /* History Log */
+    .history-card {
       background: var(--panel-bg);
       border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 20px;
+      border-radius: 8px;
+      padding: 16px;
     }
-
     .history-header {
       display: flex;
       justify-content: space-between;
-      margin-bottom: 16px;
+      align-items: center;
+      margin-bottom: 12px;
     }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      text-align: left;
-      font-size: 13px;
-    }
-
-    th, td {
-      padding: 10px 14px;
-      border-bottom: 1px solid var(--border);
-    }
-
-    th { color: var(--text-muted); font-weight: 600; text-transform: uppercase; }
+    table { width: 100%; border-collapse: collapse; font-size: 12px; }
+    th, td { padding: 8px 12px; border-bottom: 1px solid var(--border); text-align: left; }
+    th { color: var(--text-muted); text-transform: uppercase; font-weight: 600; }
   </style>
 </head>
 <body>
 
-  <!-- Header -->
-  <header>
-    <div>
-      <h1>ScrimZone Broadcast Controller</h1>
-      <span style="font-size: 12px; color: var(--text-muted);">Production Auto-Sync with Discord & Realtime Database</span>
+  <!-- ADMIN LOGIN LOCK SCREEN -->
+  <div id="login-screen">
+    <div class="login-box">
+      <div class="login-title">Admin Access</div>
+      <div class="login-sub">Broadcast Control Panel</div>
+      <input type="password" id="pin-field" class="pin-input" placeholder="••" maxlength="4" autofocus onkeydown="handlePinKey(event)">
+      <button class="btn-login" onclick="verifyPin()">Unlock Dashboard</button>
+      <div id="login-err" class="login-error">❌ Incorrect Passcode</div>
     </div>
-    <div class="header-actions">
-      <button class="btn-secondary" onclick="openHistoryDrawer()">📜 Match History</button>
-      <button class="btn-primary" onclick="confirmInitSlots()">⚡ Init 12 Slots</button>
-      <button class="btn-danger" onclick="confirmResetAll()">⚠️ Reset Scrim</button>
-    </div>
-  </header>
+  </div>
 
-  <!-- 12 Slot Grid -->
-  <div class="grid" id="slots-grid"></div>
+  <!-- SECURE CONTROLLER INTERFACE -->
+  <div id="main-content">
+    <header>
+      <div>
+        <div class="brand-title">ScrimZone Broadcast Controller</div>
+        <div class="brand-sub">Automated Discord & OBS Data Sync</div>
+      </div>
 
-  <!-- History Audit Section -->
-  <div class="history-section">
-    <div class="history-header">
-      <h3>📋 Registration Ledger & Booyah History</h3>
-      <button class="btn-secondary" onclick="loadHistory()">🔄 Refresh History</button>
+      <div class="broadcast-controls">
+        <!-- Match Selector -->
+        <div class="control-group">
+          <span class="control-label">MATCH:</span>
+          <input type="number" id="match-number" value="1" min="1" max="15" style="width: 50px;" onchange="updateMatchConfig()">
+        </div>
+
+        <!-- Map Selector -->
+        <div class="control-group">
+          <span class="control-label">MAP:</span>
+          <select id="map-select" onchange="updateMatchConfig()">
+            <option value="BERMUDA">BERMUDA</option>
+            <option value="PURGATORY">PURGATORY</option>
+            <option value="KALAHARI">KALAHARI</option>
+            <option value="NEXTERRA">NEXTERRA</option>
+            <option value="ALPINE">ALPINE</option>
+          </select>
+        </div>
+
+        <!-- Timer Section -->
+        <div class="control-group">
+          <div class="timer-display" id="timer-text">00:00</div>
+          <button class="btn-start" id="timer-toggle-btn" onclick="toggleTimer()">START</button>
+          <button class="btn-reset" onclick="resetTimer()">RESET</button>
+        </div>
+
+        <!-- Master Action Buttons -->
+        <button class="btn-primary" onclick="promptInitSlots()">INIT 12 SLOTS</button>
+        <button class="btn-danger" onclick="promptResetScrim()">RESET SCRIM</button>
+        <button class="btn-secondary" style="background:#26354a;" onclick="logoutAdmin()">🔒 LOGOUT</button>
+      </div>
+    </header>
+
+    <!-- Spectator Focus Quick-Switch Bar -->
+    <div class="focus-bar-container">
+      <div class="focus-title">Click a team to focus on spectator overlay (Bottom-Right):</div>
+      <div class="focus-buttons" id="focus-bar"></div>
     </div>
-    <table>
-      <thead>
-        <tr>
-          <th>Slot</th>
-          <th>Team Name</th>
-          <th>Discord User ID</th>
-          <th>Booyahs</th>
-          <th>Logged Timestamp</th>
-        </tr>
-      </thead>
-      <tbody id="history-table-body">
-        <tr><td colspan="5" style="text-align:center;">Loading records...</td></tr>
-      </tbody>
-    </table>
+
+    <!-- 12 Slot Grid -->
+    <div class="grid" id="slots-grid"></div>
+
+    <!-- History Ledger -->
+    <div class="history-card">
+      <div class="history-header">
+        <span style="font-weight:700; font-size:14px; text-transform:uppercase;">📜 Registration & Booyah Audit History</span>
+        <button class="btn-secondary" onclick="loadHistory()">Refresh Logs</button>
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th>Slot</th>
+            <th>Team Name</th>
+            <th>Leader ID</th>
+            <th>Booyahs</th>
+            <th>Time</th>
+          </tr>
+        </thead>
+        <tbody id="history-rows">
+          <tr><td colspan="5" style="text-align:center; color:var(--text-muted);">Loading logs...</td></tr>
+        </tbody>
+      </table>
+    </div>
   </div>
 
   <!-- Double Confirmation Modal -->
   <div class="modal-overlay" id="confirm-modal">
-    <div class="modal-box">
-      <h2 id="modal-title">⚠️ Are you absolutely sure?</h2>
-      <p id="modal-desc">This action will modify data directly on the broadcast feed.</p>
-      <div class="modal-btns">
-        <button class="btn-secondary" onclick="closeConfirmModal()">Cancel</button>
-        <button class="btn-danger" id="modal-confirm-btn">Confirm Action</button>
+    <div class="modal-card">
+      <h2 id="modal-title">Confirm Action</h2>
+      <p id="modal-desc">Are you sure you want to proceed?</p>
+      <div class="btn-row">
+        <button class="btn-secondary" onclick="closeModal()">Cancel</button>
+        <button class="btn-danger" id="modal-action-btn">Proceed</button>
       </div>
     </div>
   </div>
 
   <script>
-    const firebaseConfig = {
-      apiKey: "AIzaSyBRcMrsrifYv-VDsCrTMKZuQiub30a7wEs",
-      authDomain: "tournment-leaderboard.firebaseapp.com",
-      databaseURL: "https://tournment-leaderboard-default-rtdb.firebaseio.com",
-      projectId: "tournment-leaderboard",
-      storageBucket: "tournment-leaderboard.firebasestorage.app",
-      messagingSenderId: "685244342962",
-      appId: "1:685244342962:web:d31c15a67fb9b6161f5fab"
-    };
+    // --- AUTHENTICATION ENGINE ---
+    const ADMIN_PASSCODE = "00";
 
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.database();
-    let currentTeams = [];
-
-    // Realtime Listener
-    db.ref("esports_data/teams").on("value", snapshot => {
-      const data = snapshot.val();
-      currentTeams = [];
-      if (Array.isArray(data)) {
-        currentTeams = data;
-      } else if (data && typeof data === "object") {
-        Object.keys(data).forEach(k => currentTeams[parseInt(k)] = data[k]);
+    function checkAuth() {
+      if (sessionStorage.getItem("scrimzone_auth") === "true") {
+        document.getElementById("login-screen").style.display = "none";
+        document.getElementById("main-content").style.display = "block";
+        initFirebase();
+      } else {
+        document.getElementById("login-screen").style.display = "flex";
+        document.getElementById("main-content").style.display = "none";
       }
+    }
+
+    function verifyPin() {
+      const pinField = document.getElementById("pin-field");
+      const errEl = document.getElementById("login-err");
+      if (pinField.value === ADMIN_PASSCODE) {
+        sessionStorage.setItem("scrimzone_auth", "true");
+        errEl.style.display = "none";
+        checkAuth();
+      } else {
+        errEl.style.display = "block";
+        pinField.value = "";
+        pinField.focus();
+      }
+    }
+
+    function handlePinKey(e) {
+      if (e.key === "Enter") verifyPin();
+    }
+
+    function logoutAdmin() {
+      sessionStorage.removeItem("scrimzone_auth");
+      location.reload();
+    }
+
+    // --- FIREBASE & CONTROLLER ENGINE ---
+    let db = null;
+    let currentTeams = [];
+    let focusedIndex = 0;
+    let timerInterval = null;
+    let timerSeconds = 0;
+    let isTimerRunning = false;
+
+    function initFirebase() {
+      if (db) return;
+      const firebaseConfig = {
+        apiKey: "AIzaSyBRcMrsrifYv-VDsCrTMKZuQiub30a7wEs",
+        authDomain: "tournment-leaderboard.firebaseapp.com",
+        databaseURL: "https://tournment-leaderboard-default-rtdb.firebaseio.com",
+        projectId: "tournment-leaderboard",
+        storageBucket: "tournment-leaderboard.firebasestorage.app",
+        messagingSenderId: "685244342962",
+        appId: "1:685244342962:web:d31c15a67fb9b6161f5fab"
+      };
+
+      firebase.initializeApp(firebaseConfig);
+      db = firebase.database();
+
+      // Listen for Teams
+      db.ref("esports_data/teams").on("value", snapshot => {
+        const data = snapshot.val();
+        currentTeams = [];
+        if (Array.isArray(data)) {
+          currentTeams = data;
+        } else if (data && typeof data === "object") {
+          Object.keys(data).forEach(k => currentTeams[parseInt(k)] = data[k]);
+        }
+        renderAll();
+      });
+
+      // Listen for Match Meta
+      db.ref("esports_data/config").on("value", snapshot => {
+        const cfg = snapshot.val() || {};
+        if (cfg.match) document.getElementById("match-number").value = cfg.match;
+        if (cfg.map) document.getElementById("map-select").value = cfg.map;
+        if (cfg.focused_index !== undefined) {
+          focusedIndex = cfg.focused_index;
+          renderFocusBar();
+          renderSlots();
+        }
+      });
+
+      // Listen for Timer
+      db.ref("esports_data/timer").on("value", snapshot => {
+        const t = snapshot.val() || {};
+        timerSeconds = t.seconds || 0;
+        isTimerRunning = t.running || false;
+        renderTimer();
+      });
+
+      loadHistory();
+    }
+
+    function renderAll() {
+      renderFocusBar();
       renderSlots();
-    });
+    }
+
+    function renderFocusBar() {
+      const bar = document.getElementById("focus-bar");
+      bar.innerHTML = "";
+      for (let i = 0; i < 12; i++) {
+        const t = currentTeams[i] || {};
+        const name = t.name && !t.name.includes("OPEN") ? t.name : `SLOT ${i+1}`;
+        const btn = document.createElement("button");
+        btn.className = `btn-focus-team ${focusedIndex === i ? 'active' : ''}`;
+        btn.innerText = `#${i+1} ${name.substring(0, 10)}`;
+        btn.onclick = () => setFocus(i);
+        bar.appendChild(btn);
+      }
+    }
 
     function renderSlots() {
       const grid = document.getElementById("slots-grid");
@@ -323,115 +620,180 @@
         const team = currentTeams[i] || { name: `SLOT ${i+1} (OPEN)`, booyahs: 0 };
         const isRegistered = team.discord_user_id || (team.name && !team.name.includes("OPEN"));
         const booyahs = team.booyahs || 0;
-        const logo = team.logo || "https://via.placeholder.com/60/1c273c/8899ac?text=LOGO";
+        const logo = team.logo || "https://via.placeholder.com/40/090e17/7e8fa4?text=SLOT";
 
         const card = document.createElement("div");
-        card.className = `slot-card ${isRegistered ? 'active-team' : ''}`;
+        card.className = `slot-card ${focusedIndex === i ? 'focused' : ''}`;
         card.innerHTML = `
           <div>
             <div class="slot-header">
-              <span class="slot-num">#${i+1}</span>
-              <img src="${logo}" class="team-logo" alt="Logo" onerror="this.src='https://via.placeholder.com/60/1c273c/8899ac?text=LOGO'">
-              <div class="team-info">
-                <h3>${team.name || team.teamName || 'OPEN'}</h3>
-                <div class="booyah-badge">${booyahs > 0 ? `🏆 ${booyahs} BOOYAH` : 'No Booyahs'}</div>
+              <span class="slot-idx">#${i+1}</span>
+              <img src="${logo}" class="team-logo" onerror="this.src='https://via.placeholder.com/40/090e17/7e8fa4?text=SLOT'">
+              <div>
+                <div class="team-name">${team.name || 'OPEN SLOT'}</div>
+                <div class="slot-status-text">${isRegistered ? `🏆 ${booyahs} Booyahs` : 'Empty Slot'}</div>
               </div>
             </div>
             <div class="roster-box">
-              ${team.roster ? team.roster.join('<br>') : '1. -<br>2. -<br>3. -<br>4. -'}
+              ${team.roster && Array.isArray(team.roster) ? team.roster.join('<br>') : '1. -<br>2. -<br>3. -<br>4. -'}
             </div>
           </div>
-          <div class="slot-actions">
-            <div class="booyah-control">
-              <button class="booyah-btn" onclick="updateBooyah(${i}, -1)">-</button>
-              <span class="booyah-count">${booyahs}</span>
-              <button class="booyah-btn" onclick="updateBooyah(${i}, 1)">+ 🏆</button>
+          <div class="slot-footer">
+            <button class="btn-secondary" style="font-size:10px; padding:5px 8px;" onclick="setFocus(${i})">
+              ${focusedIndex === i ? '⭐ FOCUSED' : 'FOCUS ON STREAM'}
+            </button>
+            <div class="booyah-group">
+              <button class="booyah-step" onclick="updateBooyah(${i}, -1)">-</button>
+              <span class="booyah-num">${booyahs}</span>
+              <button class="booyah-step" onclick="updateBooyah(${i}, 1)">+ 🏆</button>
             </div>
-            ${isRegistered ? `<button class="btn-danger" style="padding: 4px 8px; font-size:11px;" onclick="confirmRemoveTeam(${i})">Remove</button>` : ''}
+            ${isRegistered ? `<button class="btn-danger" style="font-size:10px; padding:5px 8px;" onclick="promptRemoveTeam(${i})">WIPE</button>` : ''}
           </div>
         `;
         grid.appendChild(card);
       }
     }
 
-    function updateBooyah(index, change) {
+    function setFocus(index) {
+      focusedIndex = index;
+      db.ref("esports_data/config/focused_index").set(index);
+    }
+
+    function updateMatchConfig() {
+      const match = parseInt(document.getElementById("match-number").value) || 1;
+      const map = document.getElementById("map-select").value;
+      db.ref("esports_data/config").update({ match, map });
+    }
+
+    function toggleTimer() {
+      const nextState = !isTimerRunning;
+      db.ref("esports_data/timer").update({
+        running: nextState,
+        seconds: timerSeconds
+      });
+    }
+
+    function resetTimer() {
+      db.ref("esports_data/timer").set({
+        running: false,
+        seconds: 0
+      });
+    }
+
+    function renderTimer() {
+      const mins = Math.floor(timerSeconds / 60).toString().padStart(2, '0');
+      const secs = (timerSeconds % 60).toString().padStart(2, '0');
+      document.getElementById("timer-text").innerText = `${mins}:${secs}`;
+      const btn = document.getElementById("timer-toggle-btn");
+
+      if (isTimerRunning) {
+        btn.innerText = "PAUSE";
+        btn.className = "btn-pause";
+        if (!timerInterval) {
+          timerInterval = setInterval(() => {
+            timerSeconds++;
+            const m = Math.floor(timerSeconds / 60).toString().padStart(2, '0');
+            const s = (timerSeconds % 60).toString().padStart(2, '0');
+            document.getElementById("timer-text").innerText = `${m}:${s}`;
+          }, 1000);
+        }
+      } else {
+        btn.innerText = "START";
+        btn.className = "btn-start";
+        if (timerInterval) {
+          clearInterval(timerInterval);
+          timerInterval = null;
+        }
+      }
+    }
+
+    function updateBooyah(index, delta) {
       if (!currentTeams[index]) return;
-      let count = (currentTeams[index].booyahs || 0) + change;
+      let count = (currentTeams[index].booyahs || 0) + delta;
       if (count < 0) count = 0;
       db.ref(`esports_data/teams/${index}/booyahs`).set(count);
     }
 
-    function confirmInitSlots() {
-      showConfirm("Initialize 12 Empty Slots?", "This will create 12 clean, empty slots for the upcoming scrim.", () => {
-        const freshSlots = [];
-        for (let i = 1; i <= 12; i++) {
-          freshSlots.push({ name: `SLOT ${i} (OPEN)`, booyahs: 0 });
+    function promptInitSlots() {
+      openModal(
+        "Initialize 12 Empty Slots?",
+        "This will clear current board assignments and create 12 OPEN slots for incoming registrations.",
+        () => {
+          const fresh = [];
+          for (let i = 1; i <= 12; i++) {
+            fresh.push({ name: `SLOT ${i} (OPEN)`, booyahs: 0 });
+          }
+          db.ref("esports_data/teams").set(fresh);
+          closeModal();
         }
-        db.ref("esports_data/teams").set(freshSlots);
-        closeConfirmModal();
-      });
+      );
     }
 
-    function confirmResetAll() {
-      showConfirm("RESET ENTIRE SCRIM?", "This will clear all 12 teams and reset their trophies to 0.", () => {
-        confirmInitSlots();
-      });
+    function promptResetScrim() {
+      openModal(
+        "RESET ENTIRE SCRIM TO DEFAULT?",
+        "Warning: This completely resets all teams, trophies, focuses, and clears the timer.",
+        () => {
+          promptInitSlots();
+          resetTimer();
+          db.ref("esports_data/config").set({ match: 1, map: "BERMUDA", focused_index: 0 });
+          closeModal();
+        }
+      );
     }
 
-    function confirmRemoveTeam(index) {
-      showConfirm(`Remove Team from Slot #${index+1}?`, "This slot will be reopened for registration.", () => {
-        db.ref(`esports_data/teams/${index}`).set({
-          name: `SLOT ${index+1} (OPEN)`,
-          booyahs: 0
-        });
-        closeConfirmModal();
-      });
+    function promptRemoveTeam(index) {
+      openModal(
+        `Remove Team from Slot #${index+1}?`,
+        "This slot will be reopened as an empty slot immediately on the live stream.",
+        () => {
+          db.ref(`esports_data/teams/${index}`).set({
+            name: `SLOT ${index+1} (OPEN)`,
+            booyahs: 0
+          });
+          closeModal();
+        }
+      );
     }
 
-    // Modal Manager
-    function showConfirm(title, desc, onConfirm) {
+    function openModal(title, desc, action) {
       document.getElementById("modal-title").innerText = title;
       document.getElementById("modal-desc").innerText = desc;
-      const btn = document.getElementById("modal-confirm-btn");
-      btn.onclick = onConfirm;
+      document.getElementById("modal-action-btn").onclick = action;
       document.getElementById("confirm-modal").style.display = "flex";
     }
 
-    function closeConfirmModal() {
+    function closeModal() {
       document.getElementById("confirm-modal").style.display = "none";
     }
 
-    // History Loader
     function loadHistory() {
-      const tbody = document.getElementById("history-table-body");
-      db.ref("esports_data/history").limitToLast(15).once("value", snap => {
-        const data = snap.val();
-        if (!data) {
-          tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;">No match logs found.</td></tr>`;
+      if (!db) return;
+      const tbody = document.getElementById("history-rows");
+      db.ref("esports_data/history").limitToLast(12).once("value", snap => {
+        const val = snap.val();
+        if (!val) {
+          tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:var(--text-muted);">No history records logged.</td></tr>`;
           return;
         }
         tbody.innerHTML = "";
-        Object.values(data).reverse().forEach(row => {
-          const date = new Date(row.timestamp * 1000).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+        Object.values(val).reverse().forEach(entry => {
+          const dt = new Date((entry.timestamp || 0) * 1000).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
           tbody.innerHTML += `
             <tr>
-              <td>#${row.slot_index || '-'}</td>
-              <td><strong>${row.team_name || 'Unknown'}</strong></td>
-              <td><code>${row.discord_user_id || 'N/A'}</code></td>
-              <td>🏆 ${row.booyahs || 0}</td>
-              <td>${date}</td>
+              <td>#${entry.slot_index || '-'}</td>
+              <td><strong>${entry.team_name || 'Unknown'}</strong></td>
+              <td><code>${entry.discord_user_id || '-'}</code></td>
+              <td>🏆 ${entry.booyahs || 0}</td>
+              <td>${dt}</td>
             </tr>
           `;
         });
       });
     }
 
-    function openHistoryDrawer() {
-      loadHistory();
-      window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
-    }
-
-    loadHistory();
+    // Execute authentication check on page load
+    checkAuth();
   </script>
 </body>
 </html>
