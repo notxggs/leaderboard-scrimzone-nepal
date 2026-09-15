@@ -1,8 +1,0 @@
-{
-  "version": 2,
-  "rewrites": [
-    { "source": "/", "destination": "/controller.html" },
-    { "source": "/controller", "destination": "/controller.html" },
-    { "source": "/overlay", "destination": "/overlay.html" }
-  ]
-}
