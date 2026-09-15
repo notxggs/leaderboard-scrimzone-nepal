@@ -2,15 +2,15 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>ScrimZone Nepal — OBS Live Overlay</title>
-  <link href="https://fonts.googleapis.com/css2?family=Teko:wght@500;600;700&family=Inter:wght@600;700;800&display=swap" rel="stylesheet">
+  <title>ScrimZone Overlay</title>
+  <link href="https://fonts.googleapis.com/css2?family=Teko:wght@600;700&family=Rajdhani:wght@600;700;800&family=Inter:wght@700;800&display=swap" rel="stylesheet">
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
       background: transparent;
-      font-family: 'Inter', sans-serif;
+      font-family: 'Rajdhani', sans-serif;
       color: #fff;
       overflow: hidden;
       width: 1920px;
@@ -18,206 +18,242 @@
       position: relative;
     }
 
-    /* TOP BROADCAST BAR */
-    .top-bar {
+    /* TOP HUD */
+    .hud-wrapper {
       position: absolute;
-      top: 25px;
+      top: 30px;
       left: 50%;
       transform: translateX(-50%);
       display: flex;
+      flex-direction: column;
       align-items: center;
-      background: rgba(11, 16, 26, 0.95);
-      border: 2px solid #223049;
-      border-radius: 10px;
-      box-shadow: 0 8px 30px rgba(0,0,0,0.8);
-      overflow: hidden;
     }
-
-    .bar-segment {
-      padding: 8px 20px;
+    .hud-crown {
+      width: 220px;
+      height: 10px;
+      background: linear-gradient(180deg, #ffd54f 0%, #b8860b 100%);
+      clip-path: polygon(10% 0%, 90% 0%, 100% 100%, 0% 100%);
+      border: 1px solid #ffe082;
+      border-bottom: none;
+      box-shadow: 0 0 10px rgba(255, 213, 79, 0.4);
+    }
+    .hud-card {
+      position: relative;
       display: flex;
+      align-items: stretch;
+      background: linear-gradient(180deg, #0d1522 0%, #080d15 100%);
+      border: 2px solid #d4af37;
+      border-radius: 4px;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.9), inset 0 0 15px rgba(212, 175, 55, 0.15);
+      padding: 6px 14px;
+      min-width: 480px;
+    }
+    .hud-match-sec {
+      flex: 1.4;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
       align-items: center;
-      gap: 10px;
-      border-right: 1px solid rgba(255,255,255,0.08);
+      padding: 0 16px;
     }
-    .bar-segment:last-child { border-right: none; }
-
-    .segment-label {
+    .hud-title {
       font-family: 'Teko', sans-serif;
-      font-size: 22px;
-      color: #ff9800;
-      letter-spacing: 1px;
+      font-size: 38px;
+      letter-spacing: 2px;
+      line-height: 0.9;
+      color: #ffffff;
+      text-transform: uppercase;
+      text-shadow: 0 2px 8px rgba(0,0,0,0.8);
     }
-
-    .segment-value {
+    .hud-sub {
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 15px;
+      font-weight: 800;
+      color: #ffca28;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      margin-top: 2px;
+    }
+    .hud-divider {
+      width: 1px;
+      background: linear-gradient(180deg, transparent 0%, rgba(212, 175, 55, 0.6) 50%, transparent 100%);
+      margin: 4px 0;
+    }
+    .hud-timer-sec {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 0 18px;
+    }
+    .timer-label {
+      font-size: 14px;
+      font-weight: 800;
+      color: #90a4ae;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      line-height: 1;
+      margin-bottom: 2px;
+    }
+    .timer-num {
       font-family: 'Teko', sans-serif;
-      font-size: 28px;
-      letter-spacing: 1px;
-      color: #fff;
-    }
-
-    .timer-val {
+      font-size: 46px;
+      letter-spacing: 2px;
+      line-height: 0.85;
       color: #64b5f6;
-      min-width: 70px;
-      text-align: center;
+      text-shadow: 0 0 15px rgba(100, 181, 246, 0.4);
     }
 
-    /* PLAYING TEAMS LEADERBOARD (LEFT SIDE) */
-    .leaderboard-container {
+    /* LEFT LEADERBOARD */
+    .leaderboard {
       position: absolute;
-      top: 100px;
-      left: 35px;
-      width: 320px;
-      background: rgba(11, 16, 26, 0.94);
-      border: 2px solid #223049;
-      border-radius: 12px;
+      top: 130px;
+      left: 40px;
+      width: 360px; /* Made slightly wider to fit bigger badge */
+      background: rgba(10, 14, 22, 0.95);
+      border: 2px solid #1f2b40;
+      border-radius: 8px;
       overflow: hidden;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.85);
+      box-shadow: 0 12px 35px rgba(0,0,0,0.85);
     }
-
     .board-header {
-      background: #1565c0;
-      padding: 8px 16px;
+      background: linear-gradient(90deg, #1565c0 0%, #0d47a1 100%);
+      padding: 10px 14px;
       display: flex;
       justify-content: space-between;
       align-items: center;
+      border-bottom: 2px solid #ffd54f;
     }
-
     .board-title {
       font-family: 'Teko', sans-serif;
       font-size: 24px;
-      letter-spacing: 1px;
       font-weight: 700;
+      letter-spacing: 1px;
     }
-
     .board-time {
       font-size: 12px;
-      font-weight: 700;
-      background: rgba(0,0,0,0.3);
-      padding: 3px 8px;
+      font-weight: 800;
+      background: rgba(0,0,0,0.4);
+      padding: 2px 8px;
       border-radius: 4px;
+      color: #ffca28;
     }
-
     .team-row {
       display: flex;
       align-items: center;
-      padding: 6px 12px;
-      border-bottom: 1px solid rgba(255,255,255,0.05);
-      transition: background 0.2s ease;
+      padding: 7px 12px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      transition: 0.2s ease;
     }
-    .team-row:nth-child(even) { background: rgba(255,255,255,0.02); }
+    .team-row:nth-child(even) { background: rgba(255, 255, 255, 0.02); }
     .team-row.focused {
-      background: rgba(255, 152, 0, 0.2);
+      background: rgba(255, 152, 0, 0.25);
       border-left: 4px solid #ff9800;
     }
-
-    .team-num {
+    .team-idx {
       font-family: 'Teko', sans-serif;
       font-size: 22px;
       color: #ff9800;
-      width: 30px;
-    }
-
-    .team-icon {
       width: 28px;
-      height: 28px;
+    }
+    .team-logo {
+      width: 30px;
+      height: 30px;
       border-radius: 4px;
       object-fit: cover;
       margin-right: 10px;
-      background: #0e141f;
-      border: 1px solid #223049;
+      border: 1px solid #1f2b40;
+      background: #090e17;
     }
-
-    .team-title {
-      font-size: 13px;
+    .team-name {
+      font-size: 14px;
       font-weight: 700;
       flex-grow: 1;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
+      text-transform: uppercase;
     }
-
+    
+    /* MASSIVE BOOYAH BADGE */
     .booyah-badge {
       display: flex;
       align-items: center;
-      gap: 3px;
-      font-size: 12px;
+      gap: 6px;
+      font-size: 18px; /* Increased size significantly */
       font-weight: 800;
-      color: #ffca28;
+      color: #fff;
+      background: linear-gradient(135deg, #ff8f00 0%, #e65100 100%);
+      padding: 4px 10px;
+      border-radius: 6px;
+      box-shadow: 0 4px 15px rgba(255, 143, 0, 0.5);
+      text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+      border: 1px solid #ffca28;
     }
   </style>
 </head>
 <body>
 
-  <!-- Top Broadcast Ticker -->
-  <div class="top-bar">
-    <div class="bar-segment">
-      <span class="segment-label">MATCH:</span>
-      <span class="segment-value" id="match-val">1</span>
-    </div>
-    <div class="bar-segment">
-      <span class="segment-label">MAP:</span>
-      <span class="segment-value" id="map-val">BERMUDA</span>
-    </div>
-    <div class="bar-segment">
-      <span class="segment-label">TIMER:</span>
-      <span class="segment-value timer-val" id="timer-val">00:00</span>
+  <!-- TOP HUD -->
+  <div class="hud-wrapper">
+    <div class="hud-crown"></div>
+    <div class="hud-card">
+      <div class="hud-match-sec">
+        <div class="hud-title">CURRENT MATCH</div>
+        <div class="hud-sub" id="map-display">MAP - 1 - BERMUDA</div>
+      </div>
+      <div class="hud-divider"></div>
+      <div class="hud-timer-sec">
+        <div class="timer-label">MATCH TIME</div>
+        <div class="timer-num" id="timer-display">00:00</div>
+      </div>
     </div>
   </div>
 
-  <!-- Left Sidebar Roster -->
-  <div class="leaderboard-container">
+  <!-- LEFT PLAYING TEAMS -->
+  <div class="leaderboard">
     <div class="board-header">
       <span class="board-title">PLAYING TEAMS</span>
-      <span class="board-time">09:00 PM</span>
+      <span class="board-time">LIVE LOBBY</span>
     </div>
     <div id="teams-list"></div>
   </div>
 
   <script>
-    const firebaseConfig = {
-      apiKey: "AIzaSyBRcMrsrifYv-VDsCrTMKZuQiub30a7wEs",
-      authDomain: "tournment-leaderboard.firebaseapp.com",
-      databaseURL: "https://tournment-leaderboard-default-rtdb.firebaseio.com",
-      projectId: "tournment-leaderboard",
-      storageBucket: "tournment-leaderboard.firebasestorage.app",
-      messagingSenderId: "685244342962",
-      appId: "1:685244342962:web:d31c15a67fb9b6161f5fab"
-    };
-
-    firebase.initializeApp(firebaseConfig);
+    firebase.initializeApp({
+      databaseURL: "https://tournment-leaderboard-default-rtdb.firebaseio.com"
+    });
     const db = firebase.database();
 
-    let focusedIndex = -1;
+    let focusedIdx = -1;
     let timerSecs = 0;
     let timerInterval = null;
 
-    // 1. Sync Config (Map, Match Number, Camera Focus)
+    // 1. LISTEN TO MAP & MATCH NUMBER
     db.ref("esports_data/config").on("value", snap => {
       const cfg = snap.val() || {};
-      document.getElementById("match-val").innerText = cfg.match || "1";
-      document.getElementById("map-val").innerText = (cfg.map || "BERMUDA").toUpperCase();
-      focusedIndex = cfg.focused_index !== undefined ? cfg.focused_index : -1;
+      const matchNum = cfg.match || 1;
+      const mapName = (cfg.map || "BERMUDA").toUpperCase();
+      document.getElementById("map-display").innerText = `MAP - ${matchNum} - ${mapName}`;
+      
+      focusedIdx = cfg.focused_index !== undefined ? cfg.focused_index : -1;
       highlightFocus();
     });
 
-    // 2. Sync Shared Timer
+    // 2. LISTEN TO TIMER
     db.ref("esports_data/timer").on("value", snap => {
       const t = snap.val() || {};
       timerSecs = t.seconds || 0;
       const isRunning = t.running || false;
 
-      const mins = Math.floor(timerSecs / 60).toString().padStart(2, '0');
-      const secs = (timerSecs % 60).toString().padStart(2, '0');
-      document.getElementById("timer-val").innerText = `${mins}:${secs}`;
+      updateTimerUI();
 
       if (isRunning) {
         if (!timerInterval) {
           timerInterval = setInterval(() => {
             timerSecs++;
-            const m = Math.floor(timerSecs / 60).toString().padStart(2, '0');
-            const s = (timerSecs % 60).toString().padStart(2, '0');
-            document.getElementById("timer-val").innerText = `${m}:${s}`;
+            updateTimerUI();
           }, 1000);
         }
       } else {
@@ -228,7 +264,13 @@
       }
     });
 
-    // 3. Sync Teams & Booyahs
+    function updateTimerUI() {
+      const m = Math.floor(timerSecs / 60).toString().padStart(2, '0');
+      const s = (timerSecs % 60).toString().padStart(2, '0');
+      document.getElementById("timer-display").innerText = `${m}:${s}`;
+    }
+
+    // 3. LISTEN TO 12 TEAMS
     db.ref("esports_data/teams").on("value", snap => {
       const teams = snap.val() || [];
       const list = document.getElementById("teams-list");
@@ -237,29 +279,27 @@
       for (let i = 0; i < 12; i++) {
         const t = teams[i] || {};
         const booyahs = t.booyahs || 0;
-        const name = t.name || t.teamName || `SLOT ${i + 1}`;
-        const logo = t.logo || "https://via.placeholder.com/28/0e141f/7e8fa4?text=S";
+        const name = t.name || t.teamName || `SLOT ${i + 1} (OPEN)`;
+        const logo = t.logo || "https://via.placeholder.com/30/090e17/7e8fa4?text=S";
 
         list.innerHTML += `
-          <div class="team-row ${focusedIndex === i ? 'focused' : ''}" id="team-row-${i}">
-            <span class="team-num">#${i + 1}</span>
-            <img src="${logo}" class="team-icon" onerror="this.src='https://via.placeholder.com/28/0e141f/7e8fa4?text=S'">
-            <span class="team-title">${name}</span>
+          <div class="team-row" id="team-row-${i}">
+            <span class="team-idx">#${i + 1}</span>
+            <img src="${logo}" class="team-logo" onerror="this.src='https://via.placeholder.com/30/090e17/7e8fa4?text=S'">
+            <span class="team-name">${name}</span>
             ${booyahs > 0 ? `<span class="booyah-badge">🏆 x${booyahs}</span>` : ''}
           </div>
         `;
       }
+      highlightFocus();
     });
 
     function highlightFocus() {
       for (let i = 0; i < 12; i++) {
         const row = document.getElementById(`team-row-${i}`);
         if (row) {
-          if (i === focusedIndex) {
-            row.classList.add("focused");
-          } else {
-            row.classList.remove("focused");
-          }
+          if (i === focusedIdx) row.classList.add("focused");
+          else row.classList.remove("focused");
         }
       }
     }
