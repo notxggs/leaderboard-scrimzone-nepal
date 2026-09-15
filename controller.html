@@ -1,338 +1,437 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Official Broadcast Admin Controller</title>
-<style>
-  @import url('https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@600;700;800&family=Rajdhani:wght@600;700;800&family=Teko:wght@700&display=swap');
+  <meta charset="UTF-8">
+  <title>ScrimZone Nepal — Broadcast Master Controller</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Fonts & Icons -->
+  <link href="https://fonts.googleapis.com/css2?family=Teko:wght@500;700&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+  <style>
+    :root {
+      --bg: #0b0e14;
+      --panel-bg: #121824;
+      --card-bg: #182234;
+      --border: #223049;
+      --accent: #ff9800;
+      --accent-hover: #e68900;
+      --danger: #e53935;
+      --success: #00c853;
+      --text: #ffffff;
+      --text-muted: #8899ac;
+    }
 
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body {
-    background: #06080d;
-    color: #e2e8f0;
-    font-family: 'Rajdhani', sans-serif;
-    padding: 16px;
-    background-image: radial-gradient(circle at 50% 0%, rgba(66, 106, 239, 0.08) 0%, transparent 60%);
-  }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      padding: 20px;
+    }
 
-  /* PASSWORD GATE (00) */
-  #auth-overlay {
-    position: fixed;
-    top: 0; left: 0; width: 100vw; height: 100vh;
-    background: #06080d;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 99999;
-  }
-  .auth-box {
-    background: #0c1018;
-    border: 1.5px solid #d4af37;
-    border-radius: 8px;
-    padding: 30px;
-    width: 350px;
-    text-align: center;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.9);
-  }
-  .auth-box h2 { font-family: 'Teko', sans-serif; font-size: 28px; color: #fff; margin-bottom: 4px; }
-  .auth-box p { font-family: 'Chakra Petch', sans-serif; font-size: 11px; color: #8fa0b5; margin-bottom: 16px; }
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: var(--panel-bg);
+      border: 1px solid var(--border);
+      padding: 16px 24px;
+      border-radius: 10px;
+      margin-bottom: 20px;
+    }
 
-  #main-app { display: none; }
+    h1 {
+      font-family: 'Teko', sans-serif;
+      font-size: 32px;
+      letter-spacing: 1px;
+      color: var(--accent);
+      text-transform: uppercase;
+    }
 
-  .admin-header-bar {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
-    align-items: center;
-    gap: 14px;
-    background: linear-gradient(180deg, #121722 0%, #0a0d14 100%);
-    border: 1.5px solid #d4af37;
-    border-radius: 8px;
-    padding: 12px 20px;
-    margin-bottom: 16px;
-    box-shadow: 0 8px 25px rgba(0,0,0,0.8);
-  }
+    .header-actions {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
 
-  .brand-title h1 { font-family: 'Teko', sans-serif; font-size: 32px; color: #ffffff; letter-spacing: 2px; text-transform: uppercase; line-height: 0.9; }
-  .brand-title span { font-family: 'Chakra Petch', sans-serif; font-size: 11px; color: #d4af37; letter-spacing: 2px; font-weight: 700; }
+    button {
+      font-family: 'Inter', sans-serif;
+      font-weight: 600;
+      font-size: 13px;
+      padding: 9px 16px;
+      border-radius: 6px;
+      border: none;
+      cursor: pointer;
+      transition: 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
 
-  .console-controls-cluster { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
-  .match-config-panel { display: flex; align-items: center; gap: 8px; background: #05070a; padding: 6px 14px; border-radius: 6px; border: 1px solid rgba(212, 175, 55, 0.4); }
-  .config-label { font-family: 'Chakra Petch', sans-serif; font-size: 11px; font-weight: 800; color: #d4af37; letter-spacing: 1.5px; }
-  .config-input, .config-select { background: #111622; color: #ffffff; border: 1px solid #2d3748; border-radius: 4px; padding: 5px 8px; font-family: 'Chakra Petch', sans-serif; font-weight: 700; font-size: 13px; outline: none; }
-  .config-input { width: 55px; text-align: center; }
+    .btn-primary { background: var(--accent); color: #000; }
+    .btn-primary:hover { background: var(--accent-hover); }
+    .btn-danger { background: var(--danger); color: #fff; }
+    .btn-secondary { background: #223049; color: #fff; }
+    .btn-secondary:hover { background: #2f4263; }
+    .btn-success { background: var(--success); color: #000; }
 
-  .timer-box { display: flex; align-items: center; gap: 8px; background: #05070a; padding: 6px 14px; border-radius: 6px; border: 1px solid #1e293b; }
-  .timer-clock { font-family: 'Chakra Petch', sans-serif; font-size: 24px; font-weight: 800; color: #5c84ff; min-width: 65px; text-align: center; text-shadow: 0 0 10px rgba(66, 106, 239, 0.6); }
+    /* Slots Grid */
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 16px;
+      margin-bottom: 30px;
+    }
 
-  button { font-family: 'Chakra Petch', sans-serif; font-weight: 800; cursor: pointer; border-radius: 4px; border: none; transition: 0.15s ease; text-transform: uppercase; }
-  .btn-action { padding: 7px 12px; font-size: 12px; background: #171d2b; color: #cbd5e1; border: 1px solid #334155; }
-  .btn-action:hover { background: #263147; color: #fff; }
-  .btn-action.active { background: #16a34a; color: #fff; border-color: #22c55e; }
-  .btn-gold { background: #d4af37; color: #000; padding: 7px 12px; font-size: 12px; }
-  .btn-gold:hover { background: #ffe082; }
-  .btn-reset-scrim { background: #dc2626; color: #fff; padding: 7px 14px; font-size: 12px; }
+    .slot-card {
+      background: var(--panel-bg);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+      overflow: hidden;
+    }
 
-  .spectate-dock { background: #0d111a; border: 1px solid #1e293b; border-radius: 6px; padding: 10px 14px; margin-bottom: 16px; }
-  .dock-label { font-size: 11px; font-weight: 800; color: #94a3b8; letter-spacing: 1.5px; margin-bottom: 8px; text-transform: uppercase; }
-  .spectate-btn-grid { display: flex; flex-wrap: wrap; gap: 8px; }
-  .spec-btn { background: #121824; color: #94a3b8; border: 1px solid #242e42; padding: 8px 12px; font-size: 12px; border-radius: 4px; }
-  .spec-btn.current { background: #426aef; color: #fff; border-color: #60a5fa; }
+    .slot-card.active-team {
+      border-color: var(--accent);
+    }
 
-  .teams-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(360px, 1fr)); gap: 14px; }
-  .team-card { background: #0c1018; border: 1px solid #1a2233; border-radius: 6px; padding: 14px; display: flex; flex-direction: column; gap: 10px; }
-  .team-card.is-active-spec { border: 1.5px solid #d4af37; box-shadow: 0 0 15px rgba(212, 175, 55, 0.25); }
+    .slot-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
 
-  .card-top { display: flex; align-items: center; gap: 12px; }
-  .slot-tag { font-family: 'Chakra Petch', sans-serif; font-weight: 800; color: #d4af37; font-size: 18px; min-width: 32px; }
-  .logo-preview { width: 44px; height: 44px; border-radius: 4px; object-fit: contain; background: #000; border: 1px solid #242e42; flex-shrink: 0; }
-  .team-name-text { font-family: 'Rajdhani', sans-serif; font-size: 20px; font-weight: 800; color: #ffffff; text-transform: uppercase; }
-  .status-badge { font-family: 'Chakra Petch', sans-serif; font-size: 10px; font-weight: 800; color: #22c55e; }
-  .status-badge.open { color: #64748b; }
+    .slot-num {
+      font-family: 'Teko', sans-serif;
+      font-size: 26px;
+      background: #182234;
+      padding: 2px 10px;
+      border-radius: 6px;
+      color: var(--accent);
+    }
 
-  .roster-box { background: #06080d; border: 1px solid #161c28; border-radius: 4px; padding: 8px 12px; }
-  .roster-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4px 8px; margin-top: 4px; font-family: 'Chakra Petch', sans-serif; font-size: 12px; color: #cbd5e1; }
+    .team-logo {
+      width: 44px;
+      height: 44px;
+      border-radius: 6px;
+      object-fit: cover;
+      background: #1c273c;
+      border: 1px solid #2a3d5e;
+    }
 
-  .card-actions { display: flex; gap: 8px; margin-top: 4px; }
-  .btn-focus { flex: 2; background: #1e293b; color: #fff; padding: 7px; font-size: 11px; }
-  .btn-booyah { flex: 1.5; background: linear-gradient(135deg, #d4af37 0%, #aa820a 100%); color: #000; padding: 7px; font-size: 11px; }
-  .btn-clear { flex: 1; background: #181c26; color: #ef4444; border: 1px solid #2d3748; padding: 7px; font-size: 11px; }
-</style>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+    .team-info h3 {
+      font-size: 15px;
+      font-weight: 700;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 140px;
+    }
+
+    .booyah-badge {
+      font-size: 12px;
+      color: #ffca28;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      margin-top: 2px;
+    }
+
+    .roster-box {
+      background: var(--card-bg);
+      border-radius: 6px;
+      padding: 8px 12px;
+      margin-bottom: 12px;
+      font-size: 12px;
+      color: var(--text-muted);
+      line-height: 1.6;
+    }
+
+    .slot-actions {
+      display: flex;
+      gap: 6px;
+      justify-content: space-between;
+    }
+
+    .booyah-control {
+      display: flex;
+      align-items: center;
+      background: #182234;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+    }
+
+    .booyah-btn {
+      background: transparent;
+      color: var(--text);
+      padding: 4px 10px;
+      font-size: 14px;
+    }
+
+    .booyah-count {
+      padding: 0 4px;
+      font-weight: bold;
+      font-size: 13px;
+      color: var(--accent);
+    }
+
+    /* Modal Styling */
+    .modal-overlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0, 0, 0, 0.8);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+    }
+
+    .modal-box {
+      background: var(--panel-bg);
+      border: 2px solid var(--border);
+      border-radius: 12px;
+      padding: 24px;
+      max-width: 440px;
+      width: 90%;
+      text-align: center;
+    }
+
+    .modal-box h2 { font-size: 20px; margin-bottom: 8px; }
+    .modal-box p { color: var(--text-muted); font-size: 14px; margin-bottom: 20px; }
+    .modal-btns { display: flex; justify-content: center; gap: 12px; }
+
+    /* History Audit Table */
+    .history-section {
+      background: var(--panel-bg);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 20px;
+    }
+
+    .history-header {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 16px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 13px;
+    }
+
+    th, td {
+      padding: 10px 14px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    th { color: var(--text-muted); font-weight: 600; text-transform: uppercase; }
+  </style>
 </head>
 <body>
 
-  <!-- PASSWORD GATE (00) -->
-  <div id="auth-overlay">
-    <div class="auth-box">
-      <h2>ADMIN DESK LOGIN</h2>
-      <p>Enter password to unlock controller</p>
-      <input type="password" id="pass-input" placeholder="Password (00)" style="text-align:center; font-size:18px; letter-spacing:4px;" />
-      <button class="btn-gold" onclick="checkPassword()" style="margin-top:8px;">UNLOCK</button>
-      <div id="auth-err" style="color:#ef4444; font-size:12px; margin-top:8px; display:none;">Incorrect Password (Use 00)</div>
+  <!-- Header -->
+  <header>
+    <div>
+      <h1>ScrimZone Broadcast Controller</h1>
+      <span style="font-size: 12px; color: var(--text-muted);">Production Auto-Sync with Discord & Realtime Database</span>
+    </div>
+    <div class="header-actions">
+      <button class="btn-secondary" onclick="openHistoryDrawer()">📜 Match History</button>
+      <button class="btn-primary" onclick="confirmInitSlots()">⚡ Init 12 Slots</button>
+      <button class="btn-danger" onclick="confirmResetAll()">⚠️ Reset Scrim</button>
+    </div>
+  </header>
+
+  <!-- 12 Slot Grid -->
+  <div class="grid" id="slots-grid"></div>
+
+  <!-- History Audit Section -->
+  <div class="history-section">
+    <div class="history-header">
+      <h3>📋 Registration Ledger & Booyah History</h3>
+      <button class="btn-secondary" onclick="loadHistory()">🔄 Refresh History</button>
+    </div>
+    <table>
+      <thead>
+        <tr>
+          <th>Slot</th>
+          <th>Team Name</th>
+          <th>Discord User ID</th>
+          <th>Booyahs</th>
+          <th>Logged Timestamp</th>
+        </tr>
+      </thead>
+      <tbody id="history-table-body">
+        <tr><td colspan="5" style="text-align:center;">Loading records...</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Double Confirmation Modal -->
+  <div class="modal-overlay" id="confirm-modal">
+    <div class="modal-box">
+      <h2 id="modal-title">⚠️ Are you absolutely sure?</h2>
+      <p id="modal-desc">This action will modify data directly on the broadcast feed.</p>
+      <div class="modal-btns">
+        <button class="btn-secondary" onclick="closeConfirmModal()">Cancel</button>
+        <button class="btn-danger" id="modal-confirm-btn">Confirm Action</button>
+      </div>
     </div>
   </div>
 
-  <div id="main-app">
-    <div class="admin-header-bar">
-      <div class="brand-title">
-        <h1>SCRIMZONE BROADCAST CONTROLLER</h1>
-        <span>AUTOMATED DISCORD & OBS DATA SYNC</span>
-      </div>
-      <div class="console-controls-cluster">
-        <div class="match-config-panel">
-          <span class="config-label">MATCH:</span>
-          <input type="number" id="match-number-input" class="config-input" value="1" min="1" max="20" onchange="updateMatchConfig()">
-          <span class="config-label">MAP:</span>
-          <select id="map-select" class="config-select" onchange="updateMatchConfig()">
-            <option value="BERMUDA">BERMUDA</option>
-            <option value="PURGATORY">PURGATORY</option>
-            <option value="KALAHARI">KALAHARI</option>
-            <option value="NEXTERRA">NEXTERRA</option>
-          </select>
-        </div>
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyBRcMrsrifYv-VDsCrTMKZuQiub30a7wEs",
+      authDomain: "tournment-leaderboard.firebaseapp.com",
+      databaseURL: "https://tournment-leaderboard-default-rtdb.firebaseio.com",
+      projectId: "tournment-leaderboard",
+      storageBucket: "tournment-leaderboard.firebasestorage.app",
+      messagingSenderId: "685244342962",
+      appId: "1:685244342962:web:d31c15a67fb9b6161f5fab"
+    };
 
-        <div class="timer-box">
-          <div class="timer-clock" id="timer-display">00:00</div>
-          <button class="btn-action" id="timer-toggle-btn" onclick="toggleTimer()">START</button>
-          <button class="btn-action" onclick="resetTimer()">RESET</button>
-        </div>
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+    let currentTeams = [];
 
-        <button class="btn-gold" onclick="initializeSlots()">INIT SLOTS</button>
-        <button class="btn-reset-scrim" onclick="resetFullScrim()">RESET</button>
-      </div>
-    </div>
-
-    <div class="spectate-dock">
-      <div class="dock-label">CLICK TEAM TO FOCUS ON SPECTATOR OVERLAY (BOTTOM-RIGHT):</div>
-      <div class="spectate-btn-grid" id="spectate-btn-container"></div>
-    </div>
-
-    <div class="teams-grid" id="teams-container"></div>
-  </div>
-
-<script>
-  function checkPassword() {
-    if (document.getElementById('pass-input').value === "00") {
-      document.getElementById('auth-overlay').style.display = 'none';
-      document.getElementById('main-app').style.display = 'block';
-      loadLiveTeams();
-    } else {
-      document.getElementById('auth-err').style.display = 'block';
-    }
-  }
-
-  const firebaseConfig = {
-    apiKey: "AIzaSyBRcMrsrifYv-VDsCrTMKZuQiub30a7wEs",
-    authDomain: "tournment-leaderboard.firebaseapp.com",
-    databaseURL: "https://tournment-leaderboard-default-rtdb.firebaseio.com",
-    projectId: "tournment-leaderboard",
-    storageBucket: "tournment-leaderboard.firebasestorage.app",
-    messagingSenderId: "685244342962",
-    appId: "1:685244342962:web:d31c15a67fb9b6161f5fab",
-    measurementId: "G-RKSK1ZBC5M"
-  };
-
-  firebase.initializeApp(firebaseConfig);
-  const db = firebase.database();
-  let teamsData = [], activeSpectateIdx = 0;
-
-  function loadLiveTeams() {
-    db.ref('esports_data/teams').on('value', (snap) => {
-      const val = snap.val();
-      teamsData = val ? (Array.isArray(val) ? val : Object.values(val)) : [];
-      renderTeams();
-      renderSpectateBar();
-    });
-  }
-
-  function updateMatchConfig() {
-    db.ref('esports_data/match_info').set({
-      match: document.getElementById('match-number-input').value || "1",
-      map: document.getElementById('map-select').value || "BERMUDA"
-    });
-  }
-
-  db.ref('esports_data/active_spectate').on('value', (snap) => {
-    activeSpectateIdx = snap.val() || 0;
-    renderSpectateBar();
-    markActiveCard();
-  });
-
-  function renderSpectateBar() {
-    const container = document.getElementById('spectate-btn-container');
-    container.innerHTML = '';
-    for (let idx = 0; idx < 12; idx++) {
-      const team = teamsData[idx] || {};
-      const name = (team.name && !team.name.startsWith('SLOT ')) ? team.name : `SLOT ${idx + 1}`;
-      container.innerHTML += `<button class="spec-btn ${activeSpectateIdx === idx ? 'current' : ''}" onclick="db.ref('esports_data/active_spectate').set(${idx})">#${idx + 1} ${name}</button>`;
-    }
-  }
-
-  function markActiveCard() {
-    document.querySelectorAll('.team-card').forEach((card, idx) => {
-      card.classList.toggle('is-active-spec', idx === activeSpectateIdx);
-    });
-  }
-
-  function renderTeams() {
-    const container = document.getElementById('teams-container');
-    container.innerHTML = '';
-    for (let idx = 0; idx < 12; idx++) {
-      const team = teamsData[idx] || {};
-      const isRegistered = team.name && team.name.trim() !== '' && !team.name.toUpperCase().startsWith('SLOT ');
-      const name = isRegistered ? team.name : `SLOT ${idx + 1} (OPEN)`;
-      const logo = team.logo || `https://dummyimage.com/44x44/000/d4af37&text=${isRegistered ? name[0] : (idx + 1)}`;
-      const roster = team.roster || ["-", "-", "-", "-"];
-      const booyahs = team.booyahs || 0;
-
-      container.innerHTML += `
-        <div class="team-card ${activeSpectateIdx === idx ? 'is-active-spec' : ''}">
-          <div class="card-top">
-            <span class="slot-tag">#${idx + 1}</span>
-            <img class="logo-preview" src="${logo}" />
-            <div class="team-info-box">
-              <div class="team-name-text">${name}</div>
-              <div class="status-badge ${isRegistered ? '' : 'open'}">${isRegistered ? `● REGISTERED (Booyahs: ${booyahs} 🏆)` : '○ EMPTY SLOT'}</div>
-            </div>
-          </div>
-          <div class="roster-box">
-            <div class="dock-label">ROSTER:</div>
-            <div class="roster-grid">
-              <div>1. ${roster[0]}</div><div>2. ${roster[1]}</div>
-              <div>3. ${roster[2]}</div><div>4. ${roster[3]}</div>
-            </div>
-          </div>
-          <div class="card-actions">
-            <button class="btn-focus" onclick="db.ref('esports_data/active_spectate').set(${idx})">FOCUS</button>
-            <button class="btn-booyah" onclick="addBooyah(${idx})">BOOYAH 🏆</button>
-            ${isRegistered ? `<button class="btn-clear" onclick="clearSlot(${idx})">CLEAR</button>` : ''}
-          </div>
-        </div>
-      `;
-    }
-  }
-
-  function addBooyah(idx) {
-    const current = (teamsData[idx] && teamsData[idx].booyahs) ? teamsData[idx] : 0;
-    const currentCount = typeof current === 'object' ? (current.booyahs || 0) : current;
-    db.ref(`esports_data/teams/${idx}/booyahs`).set(currentCount + 1);
-  }
-
-  function initializeSlots() {
-    const payload = [];
-    for (let i = 0; i < 12; i++) {
-      payload.push({ name: `SLOT ${i + 1}`, logo: "", roster: ["-", "-", "-", "-"], booyahs: 0 });
-    }
-    db.ref('esports_data/teams').set(payload);
-  }
-
-  function clearSlot(idx) {
-    if (!confirm(`Clear Slot #${idx + 1}?`)) return;
-    db.ref(`esports_data/teams/${idx}`).set({ name: `SLOT ${idx + 1}`, logo: "", roster: ["-", "-", "-", "-"], booyahs: 0 });
-  }
-
-  function resetFullScrim() {
-    if (!confirm("Reset all slots?")) return;
-    initializeSlots();
-    db.ref('esports_data/active_spectate').set(0);
-  }
-
-  // Timer Handlers
-  let timerState = { running: false, seconds: 0, startTimestamp: null };
-  let localTimerInterval = null;
-
-  db.ref('esports_data/timer').on('value', (snap) => {
-    const val = snap.val();
-    if (val) {
-      timerState = val;
-      const btn = document.getElementById('timer-toggle-btn');
-      if (timerState.running) {
-        btn.innerText = 'PAUSE';
-        btn.classList.add('active');
-      } else {
-        btn.innerText = 'START';
-        btn.classList.remove('active');
+    // Realtime Listener
+    db.ref("esports_data/teams").on("value", snapshot => {
+      const data = snapshot.val();
+      currentTeams = [];
+      if (Array.isArray(data)) {
+        currentTeams = data;
+      } else if (data && typeof data === "object") {
+        Object.keys(data).forEach(k => currentTeams[parseInt(k)] = data[k]);
       }
-      updateTimerDisplay();
+      renderSlots();
+    });
+
+    function renderSlots() {
+      const grid = document.getElementById("slots-grid");
+      grid.innerHTML = "";
+
+      for (let i = 0; i < 12; i++) {
+        const team = currentTeams[i] || { name: `SLOT ${i+1} (OPEN)`, booyahs: 0 };
+        const isRegistered = team.discord_user_id || (team.name && !team.name.includes("OPEN"));
+        const booyahs = team.booyahs || 0;
+        const logo = team.logo || "https://via.placeholder.com/60/1c273c/8899ac?text=LOGO";
+
+        const card = document.createElement("div");
+        card.className = `slot-card ${isRegistered ? 'active-team' : ''}`;
+        card.innerHTML = `
+          <div>
+            <div class="slot-header">
+              <span class="slot-num">#${i+1}</span>
+              <img src="${logo}" class="team-logo" alt="Logo" onerror="this.src='https://via.placeholder.com/60/1c273c/8899ac?text=LOGO'">
+              <div class="team-info">
+                <h3>${team.name || team.teamName || 'OPEN'}</h3>
+                <div class="booyah-badge">${booyahs > 0 ? `🏆 ${booyahs} BOOYAH` : 'No Booyahs'}</div>
+              </div>
+            </div>
+            <div class="roster-box">
+              ${team.roster ? team.roster.join('<br>') : '1. -<br>2. -<br>3. -<br>4. -'}
+            </div>
+          </div>
+          <div class="slot-actions">
+            <div class="booyah-control">
+              <button class="booyah-btn" onclick="updateBooyah(${i}, -1)">-</button>
+              <span class="booyah-count">${booyahs}</span>
+              <button class="booyah-btn" onclick="updateBooyah(${i}, 1)">+ 🏆</button>
+            </div>
+            ${isRegistered ? `<button class="btn-danger" style="padding: 4px 8px; font-size:11px;" onclick="confirmRemoveTeam(${i})">Remove</button>` : ''}
+          </div>
+        `;
+        grid.appendChild(card);
+      }
     }
-  });
 
-  function formatTime(totalSec) {
-    const m = String(Math.floor(totalSec / 60)).padStart(2, '0');
-    const s = String(totalSec % 60).padStart(2, '0');
-    return `${m}:${s}`;
-  }
-
-  function updateTimerDisplay() {
-    clearInterval(localTimerInterval);
-    if (timerState.running && timerState.startTimestamp) {
-      localTimerInterval = setInterval(() => {
-        const elapsed = Math.floor((Date.now() - timerState.startTimestamp) / 1000);
-        document.getElementById('timer-display').innerText = formatTime(elapsed);
-      }, 1000);
-      const elapsed = Math.floor((Date.now() - timerState.startTimestamp) / 1000);
-      document.getElementById('timer-display').innerText = formatTime(elapsed);
-    } else {
-      document.getElementById('timer-display').innerText = formatTime(timerState.seconds || 0);
+    function updateBooyah(index, change) {
+      if (!currentTeams[index]) return;
+      let count = (currentTeams[index].booyahs || 0) + change;
+      if (count < 0) count = 0;
+      db.ref(`esports_data/teams/${index}/booyahs`).set(count);
     }
-  }
 
-  function toggleTimer() {
-    if (timerState.running) {
-      const elapsed = Math.floor((Date.now() - timerState.startTimestamp) / 1000);
-      db.ref('esports_data/timer').set({ running: false, seconds: elapsed, startTimestamp: null });
-    } else {
-      const currentSeconds = timerState.seconds || 0;
-      db.ref('esports_data/timer').set({ running: true, seconds: currentSeconds, startTimestamp: Date.now() - (currentSeconds * 1000) });
+    function confirmInitSlots() {
+      showConfirm("Initialize 12 Empty Slots?", "This will create 12 clean, empty slots for the upcoming scrim.", () => {
+        const freshSlots = [];
+        for (let i = 1; i <= 12; i++) {
+          freshSlots.push({ name: `SLOT ${i} (OPEN)`, booyahs: 0 });
+        }
+        db.ref("esports_data/teams").set(freshSlots);
+        closeConfirmModal();
+      });
     }
-  }
 
-  function resetTimer() {
-    db.ref('esports_data/timer').set({ running: false, seconds: 0, startTimestamp: null });
-  }
-</script>
+    function confirmResetAll() {
+      showConfirm("RESET ENTIRE SCRIM?", "This will clear all 12 teams and reset their trophies to 0.", () => {
+        confirmInitSlots();
+      });
+    }
+
+    function confirmRemoveTeam(index) {
+      showConfirm(`Remove Team from Slot #${index+1}?`, "This slot will be reopened for registration.", () => {
+        db.ref(`esports_data/teams/${index}`).set({
+          name: `SLOT ${index+1} (OPEN)`,
+          booyahs: 0
+        });
+        closeConfirmModal();
+      });
+    }
+
+    // Modal Manager
+    function showConfirm(title, desc, onConfirm) {
+      document.getElementById("modal-title").innerText = title;
+      document.getElementById("modal-desc").innerText = desc;
+      const btn = document.getElementById("modal-confirm-btn");
+      btn.onclick = onConfirm;
+      document.getElementById("confirm-modal").style.display = "flex";
+    }
+
+    function closeConfirmModal() {
+      document.getElementById("confirm-modal").style.display = "none";
+    }
+
+    // History Loader
+    function loadHistory() {
+      const tbody = document.getElementById("history-table-body");
+      db.ref("esports_data/history").limitToLast(15).once("value", snap => {
+        const data = snap.val();
+        if (!data) {
+          tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;">No match logs found.</td></tr>`;
+          return;
+        }
+        tbody.innerHTML = "";
+        Object.values(data).reverse().forEach(row => {
+          const date = new Date(row.timestamp * 1000).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+          tbody.innerHTML += `
+            <tr>
+              <td>#${row.slot_index || '-'}</td>
+              <td><strong>${row.team_name || 'Unknown'}</strong></td>
+              <td><code>${row.discord_user_id || 'N/A'}</code></td>
+              <td>🏆 ${row.booyahs || 0}</td>
+              <td>${date}</td>
+            </tr>
+          `;
+        });
+      });
+    }
+
+    function openHistoryDrawer() {
+      loadHistory();
+      window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+    }
+
+    loadHistory();
+  </script>
 </body>
 </html>
