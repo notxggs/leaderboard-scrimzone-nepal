@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>ScrimZone Overlay — Index</title>
+  <title>ScrimZone Overlay — Live & Winner Scenes</title>
   <link href="https://fonts.googleapis.com/css2?family=Teko:wght@600;700&family=Rajdhani:wght@600;700;800&family=Inter:wght@700;800&display=swap" rel="stylesheet">
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
@@ -18,272 +18,188 @@
       position: relative;
     }
 
-    /* TOP HUD */
-    .hud-wrapper {
+    /* SCENE MANAGER */
+    .scene {
       position: absolute;
-      top: 30px;
-      left: 50%;
-      transform: translateX(-50%);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
+      top: 0; left: 0; right: 0; bottom: 0;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.5s ease, visibility 0.5s ease;
     }
-    .hud-crown {
-      width: 220px;
-      height: 10px;
-      background: linear-gradient(180deg, #ffd54f 0%, #b8860b 100%);
-      clip-path: polygon(10% 0%, 90% 0%, 100% 100%, 0% 100%);
-      border: 1px solid #ffe082;
-      border-bottom: none;
-      box-shadow: 0 0 10px rgba(255, 213, 79, 0.4);
-    }
-    .hud-card {
-      position: relative;
-      display: flex;
-      align-items: stretch;
-      background: linear-gradient(180deg, #0d1522 0%, #080d15 100%);
-      border: 2px solid #d4af37;
-      border-radius: 4px;
-      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.9), inset 0 0 15px rgba(212, 175, 55, 0.15);
-      padding: 6px 14px;
-      min-width: 480px;
-    }
-    .hud-match-sec {
-      flex: 1.4;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      padding: 0 16px;
-    }
-    .hud-title {
-      font-family: 'Teko', sans-serif;
-      font-size: 38px;
-      letter-spacing: 2px;
-      line-height: 0.9;
-      color: #ffffff;
-      text-transform: uppercase;
-      text-shadow: 0 2px 8px rgba(0,0,0,0.8);
-    }
-    .hud-sub {
-      font-family: 'Rajdhani', sans-serif;
-      font-size: 15px;
-      font-weight: 800;
-      color: #ffca28;
-      letter-spacing: 1.5px;
-      text-transform: uppercase;
-      margin-top: 2px;
-    }
-    .hud-divider {
-      width: 1px;
-      background: linear-gradient(180deg, transparent 0%, rgba(212, 175, 55, 0.6) 50%, transparent 100%);
-      margin: 4px 0;
-    }
-    .hud-timer-sec {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      padding: 0 18px;
-    }
-    .timer-label {
-      font-size: 14px;
-      font-weight: 800;
-      color: #90a4ae;
-      letter-spacing: 1.5px;
-      text-transform: uppercase;
-      line-height: 1;
-      margin-bottom: 2px;
-    }
-    .timer-num {
-      font-family: 'Teko', sans-serif;
-      font-size: 46px;
-      letter-spacing: 2px;
-      line-height: 0.85;
-      color: #64b5f6;
-      text-shadow: 0 0 15px rgba(100, 181, 246, 0.4);
+    .scene.active {
+      opacity: 1;
+      visibility: visible;
     }
 
-    /* LEFT LEADERBOARD */
+    /* =========================================
+       SCENE 1: LIVE LOBBY & HUD
+    ========================================= */
+    .hud-wrapper {
+      position: absolute; top: 30px; left: 50%; transform: translateX(-50%);
+      display: flex; flex-direction: column; align-items: center;
+    }
+    .hud-crown {
+      width: 220px; height: 10px; background: linear-gradient(180deg, #ffd54f 0%, #b8860b 100%);
+      clip-path: polygon(10% 0%, 90% 0%, 100% 100%, 0% 100%); border: 1px solid #ffe082;
+      border-bottom: none; box-shadow: 0 0 10px rgba(255, 213, 79, 0.4);
+    }
+    .hud-card {
+      position: relative; display: flex; align-items: stretch;
+      background: linear-gradient(180deg, #0d1522 0%, #080d15 100%);
+      border: 2px solid #d4af37; border-radius: 4px; padding: 6px 14px; min-width: 480px;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.9), inset 0 0 15px rgba(212, 175, 55, 0.15);
+    }
+    .hud-match-sec { flex: 1.4; display: flex; flex-direction: column; align-items: center; padding: 0 16px; justify-content: center; }
+    .hud-title { font-family: 'Teko', sans-serif; font-size: 38px; letter-spacing: 2px; line-height: 0.9; color: #ffffff; text-shadow: 0 2px 8px rgba(0,0,0,0.8); }
+    .hud-sub { font-family: 'Rajdhani', sans-serif; font-size: 15px; font-weight: 800; color: #ffca28; letter-spacing: 1.5px; margin-top: 2px; }
+    .hud-divider { width: 1px; background: linear-gradient(180deg, transparent 0%, rgba(212, 175, 55, 0.6) 50%, transparent 100%); margin: 4px 0; }
+    .hud-timer-sec { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 0 18px; }
+    .timer-label { font-size: 14px; font-weight: 800; color: #90a4ae; letter-spacing: 1.5px; line-height: 1; margin-bottom: 2px; }
+    .timer-num { font-family: 'Teko', sans-serif; font-size: 46px; letter-spacing: 2px; line-height: 0.85; color: #64b5f6; text-shadow: 0 0 15px rgba(100, 181, 246, 0.4); }
+
     .leaderboard {
-      position: absolute;
-      top: 130px;
-      left: 40px;
-      width: 360px; /* Made slightly wider to fit bigger badge */
-      background: rgba(10, 14, 22, 0.95);
-      border: 2px solid #1f2b40;
-      border-radius: 8px;
-      overflow: hidden;
-      box-shadow: 0 12px 35px rgba(0,0,0,0.85);
+      position: absolute; top: 130px; left: 40px; width: 360px;
+      background: rgba(10, 14, 22, 0.95); border: 2px solid #1f2b40; border-radius: 8px;
+      overflow: hidden; box-shadow: 0 12px 35px rgba(0,0,0,0.85);
     }
     .board-header {
-      background: linear-gradient(90deg, #1565c0 0%, #0d47a1 100%);
-      padding: 10px 14px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      border-bottom: 2px solid #ffd54f;
+      background: linear-gradient(90deg, #1565c0 0%, #0d47a1 100%); padding: 10px 14px;
+      display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #ffd54f;
     }
-    .board-title {
-      font-family: 'Teko', sans-serif;
-      font-size: 24px;
-      font-weight: 700;
-      letter-spacing: 1px;
-    }
-    .board-time {
-      font-size: 12px;
-      font-weight: 800;
-      background: rgba(0,0,0,0.4);
-      padding: 2px 8px;
-      border-radius: 4px;
-      color: #ffca28;
-    }
-    .team-row {
-      display: flex;
-      align-items: center;
-      padding: 7px 12px;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-      transition: 0.2s ease;
-    }
+    .board-title { font-family: 'Teko', sans-serif; font-size: 24px; font-weight: 700; letter-spacing: 1px; }
+    .board-time { font-size: 12px; font-weight: 800; background: rgba(0,0,0,0.4); padding: 2px 8px; border-radius: 4px; color: #ffca28; }
+    .team-row { display: flex; align-items: center; padding: 7px 12px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); }
     .team-row:nth-child(even) { background: rgba(255, 255, 255, 0.02); }
-    .team-row.focused {
-      background: rgba(255, 152, 0, 0.25);
-      border-left: 4px solid #ff9800;
+    .team-row.focused { background: rgba(255, 152, 0, 0.25); border-left: 4px solid #ff9800; }
+    .team-idx { font-family: 'Teko', sans-serif; font-size: 22px; color: #ff9800; width: 28px; }
+    .team-logo { width: 30px; height: 30px; border-radius: 4px; object-fit: cover; margin-right: 10px; border: 1px solid #1f2b40; }
+    .team-name { font-size: 13px; font-weight: 700; flex-grow: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-transform: uppercase; }
+    .booyah-badge { display: flex; align-items: center; gap: 6px; font-size: 18px; font-weight: 800; color: #fff; background: linear-gradient(135deg, #ff8f00 0%, #e65100 100%); padding: 4px 10px; border-radius: 6px; border: 1px solid #ffca28; }
+
+    /* =========================================
+       SCENE 2: WINNER SCREEN
+    ========================================= */
+    .scene-winner {
+      background: radial-gradient(circle at center, rgba(13, 21, 34, 0.95) 0%, rgba(5, 8, 14, 0.98) 100%);
+      display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center;
     }
-    .team-idx {
-      font-family: 'Teko', sans-serif;
-      font-size: 22px;
-      color: #ff9800;
-      width: 28px;
+    .win-header { font-family: 'Rajdhani', sans-serif; font-size: 24px; color: #90a4ae; letter-spacing: 5px; margin-bottom: 10px; text-transform: uppercase; }
+    .win-booyah { font-family: 'Teko', sans-serif; font-size: 120px; color: #ffca28; line-height: 0.8; margin-bottom: 30px; text-shadow: 0 10px 30px rgba(255, 179, 0, 0.5); letter-spacing: 5px; }
+    .win-logo { width: 200px; height: 200px; border-radius: 12px; border: 4px solid #d4af37; object-fit: cover; margin-bottom: 20px; box-shadow: 0 15px 40px rgba(0,0,0,0.8); }
+    .win-team-name { font-family: 'Teko', sans-serif; font-size: 70px; color: #fff; text-transform: uppercase; letter-spacing: 2px; line-height: 1; margin-bottom: 10px; text-shadow: 0 5px 15px rgba(0,0,0,0.8); }
+    .win-map-info { font-size: 20px; font-weight: 800; color: #64b5f6; background: rgba(0,0,0,0.5); padding: 8px 24px; border-radius: 8px; border: 1px solid #1976d2; letter-spacing: 2px; }
+
+    /* =========================================
+       SCENE 3: UP NEXT
+    ========================================= */
+    .scene-upnext {
+      background: rgba(7, 10, 16, 0.95);
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
     }
-    .team-logo {
-      width: 30px;
-      height: 30px;
-      border-radius: 4px;
-      object-fit: cover;
-      margin-right: 10px;
-      border: 1px solid #1f2b40;
-      background: #090e17;
-    }
-    .team-name {
-      font-size: 14px;
-      font-weight: 700;
-      flex-grow: 1;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      text-transform: uppercase;
-    }
-    
-    /* MASSIVE BOOYAH BADGE */
-    .booyah-badge {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      font-size: 18px; /* Massive Size */
-      font-weight: 800;
-      color: #fff;
-      background: linear-gradient(135deg, #ff8f00 0%, #e65100 100%);
-      padding: 4px 10px;
-      border-radius: 6px;
-      box-shadow: 0 4px 15px rgba(255, 143, 0, 0.5);
-      text-shadow: 0 2px 4px rgba(0,0,0,0.5);
-      border: 1px solid #ffca28;
-    }
+    .upnext-box { border: 2px solid #d4af37; background: #0d1522; padding: 50px 100px; border-radius: 12px; text-align: center; box-shadow: 0 20px 50px rgba(0,0,0,0.9); }
+    .upnext-title { font-family: 'Teko', sans-serif; font-size: 50px; color: #ffca28; letter-spacing: 4px; line-height: 1; margin-bottom: 20px; }
+    .upnext-match { font-size: 80px; font-family: 'Teko', sans-serif; color: #fff; line-height: 0.9; margin-bottom: 10px; }
+    .upnext-map { font-size: 28px; font-weight: 800; color: #64b5f6; letter-spacing: 3px; }
+
   </style>
 </head>
 <body>
 
-  <!-- TOP HUD -->
-  <div class="hud-wrapper">
-    <div class="hud-crown"></div>
-    <div class="hud-card">
-      <div class="hud-match-sec">
-        <div class="hud-title">CURRENT MATCH</div>
-        <div class="hud-sub" id="map-display">MAP - 1 - BERMUDA</div>
+  <!-- SCENE 1: LIVE GAMEPLAY OVERLAY -->
+  <div class="scene active" id="scene-live">
+    <div class="hud-wrapper">
+      <div class="hud-crown"></div>
+      <div class="hud-card">
+        <div class="hud-match-sec">
+          <div class="hud-title">CURRENT MATCH</div>
+          <div class="hud-sub" id="map-display">MAP - 1 - BERMUDA</div>
+        </div>
+        <div class="hud-divider"></div>
+        <div class="hud-timer-sec">
+          <div class="timer-label">MATCH TIME</div>
+          <div class="timer-num" id="timer-display">00:00</div>
+        </div>
       </div>
-      <div class="hud-divider"></div>
-      <div class="hud-timer-sec">
-        <div class="timer-label">MATCH TIME</div>
-        <div class="timer-num" id="timer-display">00:00</div>
+    </div>
+    <div class="leaderboard">
+      <div class="board-header">
+        <span class="board-title">PLAYING TEAMS</span>
+        <span class="board-time">LIVE LOBBY</span>
       </div>
+      <div id="teams-list"></div>
     </div>
   </div>
 
-  <!-- LEFT PLAYING TEAMS -->
-  <div class="leaderboard">
-    <div class="board-header">
-      <span class="board-title">PLAYING TEAMS</span>
-      <span class="board-time">LIVE LOBBY</span>
+  <!-- SCENE 2: MATCH WINNER SCREEN -->
+  <div class="scene" id="scene-winner">
+    <div class="win-header">MATCH COMPLETE</div>
+    <div class="win-booyah">BOOYAH!</div>
+    <img src="https://via.placeholder.com/200" class="win-logo" id="win-logo">
+    <div class="win-team-name" id="win-name">TEAM NAME</div>
+    <div class="win-map-info" id="win-info">MATCH #1 • BERMUDA</div>
+  </div>
+
+  <!-- SCENE 3: UP NEXT SCREEN -->
+  <div class="scene" id="scene-upnext">
+    <div class="upnext-box">
+      <div class="upnext-title">UP NEXT</div>
+      <div class="upnext-match" id="next-match-text">MATCH #02</div>
+      <div class="upnext-map" id="next-map-text">MAP - PURGATORY</div>
     </div>
-    <div id="teams-list"></div>
   </div>
 
   <script>
-    firebase.initializeApp({
-      databaseURL: "https://tournment-leaderboard-default-rtdb.firebaseio.com"
-    });
+    // 🔥 EXACT FIREBASE CONFIGURATION INJECTED HERE
+    const firebaseConfig = {
+      apiKey: "AIzaSyBRcMrsrifYv-VDsCrTMKZuQiub30a7wEs",
+      authDomain: "tournment-leaderboard.firebaseapp.com",
+      databaseURL: "https://tournment-leaderboard-default-rtdb.firebaseio.com",
+      projectId: "tournment-leaderboard",
+      storageBucket: "tournment-leaderboard.firebasestorage.app",
+      messagingSenderId: "685244342962",
+      appId: "1:685244342962:web:d31c15a67fb9b6161f5fab",
+      measurementId: "G-RKSK1ZBC5M"
+    };
+
+    firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
-    let focusedIdx = -1;
     let timerSecs = 0;
+    let timerRunning = false;
     let timerInterval = null;
 
-    // 1. LISTEN TO MAP & MATCH NUMBER
-    db.ref("esports_data/config").on("value", snap => {
-      const cfg = snap.val() || {};
-      const matchNum = cfg.match || 1;
-      const mapName = (cfg.map || "BERMUDA").toUpperCase();
+    // ONE REALTIME LISTENER FOR ALL SCENES
+    db.ref("esports_data").on("value", snapshot => {
+      const data = snapshot.val() || {};
+      const config = data.config || {};
+      const teams = data.teams || [];
+      const timer = data.timer || {};
+
+      // SCENE MANAGER
+      const activeScene = config.scene || "live";
+      document.querySelectorAll('.scene').forEach(el => el.classList.remove('active'));
+      const sceneEl = document.getElementById(`scene-${activeScene}`);
+      if (sceneEl) sceneEl.classList.add('active');
+
+      // --- LIVE SCENE UPDATES ---
+      const matchNum = config.match || 1;
+      const mapName = (config.map || "BERMUDA").toUpperCase();
       document.getElementById("map-display").innerText = `MAP - ${matchNum} - ${mapName}`;
       
-      focusedIdx = cfg.focused_index !== undefined ? cfg.focused_index : -1;
-      highlightFocus();
-    });
+      const focusedIdx = config.focused_index !== undefined ? config.focused_index : -1;
 
-    // 2. LISTEN TO TIMER
-    db.ref("esports_data/timer").on("value", snap => {
-      const t = snap.val() || {};
-      timerSecs = t.seconds || 0;
-      const isRunning = t.running || false;
-
-      updateTimerUI();
-
-      if (isRunning) {
-        if (!timerInterval) {
-          timerInterval = setInterval(() => {
-            timerSecs++;
-            updateTimerUI();
-          }, 1000);
-        }
-      } else {
-        if (timerInterval) {
-          clearInterval(timerInterval);
-          timerInterval = null;
-        }
-      }
-    });
-
-    function updateTimerUI() {
-      const m = Math.floor(timerSecs / 60).toString().padStart(2, '0');
-      const s = (timerSecs % 60).toString().padStart(2, '0');
-      document.getElementById("timer-display").innerText = `${m}:${s}`;
-    }
-
-    // 3. LISTEN TO 12 TEAMS
-    db.ref("esports_data/teams").on("value", snap => {
-      const teams = snap.val() || [];
+      // Render 12 Teams
       const list = document.getElementById("teams-list");
       list.innerHTML = "";
-
       for (let i = 0; i < 12; i++) {
         const t = teams[i] || {};
         const booyahs = t.booyahs || 0;
         const name = t.name || t.teamName || `SLOT ${i + 1} (OPEN)`;
         const logo = t.logo || "https://via.placeholder.com/30/090e17/7e8fa4?text=S";
+        const isFocused = (i === focusedIdx) ? "focused" : "";
 
         list.innerHTML += `
-          <div class="team-row" id="team-row-${i}">
+          <div class="team-row ${isFocused}">
             <span class="team-idx">#${i + 1}</span>
             <img src="${logo}" class="team-logo" onerror="this.src='https://via.placeholder.com/30/090e17/7e8fa4?text=S'">
             <span class="team-name">${name}</span>
@@ -291,16 +207,37 @@
           </div>
         `;
       }
-      highlightFocus();
+
+      // --- WINNER SCENE UPDATES ---
+      if (config.winner_id !== undefined && teams[config.winner_id]) {
+        const winTeam = teams[config.winner_id];
+        document.getElementById("win-name").innerText = winTeam.name || winTeam.teamName || `SLOT ${config.winner_id + 1}`;
+        document.getElementById("win-logo").src = winTeam.logo || "https://via.placeholder.com/200/090e17/ffca28?text=W";
+        document.getElementById("win-info").innerText = `MATCH #${matchNum} • ${mapName}`;
+      }
+
+      // --- UP NEXT SCENE UPDATES ---
+      document.getElementById("next-match-text").innerText = `MATCH #${config.next_match || (matchNum + 1)}`;
+      document.getElementById("next-map-text").innerText = `MAP - ${config.next_map || "PURGATORY"}`;
+
+      // --- TIMER UPDATES ---
+      timerSecs = timer.seconds || 0;
+      timerRunning = timer.running || false;
+      renderTimer();
     });
 
-    function highlightFocus() {
-      for (let i = 0; i < 12; i++) {
-        const row = document.getElementById(`team-row-${i}`);
-        if (row) {
-          if (i === focusedIdx) row.classList.add("focused");
-          else row.classList.remove("focused");
-        }
+    function renderTimer() {
+      const updateUI = () => {
+        const m = Math.floor(timerSecs / 60).toString().padStart(2, '0');
+        const s = (timerSecs % 60).toString().padStart(2, '0');
+        document.getElementById("timer-display").innerText = `${m}:${s}`;
+      };
+      updateUI();
+
+      if (timerRunning) {
+        if (!timerInterval) timerInterval = setInterval(() => { timerSecs++; updateUI(); }, 1000);
+      } else {
+        if (timerInterval) { clearInterval(timerInterval); timerInterval = null; }
       }
     }
   </script>
