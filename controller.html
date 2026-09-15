@@ -118,13 +118,14 @@
     <div class="header-sub">AUTOMATED DISCORD & OBS DATA SYNC</div>
 
     <div class="control-bar">
+      <!-- ADDED oninput ALONG WITH onchange TO GUARANTEE INSTANT UPDATES -->
       <div class="ctrl-item">
         <span class="ctrl-label">MATCH:</span>
-        <input type="number" id="match-input" value="1" min="1" max="15" style="width:50px;" onchange="updateMeta()">
+        <input type="number" id="match-input" value="1" min="1" max="15" style="width:50px;" onchange="updateMeta()" oninput="updateMeta()">
       </div>
       <div class="ctrl-item">
         <span class="ctrl-label">MAP:</span>
-        <select id="map-select" onchange="updateMeta()">
+        <select id="map-select" onchange="updateMeta()" oninput="updateMeta()">
           <option value="BERMUDA">BERMUDA</option>
           <option value="PURGATORY">PURGATORY</option>
           <option value="KALAHARI">KALAHARI</option>
