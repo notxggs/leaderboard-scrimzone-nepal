@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>ScrimZone Nepal — OBS Live Overlay</title>
+  <title>ScrimZone Overlay</title>
   <link href="https://fonts.googleapis.com/css2?family=Teko:wght@600;700&family=Rajdhani:wght@600;700;800&family=Inter:wght@700;800&display=swap" rel="stylesheet">
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
@@ -18,9 +18,7 @@
       position: relative;
     }
 
-    /* ═══════════════════════════════════════════════════
-       ESPORTS TOP HUD BADGE
-    ════════════════════════════════════════════════════ */
+    /* TOP HUD */
     .hud-wrapper {
       position: absolute;
       top: 30px;
@@ -30,7 +28,6 @@
       flex-direction: column;
       align-items: center;
     }
-
     .hud-crown {
       width: 220px;
       height: 10px;
@@ -40,7 +37,6 @@
       border-bottom: none;
       box-shadow: 0 0 10px rgba(255, 213, 79, 0.4);
     }
-
     .hud-card {
       position: relative;
       display: flex;
@@ -52,17 +48,6 @@
       padding: 6px 14px;
       min-width: 480px;
     }
-
-    .hud-card::before, .hud-card::after {
-      content: '';
-      position: absolute;
-      width: 6px;
-      height: 6px;
-      border: 1px solid #ffe082;
-    }
-    .hud-card::before { top: 2px; left: 2px; border-right: none; border-bottom: none; }
-    .hud-card::after { bottom: 2px; right: 2px; border-left: none; border-top: none; }
-
     .hud-match-sec {
       flex: 1.4;
       display: flex;
@@ -71,7 +56,6 @@
       align-items: center;
       padding: 0 16px;
     }
-
     .hud-title {
       font-family: 'Teko', sans-serif;
       font-size: 38px;
@@ -81,7 +65,6 @@
       text-transform: uppercase;
       text-shadow: 0 2px 8px rgba(0,0,0,0.8);
     }
-
     .hud-sub {
       font-family: 'Rajdhani', sans-serif;
       font-size: 15px;
@@ -91,13 +74,11 @@
       text-transform: uppercase;
       margin-top: 2px;
     }
-
     .hud-divider {
       width: 1px;
       background: linear-gradient(180deg, transparent 0%, rgba(212, 175, 55, 0.6) 50%, transparent 100%);
       margin: 4px 0;
     }
-
     .hud-timer-sec {
       flex: 1;
       display: flex;
@@ -106,9 +87,7 @@
       align-items: center;
       padding: 0 18px;
     }
-
     .timer-label {
-      font-family: 'Rajdhani', sans-serif;
       font-size: 14px;
       font-weight: 800;
       color: #90a4ae;
@@ -117,7 +96,6 @@
       line-height: 1;
       margin-bottom: 2px;
     }
-
     .timer-num {
       font-family: 'Teko', sans-serif;
       font-size: 46px;
@@ -127,9 +105,7 @@
       text-shadow: 0 0 15px rgba(100, 181, 246, 0.4);
     }
 
-    /* ═══════════════════════════════════════════════════
-       LEFT SIDEBAR: PLAYING TEAMS LEADERBOARD
-    ════════════════════════════════════════════════════ */
+    /* LEFT LEADERBOARD */
     .leaderboard {
       position: absolute;
       top: 130px;
@@ -141,7 +117,6 @@
       overflow: hidden;
       box-shadow: 0 12px 35px rgba(0,0,0,0.85);
     }
-
     .board-header {
       background: linear-gradient(90deg, #1565c0 0%, #0d47a1 100%);
       padding: 10px 14px;
@@ -150,14 +125,12 @@
       align-items: center;
       border-bottom: 2px solid #ffd54f;
     }
-
     .board-title {
       font-family: 'Teko', sans-serif;
       font-size: 24px;
       font-weight: 700;
       letter-spacing: 1px;
     }
-
     .board-time {
       font-size: 12px;
       font-weight: 800;
@@ -166,7 +139,6 @@
       border-radius: 4px;
       color: #ffca28;
     }
-
     .team-row {
       display: flex;
       align-items: center;
@@ -179,14 +151,12 @@
       background: rgba(255, 152, 0, 0.25);
       border-left: 4px solid #ff9800;
     }
-
     .team-idx {
       font-family: 'Teko', sans-serif;
       font-size: 22px;
       color: #ff9800;
       width: 28px;
     }
-
     .team-logo {
       width: 28px;
       height: 28px;
@@ -196,7 +166,6 @@
       border: 1px solid #1f2b40;
       background: #090e17;
     }
-
     .team-name {
       font-size: 13px;
       font-weight: 700;
@@ -206,7 +175,6 @@
       text-overflow: ellipsis;
       text-transform: uppercase;
     }
-
     .booyah-badge {
       display: flex;
       align-items: center;
@@ -219,7 +187,7 @@
 </head>
 <body>
 
-  <!-- Top Esports Match Banner -->
+  <!-- TOP HUD -->
   <div class="hud-wrapper">
     <div class="hud-crown"></div>
     <div class="hud-card">
@@ -235,7 +203,7 @@
     </div>
   </div>
 
-  <!-- Left Sidebar Playing Teams -->
+  <!-- LEFT PLAYING TEAMS -->
   <div class="leaderboard">
     <div class="board-header">
       <span class="board-title">PLAYING TEAMS</span>
@@ -245,58 +213,39 @@
   </div>
 
   <script>
-    const firebaseConfig = {
-      apiKey: "AIzaSyBRcMrsrifYv-VDsCrTMKZuQiub30a7wEs",
-      authDomain: "tournment-leaderboard.firebaseapp.com",
-      databaseURL: "https://tournment-leaderboard-default-rtdb.firebaseio.com",
-      projectId: "tournment-leaderboard",
-      storageBucket: "tournment-leaderboard.firebasestorage.app",
-      messagingSenderId: "685244342962",
-      appId: "1:685244342962:web:d31c15a67fb9b6161f5fab"
-    };
-
-    firebase.initializeApp(firebaseConfig);
+    firebase.initializeApp({
+      databaseURL: "https://tournment-leaderboard-default-rtdb.firebaseio.com"
+    });
     const db = firebase.database();
 
     let focusedIdx = -1;
     let timerSecs = 0;
-    let timerRunning = false;
     let timerInterval = null;
 
-    // Realtime Listener
-    db.ref("esports_data").on("value", snapshot => {
-      const data = snapshot.val() || {};
-      
-      // Match & Map Config
-      const config = data.config || {};
-      const matchNum = config.match || 1;
-      const mapName = (config.map || "BERMUDA").toUpperCase();
+    // 1. LISTEN TO MAP & MATCH NUMBER
+    db.ref("esports_data/config").on("value", snap => {
+      const cfg = snap.val() || {};
+      const matchNum = cfg.match || 1;
+      const mapName = (cfg.map || "BERMUDA").toUpperCase();
       document.getElementById("map-display").innerText = `MAP - ${matchNum} - ${mapName}`;
-      focusedIdx = config.focused_index !== undefined ? config.focused_index : -1;
-
-      // Match Timer
-      const timer = data.timer || {};
-      timerSecs = timer.seconds || 0;
-      timerRunning = timer.running || false;
-      renderTimer();
-
-      // 12 Slot Team List
-      const teams = data.teams || [];
-      renderTeams(teams);
+      
+      focusedIdx = cfg.focused_index !== undefined ? cfg.focused_index : -1;
+      highlightFocus();
     });
 
-    function renderTimer() {
-      const m = Math.floor(timerSecs / 60).toString().padStart(2, '0');
-      const s = (timerSecs % 60).toString().padStart(2, '0');
-      document.getElementById("timer-display").innerText = `${m}:${s}`;
+    // 2. LISTEN TO TIMER
+    db.ref("esports_data/timer").on("value", snap => {
+      const t = snap.val() || {};
+      timerSecs = t.seconds || 0;
+      const isRunning = t.running || false;
 
-      if (timerRunning) {
+      updateTimerUI();
+
+      if (isRunning) {
         if (!timerInterval) {
           timerInterval = setInterval(() => {
             timerSecs++;
-            const mm = Math.floor(timerSecs / 60).toString().padStart(2, '0');
-            const ss = (timerSecs % 60).toString().padStart(2, '0');
-            document.getElementById("timer-display").innerText = `${mm}:${ss}`;
+            updateTimerUI();
           }, 1000);
         }
       } else {
@@ -305,26 +254,45 @@
           timerInterval = null;
         }
       }
+    });
+
+    function updateTimerUI() {
+      const m = Math.floor(timerSecs / 60).toString().padStart(2, '0');
+      const s = (timerSecs % 60).toString().padStart(2, '0');
+      document.getElementById("timer-display").innerText = `${m}:${s}`;
     }
 
-    function renderTeams(teams) {
+    // 3. LISTEN TO 12 TEAMS
+    db.ref("esports_data/teams").on("value", snap => {
+      const teams = snap.val() || [];
       const list = document.getElementById("teams-list");
       list.innerHTML = "";
 
       for (let i = 0; i < 12; i++) {
         const t = teams[i] || {};
         const booyahs = t.booyahs || 0;
-        const name = t.name || t.teamName || `SLOT ${i + 1}`;
+        const name = t.name || t.teamName || `SLOT ${i + 1} (OPEN)`;
         const logo = t.logo || "https://via.placeholder.com/28/090e17/7e8fa4?text=S";
 
         list.innerHTML += `
-          <div class="team-row ${focusedIdx === i ? 'focused' : ''}">
+          <div class="team-row" id="team-row-${i}">
             <span class="team-idx">#${i + 1}</span>
             <img src="${logo}" class="team-logo" onerror="this.src='https://via.placeholder.com/28/090e17/7e8fa4?text=S'">
             <span class="team-name">${name}</span>
             ${booyahs > 0 ? `<span class="booyah-badge">🏆 x${booyahs}</span>` : ''}
           </div>
         `;
+      }
+      highlightFocus();
+    });
+
+    function highlightFocus() {
+      for (let i = 0; i < 12; i++) {
+        const row = document.getElementById(`team-row-${i}`);
+        if (row) {
+          if (i === focusedIdx) row.classList.add("focused");
+          else row.classList.remove("focused");
+        }
       }
     }
   </script>
